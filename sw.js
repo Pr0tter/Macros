@@ -1,5 +1,8 @@
-// Service worker: cachet de app zodat hij offline werkt en installeerbaar is.
-const CACHE = 'macros-v3';
+// Service worker: app werkt offline én ververst zichzelf.
+// Strategie: "network-first" voor eigen bestanden — als je online bent krijg je
+// altijd de nieuwste versie, offline valt hij terug op de opgeslagen versie.
+// Gevolg: om te updaten hoef je enkel index.html op GitHub te vervangen.
+const CACHE = 'macros-v4';
 const BESTANDEN = [
   './',
   './index.html',
@@ -21,16 +24,19 @@ self.addEventListener('activate', (e)=>{
 self.addEventListener('fetch', (e)=>{
   const req = e.request;
   if(req.method !== 'GET') return;
-  // Eigen bestanden: cache-first. Externe (fonts): probeer netwerk, val terug op cache.
-  if(new URL(req.url).origin === self.location.origin){
+  const url = new URL(req.url);
+
+  if(url.origin === self.location.origin){
+    // Eigen bestanden: probeer netwerk (nieuwste), val bij offline terug op cache.
     e.respondWith(
-      caches.match(req).then(hit=> hit || fetch(req).then(res=>{
+      fetch(req).then(res=>{
         const kopie = res.clone();
         caches.open(CACHE).then(c=>c.put(req, kopie)).catch(()=>{});
         return res;
-      }).catch(()=> caches.match('./index.html')))
+      }).catch(()=> caches.match(req).then(hit=> hit || caches.match('./index.html')))
     );
   } else {
-    e.respondWith(fetch(req).catch(()=> caches.match(req)));
+    // Externe bestanden (bv. lettertypes): eerst cache, anders netwerk.
+    e.respondWith(caches.match(req).then(hit=> hit || fetch(req).catch(()=> hit)));
   }
 });
