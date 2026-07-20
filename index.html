@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Macro's">
+<meta name="theme-color" content="#0E1013">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<title>Macro's</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0E1013;
+    --surface:#171A20;
+    --surface-2:#1F232B;
+    --line:#2A2F39;
+    --text:#ECEEF1;
+    --muted:#868D9B;
+    --kcal:#F2F4F7;
+    --eiwit:#5EE6A8;
+    --koolh:#FFB454;
+    --vet:#7DA3FF;
+    --danger:#FF6B6B;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--ink);
+    color:var(--text);
+    font-family:'Space Grotesk',system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding:0 16px 40px;
+    max-width:520px;
+    margin:0 auto;
+    min-height:100vh;
+  }
+  .mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;}
+
+  /* ---------- Dashboard ---------- */
+  header{
+    padding:22px 4px 8px;
+    display:flex;justify-content:space-between;align-items:baseline;
+  }
+  header .titel{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:600;}
+  header .datum{font-size:13px;color:var(--muted);}
+
+  .kcal-readout{
+    text-align:center;
+    padding:14px 0 20px;
+  }
+  .kcal-cijfer{
+    font-family:'JetBrains Mono',monospace;
+    font-variant-numeric:tabular-nums;
+    font-size:68px;line-height:1;font-weight:700;
+    letter-spacing:-.02em;
+    color:var(--kcal);
+    transition:color .2s;
+  }
+  .kcal-label{font-size:12px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);margin-top:8px;}
+
+  .macros{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+    margin-bottom:8px;
+  }
+  .macro{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:14px 12px 12px;
+  }
+  .macro .naam{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+  .macro .waarde{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;font-size:24px;font-weight:700;line-height:1;}
+  .macro .waarde span{font-size:12px;color:var(--muted);font-weight:500;margin-left:1px;}
+  .macro .bar{height:4px;background:var(--line);border-radius:99px;margin-top:10px;overflow:hidden;}
+  .macro .bar i{display:block;height:100%;width:0;border-radius:99px;transition:width .35s cubic-bezier(.2,.8,.2,1);}
+  .macro.e .waarde{color:var(--eiwit);}   .macro.e .bar i{background:var(--eiwit);}
+  .macro.k .waarde{color:var(--koolh);}   .macro.k .bar i{background:var(--koolh);}
+  .macro.v .waarde{color:var(--vet);}     .macro.v .bar i{background:var(--vet);}
+  .macro-doel{font-size:10px;color:var(--muted);margin-top:7px;font-family:'JetBrains Mono',monospace;min-height:12px;}
+
+  .doel-regel{font-size:12px;color:var(--muted);margin-top:8px;font-family:'JetBrains Mono',monospace;min-height:14px;}
+
+  .doel-knop{
+    width:100%;margin-top:12px;background:var(--surface);border:1px dashed var(--line);
+    border-radius:14px;color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;
+    padding:13px;cursor:pointer;
+  }
+  .doel-knop:active{background:var(--surface-2);}
+  .doel-knop.ingesteld{border-style:solid;border-color:var(--eiwit);color:var(--text);}
+
+  /* Calculator */
+  .calc{margin-top:10px;background:var(--surface);border:1px solid var(--vet);border-radius:16px;padding:16px;display:none;}
+  .calc.open{display:block;}
+  .calc .kop{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+  .calc .kop .t{font-size:16px;font-weight:600;}
+  .calc .kop .sluit{color:var(--muted);font-size:22px;cursor:pointer;padding:0 4px;}
+  .calc-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:16px 0 8px;}
+  .geslacht{display:flex;gap:8px;}
+  .geslacht button{flex:1;background:var(--ink);border:1px solid var(--line);border-radius:11px;color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;padding:12px;cursor:pointer;}
+  .geslacht button.actief{background:var(--vet);border-color:var(--vet);color:#04122E;}
+  .drie{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .veld label{display:block;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;text-align:center;}
+  .veld input{width:100%;background:var(--ink);border:1px solid var(--line);border-radius:11px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;text-align:center;padding:11px 4px;outline:none;}
+  .veld input:focus{border-color:var(--vet);}
+  .keuze{display:flex;flex-direction:column;gap:8px;}
+  .keuze .optie{text-align:left;background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;}
+  .keuze .optie.actief{border-color:var(--vet);background:var(--surface-2);}
+  .keuze .optie .ot{font-size:14px;font-weight:600;}
+  .keuze .optie .od{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.35;}
+  .doel-keuze{display:flex;gap:8px;}
+  .doel-keuze button{flex:1;background:var(--ink);border:1px solid var(--line);border-radius:11px;color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;padding:11px 4px;cursor:pointer;}
+  .doel-keuze button.actief{background:var(--vet);border-color:var(--vet);color:#04122E;}
+  .tempo{display:flex;gap:8px;margin-top:8px;}
+  .tempo button{flex:1;background:var(--ink);border:1px solid var(--line);border-radius:11px;color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;padding:10px 4px;cursor:pointer;}
+  .tempo button.actief{background:var(--surface-2);border-color:var(--vet);color:var(--text);}
+  .calc-uitslag{margin-top:16px;background:var(--ink);border:1px solid var(--line);border-radius:14px;padding:14px 16px;}
+  .calc-uitslag .rij{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;}
+  .calc-uitslag .rij .l{font-size:13px;color:var(--muted);}
+  .calc-uitslag .rij .w{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:15px;}
+  .calc-uitslag .groot{border-top:1px solid var(--line);margin-top:6px;padding-top:12px;}
+  .calc-uitslag .groot .l{color:var(--text);font-weight:600;font-size:14px;}
+  .calc-uitslag .groot .w{font-size:22px;color:var(--eiwit);}
+  .macro-doelen{display:flex;gap:16px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);font-family:'JetBrains Mono',monospace;font-size:12px;}
+  .macro-doelen .e{color:var(--eiwit);} .macro-doelen .k{color:var(--koolh);} .macro-doelen .v{color:var(--vet);}
+  .calc .instel{width:100%;margin-top:14px;background:var(--eiwit);border:none;border-radius:12px;color:#06120C;font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;padding:14px;cursor:pointer;}
+  .calc .instel:active{opacity:.85;}
+  .calc .disclaimer{font-size:11px;color:var(--muted);margin-top:10px;line-height:1.45;}
+
+  /* ---------- Zoeken ---------- */
+  .zoek-wrap{position:relative;margin-top:18px;}
+  .zoek{
+    width:100%;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:14px;
+    color:var(--text);
+    font-family:'Space Grotesk',sans-serif;
+    font-size:16px;
+    padding:15px 16px 15px 46px;
+    outline:none;
+  }
+  .zoek:focus{border-color:var(--eiwit);}
+  .zoek::placeholder{color:var(--muted);}
+  .zoek-icoon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:18px;pointer-events:none;}
+
+  .resultaten{
+    margin-top:8px;
+    border-radius:14px;
+    overflow:hidden;
+    display:none;
+  }
+  .resultaten.open{display:block;}
+  .res-item{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:13px 16px;
+    background:var(--surface);
+    border-bottom:1px solid var(--line);
+    cursor:pointer;
+  }
+  .res-item:last-child{border-bottom:none;}
+  .res-item:active{background:var(--surface-2);}
+  .res-item .n{font-size:15px;}
+  .res-item .kc{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);}
+  .res-leeg{padding:16px;background:var(--surface);color:var(--muted);font-size:14px;text-align:center;}
+  .res-nieuw{padding:14px 16px;background:var(--surface-2);color:var(--eiwit);font-size:14px;font-weight:500;cursor:pointer;text-align:center;}
+  .res-nieuw:active{opacity:.7;}
+
+  /* ---------- Portie-invoer ---------- */
+  .portie{
+    margin-top:8px;
+    background:var(--surface);
+    border:1px solid var(--eiwit);
+    border-radius:16px;
+    padding:16px;
+    display:none;
+  }
+  .portie.open{display:block;}
+  .portie .kop{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+  .portie .kop .n{font-size:17px;font-weight:600;}
+  .portie .kop .sluit{color:var(--muted);font-size:22px;cursor:pointer;line-height:1;padding:0 4px;}
+  .unit-toggle{display:flex;gap:6px;background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:4px;margin-bottom:14px;}
+  .unit-toggle button{
+    flex:1;background:none;border:none;border-radius:9px;
+    color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;
+    padding:9px 0;cursor:pointer;transition:background .15s,color .15s;
+  }
+  .unit-toggle button.actief{background:var(--eiwit);color:#06120C;}
+  .gram-rij{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+  .gram-input{
+    flex:1;
+    background:var(--ink);
+    border:1px solid var(--line);
+    border-radius:12px;
+    color:var(--text);
+    font-family:'JetBrains Mono',monospace;
+    font-size:22px;font-weight:700;
+    padding:12px 14px;
+    text-align:center;
+    outline:none;
+    min-width:0;
+  }
+  .gram-input:focus{border-color:var(--eiwit);}
+  .gram-eenheid{font-size:15px;color:var(--muted);font-weight:600;}
+  .snel{display:flex;gap:8px;}
+  .snel button{
+    flex:1;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;
+    color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;
+    padding:9px 0;cursor:pointer;
+  }
+  .snel button:active{background:var(--line);}
+  .voorbeeld{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+    margin:14px 0;text-align:center;
+  }
+  .voorbeeld div .l{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+  .voorbeeld div .g{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;margin-top:3px;}
+  .vb-kcal .g{color:var(--kcal);} .vb-e .g{color:var(--eiwit);} .vb-k .g{color:var(--koolh);} .vb-v .g{color:var(--vet);}
+  .toevoeg{
+    width:100%;background:var(--eiwit);border:none;border-radius:12px;
+    color:#06120C;font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;
+    padding:14px;cursor:pointer;
+  }
+  .toevoeg:active{opacity:.85;}
+
+  /* ---------- Nieuw eten formulier ---------- */
+  .nieuw-form{margin-top:8px;background:var(--surface);border:1px solid var(--koolh);border-radius:16px;padding:16px;display:none;}
+  .nieuw-form.open{display:block;}
+  .nieuw-form .kop{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+  .nieuw-form .kop .t{font-size:15px;font-weight:600;color:var(--koolh);}
+  .nieuw-form .kop .sluit{color:var(--muted);font-size:22px;cursor:pointer;padding:0 4px;}
+  .nieuw-form input{
+    width:100%;background:var(--ink);border:1px solid var(--line);border-radius:11px;
+    color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:15px;padding:12px 14px;outline:none;margin-bottom:10px;
+  }
+  .nieuw-form input:focus{border-color:var(--koolh);}
+  .nieuw-form .grid4{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+  .nieuw-form .grid4 input{margin-bottom:0;font-family:'JetBrains Mono',monospace;text-align:center;}
+  .nieuw-form .hint{font-size:11px;color:var(--muted);margin:2px 0 12px;}
+  .nieuw-form .bewaar{width:100%;background:var(--koolh);border:none;border-radius:12px;color:#1A1204;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;padding:13px;cursor:pointer;margin-top:12px;}
+  .nieuw-form .bewaar:active{opacity:.85;}
+
+  /* ---------- Log ---------- */
+  .log-kop{display:flex;justify-content:space-between;align-items:center;margin:26px 4px 12px;}
+  .log-kop h2{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:0;}
+  .log-kop .wis{font-size:12px;color:var(--muted);cursor:pointer;background:none;border:none;font-family:inherit;}
+  .log-kop .wis:active{color:var(--danger);}
+  .log-leeg{text-align:center;color:var(--muted);font-size:14px;padding:24px 16px;background:var(--surface);border:1px dashed var(--line);border-radius:14px;}
+  .log-item{
+    display:flex;align-items:center;gap:12px;
+    background:var(--surface);border:1px solid var(--line);border-radius:14px;
+    padding:12px 14px;margin-bottom:8px;
+  }
+  .log-item .info{flex:1;min-width:0;}
+  .log-item .n{font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .log-item .sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:3px;}
+  .log-item .sub .e{color:var(--eiwit);} .log-item .sub .k{color:var(--koolh);} .log-item .sub .v{color:var(--vet);}
+  .log-item .kc{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;}
+  .log-item .del{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:2px 4px;line-height:1;}
+  .log-item .del:active{color:var(--danger);}
+
+  .voetnoot{text-align:center;color:var(--muted);font-size:11px;margin-top:20px;line-height:1.5;}
+
+  /* Aanpassen / verwijderen */
+  .res-item{position:relative;}
+  .res-bewerk{background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:4px 2px 4px 10px;line-height:1;}
+  .res-bewerk:active{color:var(--eiwit);}
+  .res-item .kc{margin-left:auto;}
+  .nieuw-form .verwijder{width:100%;margin-top:10px;background:none;border:1px solid var(--line);border-radius:12px;color:var(--danger);font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;padding:12px;cursor:pointer;}
+  .nieuw-form .verwijder:active{background:var(--surface-2);}
+
+  /* Header rechts */
+  header .rechts{display:flex;align-items:center;gap:12px;}
+  .kal-knop{background:none;border:none;font-size:20px;cursor:pointer;padding:2px;line-height:1;}
+
+  /* Kalender */
+  .kal-overlay{position:fixed;inset:0;background:rgba(6,8,11,.72);backdrop-filter:blur(3px);display:none;align-items:flex-start;justify-content:center;padding:24px 12px;overflow-y:auto;z-index:50;}
+  .kal-overlay.open{display:flex;}
+  .kal-paneel{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px 16px 20px;width:100%;max-width:460px;margin:auto;}
+  .kal-kop{display:flex;align-items:center;gap:8px;margin-bottom:16px;}
+  .kal-kop #kalTitel{flex:1;text-align:center;font-size:16px;font-weight:600;text-transform:capitalize;}
+  .kal-kop button{background:var(--ink);border:1px solid var(--line);border-radius:10px;color:var(--text);font-size:18px;font-weight:700;width:38px;height:38px;cursor:pointer;line-height:1;}
+  .kal-kop .kal-sluit{color:var(--muted);}
+  .kal-weekdagen{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:6px;}
+  .kal-weekdagen span{text-align:center;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
+  .kal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;}
+  .kal-cel{aspect-ratio:1/1;border-radius:9px;background:var(--ink);border:1px solid var(--line);position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .kal-cel.leeg{background:transparent;border:none;}
+  .kal-cel .dag{position:absolute;top:3px;left:5px;font-size:9px;color:var(--muted);font-weight:600;}
+  .kal-cel .cal{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;}
+  .kal-cel.vandaag{outline:2px solid var(--text);outline-offset:-2px;}
+  .kal-cel.groen{background:#34C98A;border-color:#34C98A;}  .kal-cel.groen .cal{color:#06120C;} .kal-cel.groen .dag{color:rgba(6,18,12,.6);}
+  .kal-cel.blauw{background:#5B8DEF;border-color:#5B8DEF;}  .kal-cel.blauw .cal{color:#04122E;} .kal-cel.blauw .dag{color:rgba(4,18,46,.6);}
+  .kal-cel.rood{background:#F2685F;border-color:#F2685F;}   .kal-cel.rood .cal{color:#2A0806;}  .kal-cel.rood .dag{color:rgba(42,8,6,.6);}
+  .kal-legenda{margin-top:16px;display:flex;flex-direction:column;gap:8px;}
+  .kal-legenda .rij{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--muted);}
+  .kal-legenda .vk{width:16px;height:16px;border-radius:5px;flex-shrink:0;}
+  .kal-legenda .vk.groen{background:#34C98A;} .kal-legenda .vk.blauw{background:#5B8DEF;} .kal-legenda .vk.rood{background:#F2685F;}
+  .kal-leeg-tekst{text-align:center;color:var(--muted);font-size:12px;margin-top:14px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="titel">Vandaag</div>
+  <div class="rechts">
+    <span class="datum" id="datum"></span>
+    <button class="kal-knop" id="kalKnop" title="Kalender">📅</button>
+  </div>
+</header>
+
+<div class="kcal-readout">
+  <div class="kcal-cijfer mono" id="totKcal">0</div>
+  <div class="kcal-label">kcal</div>
+  <div class="doel-regel" id="doelRegel"></div>
+</div>
+
+<div class="macros">
+  <div class="macro e">
+    <div class="naam">Eiwit</div>
+    <div class="waarde"><span class="mono" id="totE">0</span><span>g</span></div>
+    <div class="bar"><i id="barE"></i></div>
+    <div class="macro-doel" id="doelE"></div>
+  </div>
+  <div class="macro k">
+    <div class="naam">Koolh.</div>
+    <div class="waarde"><span class="mono" id="totK">0</span><span>g</span></div>
+    <div class="bar"><i id="barK"></i></div>
+    <div class="macro-doel" id="doelK"></div>
+  </div>
+  <div class="macro v">
+    <div class="naam">Vet</div>
+    <div class="waarde"><span class="mono" id="totV">0</span><span>g</span></div>
+    <div class="bar"><i id="barV"></i></div>
+    <div class="macro-doel" id="doelV"></div>
+  </div>
+</div>
+
+<button class="doel-knop" id="doelKnop">⊕&nbsp;&nbsp;Stel je caloriedoel in</button>
+
+<div class="calc" id="calc">
+  <div class="kop">
+    <div class="t">Caloriedoel berekenen</div>
+    <div class="sluit" id="cSluit">✕</div>
+  </div>
+
+  <div class="calc-label">Geslacht</div>
+  <div class="geslacht">
+    <button id="gMan" class="actief">Man</button>
+    <button id="gVrouw">Vrouw</button>
+  </div>
+
+  <div class="calc-label">Jouw gegevens</div>
+  <div class="drie">
+    <div class="veld"><label>Leeftijd</label><input id="cLeeftijd" type="number" inputmode="numeric" placeholder="jr"></div>
+    <div class="veld"><label>Lengte</label><input id="cLengte" type="number" inputmode="numeric" placeholder="cm"></div>
+    <div class="veld"><label>Gewicht</label><input id="cGewicht" type="number" inputmode="decimal" placeholder="kg"></div>
+  </div>
+
+  <div class="calc-label">Hoe actief ben je?</div>
+  <div class="keuze" id="activiteit">
+    <button class="optie" data-f="1.2"><div class="ot">Zittend</div><div class="od">Kantoor of studie, weinig beweging, geen sport.</div></button>
+    <button class="optie actief" data-f="1.375"><div class="ot">Licht actief</div><div class="od">Lichte inspanning of sport 1–3× per week.</div></button>
+    <button class="optie" data-f="1.55"><div class="ot">Matig actief</div><div class="od">Training of sport 3–5× per week.</div></button>
+    <button class="optie" data-f="1.725"><div class="ot">Zeer actief</div><div class="od">Intensief sporten 6–7× per week.</div></button>
+    <button class="optie" data-f="1.9"><div class="ot">Extreem actief</div><div class="od">Fysiek werk + (bijna) dagelijks hard trainen.</div></button>
+  </div>
+
+  <div class="calc-label">Wat is je doel?</div>
+  <div class="doel-keuze" id="doelKeuze">
+    <button data-d="afvallen">Afvallen</button>
+    <button data-d="onderhoud" class="actief">Onderhoud</button>
+    <button data-d="bijkomen">Bijkomen</button>
+  </div>
+  <div class="tempo" id="tempo" style="display:none;">
+    <button data-t="rustig" class="actief">Rustig</button>
+    <button data-t="matig">Gemiddeld</button>
+  </div>
+
+  <div class="calc-uitslag" id="calcUitslag">
+    <div class="rij"><span class="l">Ruststofwisseling (BMR)</span><span class="w mono" id="rBmr">–</span></div>
+    <div class="rij"><span class="l">Onderhoud (TDEE)</span><span class="w mono" id="rTdee">–</span></div>
+    <div class="rij groot"><span class="l">Jouw dagdoel</span><span class="w mono" id="rDoel">–</span></div>
+    <div class="macro-doelen"><span class="e" id="rE">–</span><span class="k" id="rK">–</span><span class="v" id="rV">–</span></div>
+  </div>
+
+  <button class="instel" id="cInstel">Instellen als dagdoel</button>
+  <div class="disclaimer">Een schatting op basis van de Mifflin-St Jeor-formule. Behandel het als startpunt en stuur bij op basis van hoe je gewicht en energie in het echt evolueren. Vermijd extreme tekorten.</div>
+</div>
+
+<div class="zoek-wrap">
+  <span class="zoek-icoon">⌕</span>
+  <input class="zoek" id="zoek" type="text" placeholder="Zoek eten, bv. zalm…" autocomplete="off">
+</div>
+
+<div class="resultaten" id="resultaten"></div>
+
+<!-- Portie-invoer -->
+<div class="portie" id="portie">
+  <div class="kop">
+    <div class="n" id="pNaam">—</div>
+    <div class="sluit" id="pSluit">✕</div>
+  </div>
+  <div class="unit-toggle" id="unitToggle" style="display:none;">
+    <button id="uGram" class="actief">Gram</button>
+    <button id="uStuk">Per stuk</button>
+  </div>
+  <div class="gram-rij">
+    <input class="gram-input mono" id="pGram" type="number" inputmode="numeric" value="100">
+    <span class="gram-eenheid" id="pEenheid">gram</span>
+  </div>
+  <div class="snel" id="snelKnoppen"></div>
+  <div class="voorbeeld">
+    <div class="vb-kcal"><div class="l">kcal</div><div class="g mono" id="pKcal">0</div></div>
+    <div class="vb-e"><div class="l">eiwit</div><div class="g mono" id="pE">0</div></div>
+    <div class="vb-k"><div class="l">koolh</div><div class="g mono" id="pK">0</div></div>
+    <div class="vb-v"><div class="l">vet</div><div class="g mono" id="pV">0</div></div>
+  </div>
+  <button class="toevoeg" id="pToevoeg">Toevoegen</button>
+</div>
+
+<!-- Nieuw / aanpassen eten -->
+<div class="nieuw-form" id="nieuwForm">
+  <div class="kop">
+    <div class="t" id="nTitel">Eigen eten toevoegen</div>
+    <div class="sluit" id="nSluit">✕</div>
+  </div>
+  <input id="nNaam" type="text" placeholder="Naam (bv. Mama's lasagne)">
+  <div class="hint">Waarden per 100 gram:</div>
+  <div class="grid4">
+    <input id="nKcal" type="number" inputmode="numeric" placeholder="kcal">
+    <input id="nE" type="number" inputmode="decimal" placeholder="eiwit g">
+    <input id="nK" type="number" inputmode="decimal" placeholder="koolh g">
+    <input id="nV" type="number" inputmode="decimal" placeholder="vet g">
+  </div>
+  <div class="hint" style="margin-top:12px;">Optioneel — gewicht van 1 stuk (voor "per stuk"):</div>
+  <input id="nStuk" type="number" inputmode="numeric" placeholder="gram per stuk (bv. 120)">
+  <button class="bewaar" id="nBewaar">Bewaren & kiezen</button>
+  <button class="verwijder" id="nVerwijder" style="display:none;">Verwijderen</button>
+</div>
+
+<!-- Log -->
+<div class="log-kop">
+  <h2>Gegeten</h2>
+  <button class="wis" id="wisDag">Dag wissen</button>
+</div>
+<div id="logLijst"></div>
+
+<div class="voetnoot">
+  Waarden zijn per 100 g en gebaseerd op standaard referentiewaarden — kleine afwijkingen per product/merk zijn normaal.<br>
+  Je log wordt bewaard in de Claude-app.
+</div>
+
+<div class="kal-overlay" id="kalOverlay">
+  <div class="kal-paneel">
+    <div class="kal-kop">
+      <button id="kalVorige">‹</button>
+      <div id="kalTitel">—</div>
+      <button id="kalVolgende">›</button>
+      <button class="kal-sluit" id="kalSluit">✕</button>
+    </div>
+    <div class="kal-weekdagen">
+      <span>ma</span><span>di</span><span>wo</span><span>do</span><span>vr</span><span>za</span><span>zo</span>
+    </div>
+    <div class="kal-grid" id="kalGrid"></div>
+    <div class="kal-legenda">
+      <div class="rij"><span class="vk groen"></span> Binnen 100 kcal van je doel</div>
+      <div class="rij"><span class="vk blauw"></span> Meer dan 100 kcal onder je doel</div>
+      <div class="rij"><span class="vk rood"></span> Meer dan 100 kcal boven je doel</div>
+    </div>
+    <div class="kal-leeg-tekst" id="kalLeegTekst" style="display:none;">Stel eerst een caloriedoel in om de kleuren te zien.</div>
+  </div>
+</div>
+
+<script>
+// Service worker registreren (voor installeren als app + offline). Faalt stil op file://.
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); });
+}
+
+// ---------- Voedingsdatabase (per 100 g) ----------
+// {n:naam, kc:kcal, e:eiwit, k:koolhydraten, v:vet}
+const DB = [
+  // Vlees & gevogelte
+  {n:"Kipfilet (rauw)",kc:165,e:31,k:0,v:3.6,stuk:150,se:"filet"},
+  {n:"Kalkoenfilet",kc:104,e:24,k:0,v:1,stuk:150,se:"filet"},
+  {n:"Rundergehakt",kc:250,e:18,k:0,v:20},
+  {n:"Biefstuk (mager)",kc:158,e:26,k:0,v:6,stuk:150,se:"stuk"},
+  {n:"Varkenshaas",kc:143,e:21,k:0,v:6},
+  {n:"Spek",kc:541,e:37,k:1.4,v:42,stuk:10,se:"reepje"},
+  {n:"Gekookte ham",kc:145,e:21,k:1.5,v:6,stuk:20,se:"snee"},
+  {n:"Salami",kc:336,e:22,k:1,v:26,stuk:5,se:"plakje"},
+  // Vis
+  {n:"Zalm (rauw)",kc:208,e:20,k:0,v:13,stuk:125,se:"moot"},
+  {n:"Tonijn (in water)",kc:116,e:26,k:0,v:1},
+  {n:"Kabeljauw",kc:82,e:18,k:0,v:0.7,stuk:150,se:"stuk"},
+  {n:"Garnalen",kc:99,e:24,k:0,v:0.3},
+  // Eieren & zuivel
+  {n:"Ei (heel)",kc:143,e:13,k:0.7,v:10,stuk:55,se:"ei"},
+  {n:"Eiwit",kc:52,e:11,k:0.7,v:0.2,stuk:33,se:"eiwit"},
+  {n:"Volle melk",kc:61,e:3.2,k:4.8,v:3.3,stuk:250,se:"glas"},
+  {n:"Magere melk",kc:35,e:3.4,k:5,v:0.1,stuk:250,se:"glas"},
+  {n:"Magere kwark",kc:57,e:11,k:3.5,v:0.2},
+  {n:"Griekse yoghurt (vol)",kc:97,e:9,k:4,v:5},
+  {n:"Griekse yoghurt 0%",kc:59,e:10,k:3.6,v:0.4},
+  {n:"Volle yoghurt",kc:61,e:3.5,k:4.7,v:3.3},
+  {n:"Cottage cheese",kc:98,e:11,k:3.4,v:4.3},
+  {n:"Goudse kaas",kc:356,e:25,k:2.2,v:28,stuk:20,se:"plak"},
+  {n:"Feta",kc:264,e:14,k:4,v:21},
+  {n:"Mozzarella",kc:280,e:22,k:2.2,v:22,stuk:125,se:"bol"},
+  {n:"Boter",kc:717,e:0.9,k:0.1,v:81},
+  // Zetmeel & granen
+  {n:"Witte rijst (gekookt)",kc:130,e:2.7,k:28,v:0.3},
+  {n:"Volkoren rijst (gekookt)",kc:111,e:2.6,k:23,v:0.9},
+  {n:"Pasta (gekookt)",kc:158,e:5.8,k:31,v:0.9},
+  {n:"Aardappel (gekookt)",kc:87,e:1.9,k:20,v:0.1,stuk:120,se:"stuk"},
+  {n:"Zoete aardappel (gekookt)",kc:90,e:2,k:21,v:0.1,stuk:130,se:"stuk"},
+  {n:"Wit brood",kc:265,e:9,k:49,v:3.2,stuk:35,se:"snee"},
+  {n:"Volkoren brood",kc:247,e:13,k:41,v:3.4,stuk:35,se:"snee"},
+  {n:"Havermout",kc:389,e:17,k:66,v:7},
+  {n:"Muesli",kc:363,e:10,k:66,v:6},
+  {n:"Cornflakes",kc:357,e:7.5,k:84,v:0.9},
+  {n:"Quinoa (gekookt)",kc:120,e:4.4,k:21,v:1.9},
+  {n:"Couscous (gekookt)",kc:112,e:3.8,k:23,v:0.2},
+  {n:"Rijstwafel",kc:387,e:8,k:82,v:3,stuk:9,se:"wafel"},
+  // Peulvruchten & tofu
+  {n:"Linzen (gekookt)",kc:116,e:9,k:20,v:0.4},
+  {n:"Kikkererwten (gekookt)",kc:164,e:8.9,k:27,v:2.6},
+  {n:"Bruine bonen (gekookt)",kc:127,e:8.7,k:23,v:0.5},
+  {n:"Tofu",kc:76,e:8,k:1.9,v:4.8},
+  // Groenten
+  {n:"Broccoli",kc:34,e:2.8,k:7,v:0.4},
+  {n:"Wortel",kc:41,e:0.9,k:10,v:0.2,stuk:60,se:"stuk"},
+  {n:"Spinazie",kc:23,e:2.9,k:3.6,v:0.4},
+  {n:"Tomaat",kc:18,e:0.9,k:3.9,v:0.2,stuk:120,se:"stuk"},
+  {n:"Komkommer",kc:15,e:0.7,k:3.6,v:0.1,stuk:300,se:"stuk"},
+  {n:"Paprika",kc:31,e:1,k:6,v:0.3,stuk:150,se:"stuk"},
+  {n:"Sla",kc:15,e:1.4,k:2.9,v:0.2},
+  {n:"Ui",kc:40,e:1.1,k:9,v:0.1,stuk:110,se:"stuk"},
+  {n:"Champignons",kc:22,e:3.1,k:3.3,v:0.3,stuk:18,se:"stuk"},
+  {n:"Mais",kc:86,e:3.2,k:19,v:1.2},
+  {n:"Erwten",kc:81,e:5,k:14,v:0.4},
+  {n:"Avocado",kc:160,e:2,k:9,v:15,stuk:150,se:"stuk"},
+  // Fruit
+  {n:"Banaan",kc:89,e:1.1,k:23,v:0.3,stuk:120,se:"stuk"},
+  {n:"Appel",kc:52,e:0.3,k:14,v:0.2,stuk:180,se:"stuk"},
+  {n:"Sinaasappel",kc:47,e:0.9,k:12,v:0.1,stuk:130,se:"stuk"},
+  {n:"Peer",kc:57,e:0.4,k:15,v:0.1,stuk:170,se:"stuk"},
+  {n:"Aardbei",kc:32,e:0.7,k:7.7,v:0.3,stuk:12,se:"stuk"},
+  {n:"Blauwe bessen",kc:57,e:0.7,k:14,v:0.3},
+  {n:"Druiven",kc:69,e:0.7,k:18,v:0.2},
+  {n:"Mango",kc:60,e:0.8,k:15,v:0.4,stuk:200,se:"stuk"},
+  {n:"Ananas",kc:50,e:0.5,k:13,v:0.1},
+  {n:"Rozijnen",kc:299,e:3.1,k:79,v:0.5},
+  {n:"Dadels",kc:282,e:2.5,k:75,v:0.4,stuk:8,se:"stuk"},
+  // Noten, zaden & vetten
+  {n:"Pindakaas",kc:588,e:25,k:20,v:50},
+  {n:"Amandelen",kc:579,e:21,k:22,v:50},
+  {n:"Walnoten",kc:654,e:15,k:14,v:65},
+  {n:"Cashewnoten",kc:553,e:18,k:30,v:44},
+  {n:"Hazelnoten",kc:628,e:15,k:17,v:61},
+  {n:"Chiazaad",kc:486,e:17,k:42,v:31},
+  {n:"Olijfolie",kc:884,e:0,k:0,v:100},
+  {n:"Kokosolie",kc:862,e:0,k:0,v:100},
+  // Zoet & overig
+  {n:"Melkchocolade",kc:535,e:7.7,k:59,v:30},
+  {n:"Pure chocolade",kc:546,e:4.9,k:61,v:31},
+  {n:"Honing",kc:304,e:0.3,k:82,v:0},
+  {n:"Suiker",kc:387,e:0,k:100,v:0}
+];
+
+// Doelwaarden voor de balkjes. Standaard tot je eigen doel is berekend.
+let DOEL = {kcal:2500, e:150, k:280, v:80};
+let doelGezet = false;
+let overrides = {};      // aanpassingen op ingebouwde voedingsmiddelen (per naam)
+let geschiedenis = {};   // {datum: {kcal, doel}} voor de kalender
+let bewerk = null;       // huidige bewerking: {type:'eigen',index} of {type:'db',naam} of null
+let kalMaand = null;     // eerste dag van de getoonde maand in de kalender
+
+// ---------- State ----------
+let log = [];          // gegeten items vandaag
+let eigen = [];        // eigen toegevoegde voedingsmiddelen
+let gekozen = null;    // huidig gekozen voedingsmiddel voor portie
+
+// Opslag: binnen de Claude-app via window.storage, daarbuiten via de browser (localStorage).
+// Zo blijft je log ook bewaard als je dit bestand doorstuurt en iemand het los opent.
+const heeftClaudeStorage = (typeof window !== 'undefined' && window.storage);
+
+async function opslaanRaw(sleutel, waarde){
+  if(heeftClaudeStorage){ try{ await window.storage.set(sleutel, waarde, false); }catch(e){} }
+  else { try{ localStorage.setItem(sleutel, waarde); }catch(e){} }
+}
+async function ladenRaw(sleutel){
+  if(heeftClaudeStorage){
+    try{ const r = await window.storage.get(sleutel, false); return (r && r.value) ? r.value : null; }catch(e){ return null; }
+  } else {
+    try{ return localStorage.getItem(sleutel); }catch(e){ return null; }
+  }
+}
+
+function vandaagSleutel(){
+  const d = new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+// ---------- Opslaan / laden ----------
+async function laad(){
+  const c = await ladenRaw('eigen-eten');
+  if(c){ try{ eigen = JSON.parse(c); }catch(e){} }
+  const l = await ladenRaw('dag-log');
+  if(l){
+    try{
+      const data = JSON.parse(l);
+      if(data.datum === vandaagSleutel()) log = data.items || [];
+    }catch(e){}
+  }
+  const p = await ladenRaw('doel-profiel');
+  if(p){
+    try{
+      const data = JSON.parse(p);
+      if(data.doel){ DOEL = data.doel; doelGezet = true; }
+      if(data.invoer) geladenInvoer = data.invoer;
+    }catch(e){}
+  }
+  const ov = await ladenRaw('overrides');
+  if(ov){ try{ overrides = JSON.parse(ov); }catch(e){} }
+  const g = await ladenRaw('geschiedenis');
+  if(g){ try{ geschiedenis = JSON.parse(g); }catch(e){} }
+}
+async function bewaarLog(){
+  await opslaanRaw('dag-log', JSON.stringify({datum:vandaagSleutel(), items:log}));
+  await bewaarGeschiedenis();
+}
+async function bewaarEigen(){
+  await opslaanRaw('eigen-eten', JSON.stringify(eigen));
+}
+async function bewaarOverrides(){
+  await opslaanRaw('overrides', JSON.stringify(overrides));
+}
+async function bewaarGeschiedenis(){
+  let kc=0; for(const it of log) kc += it.kc;
+  const key = vandaagSleutel();
+  if(kc > 0){ geschiedenis[key] = { kcal: rond(kc), doel: doelGezet ? DOEL.kcal : null }; }
+  else { delete geschiedenis[key]; }
+  await opslaanRaw('geschiedenis', JSON.stringify(geschiedenis));
+}
+
+// ---------- Helpers ----------
+function alleEten(){
+  const db = DB.map(f => overrides[f.n] ? Object.assign({}, f, overrides[f.n]) : f);
+  return [...eigen, ...db];
+}
+const $ = id => document.getElementById(id);
+function rond(x){ return Math.round(x); }
+function rond1(x){ return Math.round(x*10)/10; }
+
+// ---------- Totalen / dashboard ----------
+function updateDashboard(){
+  let kc=0,e=0,k=0,v=0;
+  for(const it of log){ kc+=it.kc; e+=it.e; k+=it.k; v+=it.v; }
+  $('totKcal').textContent = rond(kc).toLocaleString('nl-BE');
+  $('totE').textContent = rond(e);
+  $('totK').textContent = rond(k);
+  $('totV').textContent = rond(v);
+  $('barE').style.width = Math.min(100, e/DOEL.e*100)+'%';
+  $('barK').style.width = Math.min(100, k/DOEL.k*100)+'%';
+  $('barV').style.width = Math.min(100, v/DOEL.v*100)+'%';
+  if(doelGezet){
+    const rest = rond(DOEL.kcal - kc);
+    $('doelRegel').textContent = 'doel ' + DOEL.kcal.toLocaleString('nl-BE') + '  ·  ' + (rest>=0 ? 'nog '+rest.toLocaleString('nl-BE') : (-rest).toLocaleString('nl-BE')+' over');
+    $('doelE').textContent = 'doel ' + DOEL.e + 'g';
+    $('doelK').textContent = 'doel ' + DOEL.k + 'g';
+    $('doelV').textContent = 'doel ' + DOEL.v + 'g';
+  } else {
+    $('doelRegel').textContent = '';
+    $('doelE').textContent = ''; $('doelK').textContent = ''; $('doelV').textContent = '';
+  }
+}
+
+// ---------- Log renderen ----------
+function renderLog(){
+  const wrap = $('logLijst');
+  if(log.length===0){
+    wrap.innerHTML = '<div class="log-leeg">Nog niets gegeten vandaag. Zoek hierboven je eerste item.</div>';
+    return;
+  }
+  wrap.innerHTML = '';
+  log.forEach((it, i)=>{
+    const el = document.createElement('div');
+    el.className='log-item';
+    el.innerHTML =
+      '<div class="info">'+
+        '<div class="n">'+escapeHtml(it.n)+'</div>'+
+        '<div class="sub">'+(it.label ? it.label+' · '+rond(it.gram)+'g' : rond(it.gram)+'g')+' · <span class="e">'+rond1(it.e)+'e</span> · <span class="k">'+rond1(it.k)+'k</span> · <span class="v">'+rond1(it.v)+'v</span></div>'+
+      '</div>'+
+      '<div class="kc mono">'+rond(it.kc)+'</div>'+
+      '<button class="del" data-i="'+i+'">✕</button>';
+    wrap.appendChild(el);
+  });
+  wrap.querySelectorAll('.del').forEach(b=>{
+    b.onclick = ()=>{ log.splice(parseInt(b.dataset.i),1); bewaarLog(); updateDashboard(); renderLog(); };
+  });
+}
+
+function escapeHtml(s){ return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+// ---------- Zoeken ----------
+const zoekInput = $('zoek');
+const resBox = $('resultaten');
+zoekInput.addEventListener('input', ()=>{
+  const q = zoekInput.value.trim().toLowerCase();
+  sluitPortie(); sluitNieuw();
+  if(q.length===0){ resBox.classList.remove('open'); resBox.innerHTML=''; return; }
+  const treffers = alleEten().filter(f=>f.n.toLowerCase().includes(q)).slice(0,8);
+  resBox.classList.add('open');
+  let html='';
+  if(treffers.length===0){
+    html += '<div class="res-leeg">Niet gevonden</div>';
+  } else {
+    treffers.forEach((f,idx)=>{
+      html += '<div class="res-item" data-naam="'+encodeURIComponent(f.n)+'">'+
+                '<span class="n">'+escapeHtml(f.n)+'</span>'+
+                '<span class="kc">'+f.kc+' kcal /100g</span>'+
+                '<button class="res-bewerk" data-naam="'+encodeURIComponent(f.n)+'" title="Aanpassen">✎</button>'+
+              '</div>';
+    });
+  }
+  html += '<div class="res-nieuw" id="resNieuw">+ Eigen eten toevoegen'+(q?' "'+escapeHtml(zoekInput.value.trim())+'"':'')+'</div>';
+  resBox.innerHTML = html;
+  resBox.querySelectorAll('.res-item').forEach(el=>{
+    el.onclick = ()=>{
+      const naam = decodeURIComponent(el.dataset.naam);
+      const f = alleEten().find(x=>x.n===naam);
+      if(f) openPortie(f);
+    };
+  });
+  resBox.querySelectorAll('.res-bewerk').forEach(b=>{
+    b.onclick = (e)=>{
+      e.stopPropagation();
+      openBewerk(decodeURIComponent(b.dataset.naam));
+    };
+  });
+  $('resNieuw').onclick = ()=> openNieuw(zoekInput.value.trim());
+});
+
+// ---------- Portie ----------
+let modus = 'gram';   // 'gram' of 'stuk'
+
+function openPortie(f){
+  gekozen = f;
+  resBox.classList.remove('open');
+  $('pNaam').textContent = f.n;
+  // Toggle alleen tonen als dit eten een gemiddeld stukgewicht heeft
+  if(f.stuk){ $('unitToggle').style.display = 'flex'; }
+  else { $('unitToggle').style.display = 'none'; }
+  zetModus('gram');
+  $('portie').classList.add('open');
+  $('pGram').focus();
+  $('pGram').select();
+}
+function sluitPortie(){ $('portie').classList.remove('open'); }
+
+function zetModus(m){
+  modus = m;
+  $('uGram').classList.toggle('actief', m==='gram');
+  $('uStuk').classList.toggle('actief', m==='stuk');
+  if(m==='gram'){
+    $('pGram').value = 100;
+    $('pGram').step = 'any';
+    $('pEenheid').textContent = 'gram';
+    bouwSnel([['50','50g'],['100','100g'],['150','150g'],['200','200g']]);
+  } else {
+    $('pGram').value = 1;
+    $('pGram').step = 'any';
+    const se = gekozen.se || 'stuk';
+    $('pEenheid').textContent = se + ' × ' + gekozen.stuk + 'g';
+    bouwSnel([['1','1'],['2','2'],['3','3'],['0.5','½']]);
+  }
+  berekenPortie();
+}
+function bouwSnel(paren){
+  const wrap = $('snelKnoppen');
+  wrap.innerHTML = '';
+  paren.forEach(([val,label])=>{
+    const b = document.createElement('button');
+    b.textContent = label;
+    b.onclick = ()=>{ $('pGram').value = val; berekenPortie(); };
+    wrap.appendChild(b);
+  });
+}
+function effectieveGram(){
+  const inv = parseFloat($('pGram').value) || 0;
+  return modus==='stuk' ? inv * (gekozen.stuk||0) : inv;
+}
+function berekenPortie(){
+  if(!gekozen) return;
+  const f = effectieveGram()/100;
+  $('pKcal').textContent = rond(gekozen.kc*f);
+  $('pE').textContent = rond1(gekozen.e*f);
+  $('pK').textContent = rond1(gekozen.k*f);
+  $('pV').textContent = rond1(gekozen.v*f);
+}
+
+$('pGram').addEventListener('input', berekenPortie);
+$('uGram').onclick = ()=> zetModus('gram');
+$('uStuk').onclick = ()=> zetModus('stuk');
+$('pSluit').onclick = sluitPortie;
+$('pToevoeg').onclick = ()=>{
+  if(!gekozen) return;
+  const inv = parseFloat($('pGram').value) || 0;
+  const g = effectieveGram();
+  if(g<=0) return;
+  const f = g/100;
+  let label = null;
+  if(modus==='stuk'){
+    const se = gekozen.se || 'stuk';
+    const aantalTekst = (inv % 1 === 0) ? inv : inv.toString().replace('.',',');
+    label = aantalTekst + ' ' + se;
+  }
+  log.push({
+    n: gekozen.n, gram: g, label: label,
+    kc: gekozen.kc*f, e: gekozen.e*f, k: gekozen.k*f, v: gekozen.v*f
+  });
+  bewaarLog();
+  gekozen=null;
+  sluitPortie();
+  zoekInput.value='';
+  resBox.classList.remove('open'); resBox.innerHTML='';
+  updateDashboard(); renderLog();
+};
+
+// ---------- Nieuw eten / aanpassen ----------
+function openNieuw(naam){
+  bewerk = null;
+  resetVerwijderKnop();
+  resBox.classList.remove('open');
+  sluitPortie();
+  $('nTitel').textContent = 'Eigen eten toevoegen';
+  $('nBewaar').textContent = 'Bewaren & kiezen';
+  $('nVerwijder').style.display = 'none';
+  $('nNaam').readOnly = false;
+  $('nNaam').value = naam || '';
+  $('nKcal').value=''; $('nE').value=''; $('nK').value=''; $('nV').value=''; $('nStuk').value='';
+  $('nieuwForm').classList.add('open');
+  if(!naam) $('nNaam').focus(); else $('nKcal').focus();
+}
+
+function openBewerk(naam){
+  resetVerwijderKnop();
+  resBox.classList.remove('open');
+  sluitPortie();
+  // Is het een eigen item of een ingebouwd item?
+  const eigenIndex = eigen.findIndex(x=>x.n===naam);
+  let f;
+  if(eigenIndex >= 0){ bewerk = {type:'eigen', index:eigenIndex}; f = eigen[eigenIndex]; }
+  else { bewerk = {type:'db', naam:naam}; f = alleEten().find(x=>x.n===naam); }
+  if(!f) return;
+  $('nTitel').textContent = 'Aanpassen';
+  $('nBewaar').textContent = 'Wijzigingen bewaren';
+  $('nVerwijder').style.display = 'block';
+  $('nVerwijder').textContent = (bewerk.type==='eigen') ? 'Verwijderen' : 'Herstel standaardwaarden';
+  $('nNaam').readOnly = true;   // naam is de sleutel — niet wijzigen
+  $('nNaam').value = f.n;
+  $('nKcal').value = f.kc;
+  $('nE').value = f.e;
+  $('nK').value = f.k;
+  $('nV').value = f.v;
+  $('nStuk').value = f.stuk || '';
+  $('nieuwForm').classList.add('open');
+  $('nKcal').focus();
+}
+
+function sluitNieuw(){ $('nieuwForm').classList.remove('open'); }
+$('nSluit').onclick = sluitNieuw;
+
+$('nBewaar').onclick = ()=>{
+  const naam = $('nNaam').value.trim();
+  const kc = parseFloat($('nKcal').value);
+  if(!naam || isNaN(kc)){ $('nNaam').focus(); return; }
+  const waarden = {
+    kc: kc,
+    e: parseFloat($('nE').value)||0,
+    k: parseFloat($('nK').value)||0,
+    v: parseFloat($('nV').value)||0
+  };
+  const st = parseFloat($('nStuk').value);
+
+  if(bewerk && bewerk.type==='eigen'){
+    const f = eigen[bewerk.index];
+    f.kc=waarden.kc; f.e=waarden.e; f.k=waarden.k; f.v=waarden.v;
+    if(!isNaN(st) && st>0){ f.stuk=st; if(!f.se) f.se='stuk'; } else { delete f.stuk; delete f.se; }
+    bewaarEigen(); sluitNieuw(); herstelZoek(); openPortie(f);
+  } else if(bewerk && bewerk.type==='db'){
+    const ov = { kc:waarden.kc, e:waarden.e, k:waarden.k, v:waarden.v };
+    if(!isNaN(st) && st>0){ ov.stuk=st; ov.se='stuk'; }
+    overrides[bewerk.naam] = ov;
+    bewaarOverrides(); sluitNieuw(); herstelZoek();
+    openPortie(alleEten().find(x=>x.n===bewerk.naam));
+  } else {
+    const f = { n:naam, kc:waarden.kc, e:waarden.e, k:waarden.k, v:waarden.v };
+    if(!isNaN(st) && st>0){ f.stuk=st; f.se='stuk'; }
+    eigen.unshift(f);
+    bewaarEigen(); sluitNieuw(); herstelZoek(); openPortie(f);
+  }
+};
+
+let verwijderBevestig = false;
+let verwijderTimer = null;
+function resetVerwijderKnop(){
+  verwijderBevestig = false;
+  if(verwijderTimer){ clearTimeout(verwijderTimer); verwijderTimer = null; }
+}
+$('nVerwijder').onclick = ()=>{
+  if(!bewerk) return;
+  if(bewerk.type==='eigen'){
+    // Dubbele tik ter bevestiging (confirm-pop-up werkt niet in alle omgevingen)
+    if(!verwijderBevestig){
+      verwijderBevestig = true;
+      $('nVerwijder').textContent = 'Zeker? Tik nogmaals om te verwijderen';
+      verwijderTimer = setTimeout(()=>{ verwijderBevestig=false; $('nVerwijder').textContent='Verwijderen'; }, 3500);
+      return;
+    }
+    resetVerwijderKnop();
+    eigen.splice(bewerk.index,1);
+    bewaarEigen();
+  } else {
+    delete overrides[bewerk.naam];
+    bewaarOverrides();
+  }
+  bewerk = null;
+  sluitNieuw();
+  herstelZoek();
+};
+
+function herstelZoek(){ zoekInput.value=''; resBox.classList.remove('open'); resBox.innerHTML=''; }
+
+// ---------- Caloriecalculator ----------
+let calcState = { geslacht:'man', factor:1.375, doel:'onderhoud', tempo:'rustig' };
+let geladenInvoer = null;
+
+const AANPASSING = {
+  afvallen: { rustig: 0.85, matig: 0.80 },
+  bijkomen: { rustig: 1.10, matig: 1.15 }
+};
+
+$('doelKnop').onclick = ()=>{
+  const c = $('calc');
+  const open = c.classList.toggle('open');
+  if(open){
+    resBox.classList.remove('open'); sluitPortie(); sluitNieuw();
+    berekenCalc();
+    c.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+};
+$('cSluit').onclick = ()=> $('calc').classList.remove('open');
+
+$('gMan').onclick = ()=>{ calcState.geslacht='man'; $('gMan').classList.add('actief'); $('gVrouw').classList.remove('actief'); berekenCalc(); };
+$('gVrouw').onclick = ()=>{ calcState.geslacht='vrouw'; $('gVrouw').classList.add('actief'); $('gMan').classList.remove('actief'); berekenCalc(); };
+
+['cLeeftijd','cLengte','cGewicht'].forEach(id=> $(id).addEventListener('input', berekenCalc));
+
+$('activiteit').querySelectorAll('.optie').forEach(b=>{
+  b.onclick = ()=>{
+    $('activiteit').querySelectorAll('.optie').forEach(x=>x.classList.remove('actief'));
+    b.classList.add('actief');
+    calcState.factor = parseFloat(b.dataset.f);
+    berekenCalc();
+  };
+});
+
+$('doelKeuze').querySelectorAll('button').forEach(b=>{
+  b.onclick = ()=>{
+    $('doelKeuze').querySelectorAll('button').forEach(x=>x.classList.remove('actief'));
+    b.classList.add('actief');
+    calcState.doel = b.dataset.d;
+    $('tempo').style.display = (calcState.doel==='onderhoud') ? 'none' : 'flex';
+    berekenCalc();
+  };
+});
+$('tempo').querySelectorAll('button').forEach(b=>{
+  b.onclick = ()=>{
+    $('tempo').querySelectorAll('button').forEach(x=>x.classList.remove('actief'));
+    b.classList.add('actief');
+    calcState.tempo = b.dataset.t;
+    berekenCalc();
+  };
+});
+
+function berekenCalc(){
+  const leeftijd = parseFloat($('cLeeftijd').value);
+  const lengte = parseFloat($('cLengte').value);
+  const gewicht = parseFloat($('cGewicht').value);
+  if(!leeftijd || !lengte || !gewicht || leeftijd<=0 || lengte<=0 || gewicht<=0){
+    ['rBmr','rTdee','rDoel','rE','rK','rV'].forEach(id=> $(id).textContent='–');
+    return null;
+  }
+  // Mifflin-St Jeor
+  const bmr = 10*gewicht + 6.25*lengte - 5*leeftijd + (calcState.geslacht==='man' ? 5 : -161);
+  const tdee = bmr * calcState.factor;
+  let doelKcal = tdee;
+  if(calcState.doel!=='onderhoud'){
+    doelKcal = tdee * AANPASSING[calcState.doel][calcState.tempo];
+  }
+  doelKcal = rond(doelKcal);
+  // Macro's: eiwit 2 g/kg lichaamsgewicht, vet 25% van kcal, rest koolhydraten
+  const eiwitG = rond(2.0 * gewicht);
+  const vetG = rond((doelKcal * 0.25) / 9);
+  const koolhG = Math.max(0, rond((doelKcal - eiwitG*4 - vetG*9) / 4));
+  $('rBmr').textContent = rond(bmr).toLocaleString('nl-BE') + ' kcal';
+  $('rTdee').textContent = rond(tdee).toLocaleString('nl-BE') + ' kcal';
+  $('rDoel').textContent = doelKcal.toLocaleString('nl-BE') + ' kcal';
+  $('rE').textContent = eiwitG + 'g eiwit';
+  $('rK').textContent = koolhG + 'g koolh.';
+  $('rV').textContent = vetG + 'g vet';
+  return { kcal: doelKcal, e: eiwitG, k: koolhG, v: vetG };
+}
+
+$('cInstel').onclick = ()=>{
+  const r = berekenCalc();
+  if(!r){ $('cLeeftijd').focus(); return; }
+  DOEL = r;
+  doelGezet = true;
+  bewaarDoel();
+  bewaarGeschiedenis();
+  markeerDoelKnop();
+  $('calc').classList.remove('open');
+  updateDashboard();
+};
+
+function markeerDoelKnop(){
+  if(!doelGezet) return;
+  $('doelKnop').classList.add('ingesteld');
+  $('doelKnop').innerHTML = '🎯&nbsp;&nbsp;Doel ' + DOEL.kcal.toLocaleString('nl-BE') + ' kcal · '
+    + DOEL.e + 'e / ' + DOEL.k + 'k / ' + DOEL.v + 'v — aanpassen';
+}
+
+async function bewaarDoel(){
+  await opslaanRaw('doel-profiel', JSON.stringify({
+    doel: DOEL,
+    invoer: {
+      geslacht:calcState.geslacht, factor:calcState.factor, doel:calcState.doel, tempo:calcState.tempo,
+      leeftijd:$('cLeeftijd').value, lengte:$('cLengte').value, gewicht:$('cGewicht').value
+    }
+  }));
+}
+
+function syncCalcUI(iv){
+  if(!iv) return;
+  calcState = { geslacht:iv.geslacht||'man', factor:iv.factor||1.375, doel:iv.doel||'onderhoud', tempo:iv.tempo||'rustig' };
+  $('cLeeftijd').value = iv.leeftijd||'';
+  $('cLengte').value = iv.lengte||'';
+  $('cGewicht').value = iv.gewicht||'';
+  $('gMan').classList.toggle('actief', calcState.geslacht==='man');
+  $('gVrouw').classList.toggle('actief', calcState.geslacht==='vrouw');
+  $('activiteit').querySelectorAll('.optie').forEach(x=>{
+    x.classList.toggle('actief', parseFloat(x.dataset.f)===calcState.factor);
+  });
+  $('doelKeuze').querySelectorAll('button').forEach(x=>{
+    x.classList.toggle('actief', x.dataset.d===calcState.doel);
+  });
+  $('tempo').style.display = (calcState.doel==='onderhoud') ? 'none' : 'flex';
+  $('tempo').querySelectorAll('button').forEach(x=>{
+    x.classList.toggle('actief', x.dataset.t===calcState.tempo);
+  });
+}
+
+// ---------- Dag wissen ----------
+let wisBevestig = false;
+let wisTimer = null;
+$('wisDag').onclick = ()=>{
+  if(log.length===0) return;
+  if(!wisBevestig){
+    wisBevestig = true;
+    $('wisDag').textContent = 'Zeker? Tik nogmaals';
+    wisTimer = setTimeout(()=>{ wisBevestig=false; $('wisDag').textContent='Dag wissen'; }, 3500);
+    return;
+  }
+  clearTimeout(wisTimer); wisBevestig=false; $('wisDag').textContent='Dag wissen';
+  log = [];
+  bewaarLog(); updateDashboard(); renderLog();
+};
+
+// ---------- Kalender ----------
+const MAANDEN_VOL = ['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'];
+
+$('kalKnop').onclick = ()=>{
+  const d = new Date();
+  kalMaand = new Date(d.getFullYear(), d.getMonth(), 1);
+  renderKalender();
+  $('kalOverlay').classList.add('open');
+};
+$('kalSluit').onclick = ()=> $('kalOverlay').classList.remove('open');
+$('kalOverlay').onclick = (e)=>{ if(e.target === $('kalOverlay')) $('kalOverlay').classList.remove('open'); };
+$('kalVorige').onclick = ()=>{ kalMaand.setMonth(kalMaand.getMonth()-1); renderKalender(); };
+$('kalVolgende').onclick = ()=>{ kalMaand.setMonth(kalMaand.getMonth()+1); renderKalender(); };
+
+function kleurVoor(entry){
+  const doel = entry.doel || (doelGezet ? DOEL.kcal : null);
+  if(!doel) return '';
+  const diff = entry.kcal - doel;
+  if(Math.abs(diff) <= 100) return 'groen';
+  return diff < 0 ? 'blauw' : 'rood';
+}
+
+function renderKalender(){
+  const jaar = kalMaand.getFullYear();
+  const maand = kalMaand.getMonth();
+  $('kalTitel').textContent = MAANDEN_VOL[maand] + ' ' + jaar;
+  $('kalLeegTekst').style.display = doelGezet ? 'none' : 'block';
+
+  const eersteDag = new Date(jaar, maand, 1);
+  const offset = (eersteDag.getDay() + 6) % 7;  // maandag = 0
+  const dagenInMaand = new Date(jaar, maand+1, 0).getDate();
+  const vandaag = vandaagSleutel();
+
+  let html = '';
+  for(let i=0;i<offset;i++){ html += '<div class="kal-cel leeg"></div>'; }
+  for(let d=1; d<=dagenInMaand; d++){
+    const key = jaar + '-' + String(maand+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+    const entry = geschiedenis[key];
+    const isVandaag = key === vandaag;
+    let cls = 'kal-cel';
+    let binnen = '<span class="dag">'+d+'</span>';
+    if(entry){
+      const kleur = kleurVoor(entry);
+      if(kleur) cls += ' ' + kleur;
+      binnen += '<span class="cal">'+entry.kcal.toLocaleString('nl-BE')+'</span>';
+    }
+    if(isVandaag) cls += ' vandaag';
+    html += '<div class="'+cls+'">'+binnen+'</div>';
+  }
+  $('kalGrid').innerHTML = html;
+}
+
+// ---------- Datum ----------
+function toonDatum(){
+  const d = new Date();
+  const dagen=['zo','ma','di','wo','do','vr','za'];
+  const maanden=['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];
+  $('datum').textContent = dagen[d.getDay()]+' '+d.getDate()+' '+maanden[d.getMonth()];
+}
+
+// ---------- Start ----------
+(async function init(){
+  toonDatum();
+  await laad();
+  if(geladenInvoer) syncCalcUI(geladenInvoer);
+  markeerDoelKnop();
+  updateDashboard();
+  renderLog();
+})();
+</script>
+</body>
+</html>
