@@ -482,7 +482,6 @@
 </div>
 
 <script>
-// Service worker registreren (voor installeren als app + offline). Faalt stil op file://.
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); });
 }
@@ -778,7 +777,7 @@ zoekInput.addEventListener('input', ()=>{
     treffers.forEach((f,idx)=>{
       html += '<div class="res-item" data-naam="'+encodeURIComponent(f.n)+'">'+
                 '<span class="n">'+escapeHtml(f.n)+'</span>'+
-                '<span class="kc">'+f.kc+' kcal /100g</span>'+
+                '<span class="kc">'+f.kc+' kcal /100'+(f.drank?'ml':'g')+'</span>'+
                 '<button class="res-bewerk" data-naam="'+encodeURIComponent(f.n)+'" title="Aanpassen">✎</button>'+
               '</div>';
     });
