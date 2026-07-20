@@ -431,14 +431,19 @@
     <div class="sluit" id="nSluit">✕</div>
   </div>
   <input id="nNaam" type="text" placeholder="Naam (bv. Mama's lasagne)">
-  <div class="hint">Waarden per 100 gram:</div>
+  <div class="hint" style="margin-top:2px;">Soort:</div>
+  <div class="unit-toggle" id="nSoortToggle">
+    <button id="nSoortVast" class="actief">Vast (gram)</button>
+    <button id="nSoortDrank">Drank (ml)</button>
+  </div>
+  <div class="hint" id="nWaardenHint">Waarden per 100 gram:</div>
   <div class="grid4">
     <input id="nKcal" type="number" inputmode="numeric" placeholder="kcal">
     <input id="nE" type="number" inputmode="decimal" placeholder="eiwit g">
     <input id="nK" type="number" inputmode="decimal" placeholder="koolh g">
     <input id="nV" type="number" inputmode="decimal" placeholder="vet g">
   </div>
-  <div class="hint" style="margin-top:12px;">Optioneel — gewicht van 1 stuk (voor "per stuk"):</div>
+  <div class="hint" id="nStukHint" style="margin-top:12px;">Optioneel — gewicht van 1 stuk (voor "per stuk"):</div>
   <input id="nStuk" type="number" inputmode="numeric" placeholder="gram per stuk (bv. 120)">
   <button class="bewaar" id="nBewaar">Bewaren & kiezen</button>
   <button class="verwijder" id="nVerwijder" style="display:none;">Verwijderen</button>
@@ -452,8 +457,7 @@
 <div id="logLijst"></div>
 
 <div class="voetnoot">
-  Waarden zijn per 100 g en gebaseerd op standaard referentiewaarden — kleine afwijkingen per product/merk zijn normaal.<br>
-  Je log wordt bewaard in de Claude-app.
+  Waarden zijn per 100 g (of 100 ml voor drank) en gebaseerd op standaard referentiewaarden — kleine afwijkingen per product/merk zijn normaal.
 </div>
 
 <div class="kal-overlay" id="kalOverlay">
@@ -503,8 +507,8 @@ const DB = [
   // Eieren & zuivel
   {n:"Ei (heel)",kc:143,e:13,k:0.7,v:10,stuk:55,se:"ei"},
   {n:"Eiwit",kc:52,e:11,k:0.7,v:0.2,stuk:33,se:"eiwit"},
-  {n:"Volle melk",kc:61,e:3.2,k:4.8,v:3.3,stuk:250,se:"glas"},
-  {n:"Magere melk",kc:35,e:3.4,k:5,v:0.1,stuk:250,se:"glas"},
+  {n:"Volle melk",kc:61,e:3.2,k:4.8,v:3.3,stuk:250,se:"glas",drank:1},
+  {n:"Magere melk",kc:35,e:3.4,k:5,v:0.1,stuk:250,se:"glas",drank:1},
   {n:"Magere kwark",kc:57,e:11,k:3.5,v:0.2},
   {n:"Griekse yoghurt (vol)",kc:97,e:9,k:4,v:5},
   {n:"Griekse yoghurt 0%",kc:59,e:10,k:3.6,v:0.4},
@@ -571,7 +575,56 @@ const DB = [
   {n:"Melkchocolade",kc:535,e:7.7,k:59,v:30},
   {n:"Pure chocolade",kc:546,e:4.9,k:61,v:31},
   {n:"Honing",kc:304,e:0.3,k:82,v:0},
-  {n:"Suiker",kc:387,e:0,k:100,v:0}
+  {n:"Suiker",kc:387,e:0,k:100,v:0},
+  // Dranken (waarden per 100 ml)
+  {n:"Water",kc:0,e:0,k:0,v:0,stuk:250,se:"glas",drank:1},
+  {n:"Cola",kc:42,e:0,k:10.6,v:0,stuk:330,se:"blikje",drank:1},
+  {n:"Cola zero",kc:1,e:0,k:0,v:0,stuk:330,se:"blikje",drank:1},
+  {n:"Sinaasappelsap",kc:45,e:0.7,k:10.4,v:0.2,stuk:200,se:"glas",drank:1},
+  {n:"Appelsap",kc:46,e:0.1,k:11.3,v:0.1,stuk:200,se:"glas",drank:1},
+  {n:"Ice tea",kc:30,e:0,k:7.5,v:0,stuk:250,se:"glas",drank:1},
+  {n:"Energydrank",kc:45,e:0,k:11,v:0,stuk:250,se:"blikje",drank:1},
+  {n:"Sportdrank",kc:24,e:0,k:6,v:0,stuk:500,se:"fles",drank:1},
+  {n:"Koffie (zwart)",kc:2,e:0.1,k:0,v:0,stuk:150,se:"tas",drank:1},
+  {n:"Thee (zonder suiker)",kc:1,e:0,k:0,v:0,stuk:200,se:"tas",drank:1},
+  {n:"Chocolademelk",kc:70,e:3.4,k:10,v:1.9,stuk:250,se:"glas",drank:1},
+  {n:"Smoothie",kc:55,e:0.6,k:13,v:0.2,stuk:250,se:"beker",drank:1},
+  {n:"Bier (pils)",kc:43,e:0.5,k:3.6,v:0,stuk:250,se:"glas",drank:1},
+  {n:"Wijn (rood)",kc:85,e:0.1,k:2.6,v:0,stuk:150,se:"glas",drank:1},
+  {n:"Wijn (wit)",kc:82,e:0.1,k:2.6,v:0,stuk:150,se:"glas",drank:1},
+  // Extra zuivel & kaas
+  {n:"Skyr",kc:63,e:11,k:4,v:0.2},
+  {n:"Roomkaas",kc:253,e:6,k:4,v:24},
+  {n:"Halloumi",kc:321,e:21,k:2.2,v:25},
+  // Warme maaltijden & snacks
+  {n:"Pizza margherita",kc:266,e:11,k:33,v:10},
+  {n:"Frieten",kc:312,e:3.4,k:41,v:15},
+  {n:"Kipnuggets",kc:296,e:15,k:16,v:18},
+  {n:"Noedels (gekookt)",kc:138,e:4.5,k:25,v:2.2},
+  {n:"Sushi (maki)",kc:140,e:3.5,k:28,v:1.5},
+  {n:"Wrap (tortilla)",kc:310,e:8,k:50,v:8,stuk:60,se:"stuk"},
+  {n:"Pita",kc:275,e:9,k:55,v:1.2,stuk:60,se:"stuk"},
+  {n:"Pannenkoek",kc:227,e:6,k:28,v:10,stuk:60,se:"stuk"},
+  {n:"Croissant",kc:406,e:8,k:46,v:21,stuk:60,se:"stuk"},
+  {n:"Hummus",kc:166,e:8,k:14,v:10},
+  {n:"Gerookte zalm",kc:117,e:18,k:0,v:4.3},
+  {n:"Edamame",kc:121,e:12,k:9,v:5},
+  {n:"Kidneybonen (gekookt)",kc:127,e:8.7,k:23,v:0.5},
+  {n:"Pinda's",kc:567,e:26,k:16,v:49},
+  // Zoet & sauzen
+  {n:"Chips",kc:536,e:7,k:53,v:34},
+  {n:"Popcorn",kc:387,e:12,k:78,v:4},
+  {n:"IJs (vanille)",kc:207,e:3.5,k:24,v:11},
+  {n:"Nutella",kc:539,e:6.3,k:57,v:31},
+  {n:"Mayonaise",kc:680,e:1,k:1.5,v:75},
+  {n:"Ketchup",kc:112,e:1.2,k:26,v:0.1},
+  // Extra groenten & fruit
+  {n:"Courgette",kc:17,e:1.2,k:3.1,v:0.3},
+  {n:"Bloemkool",kc:25,e:1.9,k:5,v:0.3},
+  {n:"Watermeloen",kc:30,e:0.6,k:8,v:0.2},
+  {n:"Kiwi",kc:61,e:1.1,k:15,v:0.5,stuk:75,se:"stuk"},
+  {n:"Mandarijn",kc:53,e:0.8,k:13,v:0.3,stuk:75,se:"stuk"},
+  {n:"Perzik",kc:39,e:0.9,k:10,v:0.3,stuk:150,se:"stuk"}
 ];
 
 // Doelwaarden voor de balkjes. Standaard tot je eigen doel is berekend.
@@ -696,7 +749,7 @@ function renderLog(){
     el.innerHTML =
       '<div class="info">'+
         '<div class="n">'+escapeHtml(it.n)+'</div>'+
-        '<div class="sub">'+(it.label ? it.label+' · '+rond(it.gram)+'g' : rond(it.gram)+'g')+' · <span class="e">'+rond1(it.e)+'e</span> · <span class="k">'+rond1(it.k)+'k</span> · <span class="v">'+rond1(it.v)+'v</span></div>'+
+        '<div class="sub">'+(function(){var eh=(it.eenheid==='ml')?' ml':'g'; var hoev=rond(it.gram)+eh; return it.label ? it.label+' · '+hoev : hoev;})()+' · <span class="e">'+rond1(it.e)+'e</span> · <span class="k">'+rond1(it.k)+'k</span> · <span class="v">'+rond1(it.v)+'v</span></div>'+
       '</div>'+
       '<div class="kc mono">'+rond(it.kc)+'</div>'+
       '<button class="del" data-i="'+i+'">✕</button>';
@@ -755,7 +808,10 @@ function openPortie(f){
   gekozen = f;
   resBox.classList.remove('open');
   $('pNaam').textContent = f.n;
-  // Toggle alleen tonen als dit eten een gemiddeld stukgewicht heeft
+  // Knoplabels aanpassen: drank = ml, vast = gram
+  $('uGram').textContent = f.drank ? 'Ml' : 'Gram';
+  $('uStuk').textContent = f.drank ? ('Per ' + (f.se || 'glas')) : 'Per stuk';
+  // Toggle alleen tonen als dit item een gemiddeld stuk/glas heeft
   if(f.stuk){ $('unitToggle').style.display = 'flex'; }
   else { $('unitToggle').style.display = 'none'; }
   zetModus('gram');
@@ -767,18 +823,25 @@ function sluitPortie(){ $('portie').classList.remove('open'); }
 
 function zetModus(m){
   modus = m;
+  const drank = !!gekozen.drank;
   $('uGram').classList.toggle('actief', m==='gram');
   $('uStuk').classList.toggle('actief', m==='stuk');
   if(m==='gram'){
-    $('pGram').value = 100;
     $('pGram').step = 'any';
-    $('pEenheid').textContent = 'gram';
-    bouwSnel([['50','50g'],['100','100g'],['150','150g'],['200','200g']]);
+    if(drank){
+      $('pGram').value = 250;
+      $('pEenheid').textContent = 'ml';
+      bouwSnel([['100','100'],['200','200'],['250','250'],['330','330']]);
+    } else {
+      $('pGram').value = 100;
+      $('pEenheid').textContent = 'gram';
+      bouwSnel([['50','50g'],['100','100g'],['150','150g'],['200','200g']]);
+    }
   } else {
     $('pGram').value = 1;
     $('pGram').step = 'any';
-    const se = gekozen.se || 'stuk';
-    $('pEenheid').textContent = se + ' × ' + gekozen.stuk + 'g';
+    const se = gekozen.se || (drank ? 'glas' : 'stuk');
+    $('pEenheid').textContent = se + ' × ' + gekozen.stuk + (drank ? 'ml' : 'g');
     bouwSnel([['1','1'],['2','2'],['3','3'],['0.5','½']]);
   }
   berekenPortie();
@@ -816,14 +879,15 @@ $('pToevoeg').onclick = ()=>{
   const g = effectieveGram();
   if(g<=0) return;
   const f = g/100;
+  const eenheid = gekozen.drank ? 'ml' : 'g';
   let label = null;
   if(modus==='stuk'){
-    const se = gekozen.se || 'stuk';
+    const se = gekozen.se || (gekozen.drank ? 'glas' : 'stuk');
     const aantalTekst = (inv % 1 === 0) ? inv : inv.toString().replace('.',',');
     label = aantalTekst + ' ' + se;
   }
   log.push({
-    n: gekozen.n, gram: g, label: label,
+    n: gekozen.n, gram: g, eenheid: eenheid, label: label,
     kc: gekozen.kc*f, e: gekozen.e*f, k: gekozen.k*f, v: gekozen.v*f
   });
   bewaarLog();
@@ -835,6 +899,20 @@ $('pToevoeg').onclick = ()=>{
 };
 
 // ---------- Nieuw eten / aanpassen ----------
+let nDrank = false;
+function zetNieuwSoort(drank){
+  nDrank = !!drank;
+  $('nSoortVast').classList.toggle('actief', !nDrank);
+  $('nSoortDrank').classList.toggle('actief', nDrank);
+  $('nWaardenHint').textContent = nDrank ? 'Waarden per 100 ml:' : 'Waarden per 100 gram:';
+  $('nStukHint').textContent = nDrank
+    ? 'Optioneel — inhoud van 1 glas/blik in ml (voor "per glas"):'
+    : 'Optioneel — gewicht van 1 stuk (voor "per stuk"):';
+  $('nStuk').placeholder = nDrank ? 'ml per glas (bv. 250)' : 'gram per stuk (bv. 120)';
+}
+$('nSoortVast').onclick = ()=> zetNieuwSoort(false);
+$('nSoortDrank').onclick = ()=> zetNieuwSoort(true);
+
 function openNieuw(naam){
   bewerk = null;
   resetVerwijderKnop();
@@ -846,6 +924,7 @@ function openNieuw(naam){
   $('nNaam').readOnly = false;
   $('nNaam').value = naam || '';
   $('nKcal').value=''; $('nE').value=''; $('nK').value=''; $('nV').value=''; $('nStuk').value='';
+  zetNieuwSoort(false);
   $('nieuwForm').classList.add('open');
   if(!naam) $('nNaam').focus(); else $('nKcal').focus();
 }
@@ -871,6 +950,7 @@ function openBewerk(naam){
   $('nK').value = f.k;
   $('nV').value = f.v;
   $('nStuk').value = f.stuk || '';
+  zetNieuwSoort(!!f.drank);
   $('nieuwForm').classList.add('open');
   $('nKcal').focus();
 }
@@ -889,21 +969,24 @@ $('nBewaar').onclick = ()=>{
     v: parseFloat($('nV').value)||0
   };
   const st = parseFloat($('nStuk').value);
+  const seStandaard = nDrank ? 'glas' : 'stuk';
 
   if(bewerk && bewerk.type==='eigen'){
     const f = eigen[bewerk.index];
     f.kc=waarden.kc; f.e=waarden.e; f.k=waarden.k; f.v=waarden.v;
-    if(!isNaN(st) && st>0){ f.stuk=st; if(!f.se) f.se='stuk'; } else { delete f.stuk; delete f.se; }
+    if(nDrank){ f.drank=1; } else { delete f.drank; }
+    if(!isNaN(st) && st>0){ f.stuk=st; f.se = f.se || seStandaard; } else { delete f.stuk; delete f.se; }
     bewaarEigen(); sluitNieuw(); herstelZoek(); openPortie(f);
   } else if(bewerk && bewerk.type==='db'){
-    const ov = { kc:waarden.kc, e:waarden.e, k:waarden.k, v:waarden.v };
-    if(!isNaN(st) && st>0){ ov.stuk=st; ov.se='stuk'; }
+    const ov = { kc:waarden.kc, e:waarden.e, k:waarden.k, v:waarden.v, drank: nDrank ? 1 : 0 };
+    if(!isNaN(st) && st>0){ ov.stuk=st; ov.se=seStandaard; }
     overrides[bewerk.naam] = ov;
     bewaarOverrides(); sluitNieuw(); herstelZoek();
     openPortie(alleEten().find(x=>x.n===bewerk.naam));
   } else {
     const f = { n:naam, kc:waarden.kc, e:waarden.e, k:waarden.k, v:waarden.v };
-    if(!isNaN(st) && st>0){ f.stuk=st; f.se='stuk'; }
+    if(nDrank){ f.drank=1; }
+    if(!isNaN(st) && st>0){ f.stuk=st; f.se=seStandaard; }
     eigen.unshift(f);
     bewaarEigen(); sluitNieuw(); herstelZoek(); openPortie(f);
   }
