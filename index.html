@@ -404,6 +404,14 @@
   .scan-titel{font-size:17px;font-weight:600;}
   .scan-reader{width:100%!important;height:190px!important;border-radius:14px;overflow:hidden;background:#000;position:relative;}
   .scan-reader video{width:100%!important;height:100%!important;object-fit:cover;display:block;border-radius:14px;}
+  .scan-kader{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:78%;height:52%;pointer-events:none;}
+  .scan-kader span{position:absolute;width:26px;height:26px;border:3px solid #fff;}
+  .scan-kader span:nth-child(1){top:0;left:0;border-right:none;border-bottom:none;border-radius:6px 0 0 0;}
+  .scan-kader span:nth-child(2){top:0;right:0;border-left:none;border-bottom:none;border-radius:0 6px 0 0;}
+  .scan-kader span:nth-child(3){bottom:0;left:0;border-right:none;border-top:none;border-radius:0 0 0 6px;}
+  .scan-kader span:nth-child(4){bottom:0;right:0;border-left:none;border-top:none;border-radius:0 0 6px 0;}
+  .scan-lijn{position:absolute;left:8%;right:8%;height:2px;background:#5EE6A8;box-shadow:0 0 8px #5EE6A8;top:0;animation:scanbeweeg 1.8s ease-in-out infinite;}
+  @keyframes scanbeweeg{0%{top:6%;}50%{top:94%;}100%{top:6%;}}
   .scan-status{text-align:center;color:var(--muted);font-size:13px;margin-top:14px;line-height:1.5;}
   .scan-status.bezig{color:var(--vet);}
   .scan-status.fout{color:var(--danger);}
@@ -1826,7 +1834,8 @@ async function startScan(){
 // --- Native pad: eigen getUserMedia + BarcodeDetector (Android Chrome) ---
 async function startNative(){
   const reader = $('scanReader');
-  reader.innerHTML = '<video id="scanVideo" playsinline muted autoplay></video>';
+  reader.innerHTML = '<video id="scanVideo" playsinline muted autoplay></video>'
+    + '<div class="scan-kader"><span></span><span></span><span></span><span></span><div class="scan-lijn"></div></div>';
   const video = $('scanVideo');
   try{
     scanStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false });
