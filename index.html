@@ -2425,18 +2425,29 @@ function renderKalender(){
 
 function toonDagDetail(key){
   const entry = geschiedenis[key];
-  if(!entry) return;
+  const isVandaag = key === vandaagSleutel();
+  if(!entry && !isVandaag) return;
   const [j,m,d] = key.split('-');
   const dagenVol=['zondag','maandag','dinsdag','woensdag','donderdag','vrijdag','zaterdag'];
   const maandenVol=['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'];
   const dt = new Date(+j, +m-1, +d);
   $('kalDagTitel').textContent = dagenVol[dt.getDay()]+' '+(+d)+' '+maandenVol[+m-1];
-  let html = '<div class="kd-kcal">'+entry.kcal.toLocaleString('nl-BE')+' <span>kcal</span>'+
-             (entry.doel ? ' <span class="kd-doel">/ doel '+entry.doel.toLocaleString('nl-BE')+'</span>' : '')+'</div>';
-  if(entry.items && entry.items.length){
-    html += entry.items.map(it=>'<div class="prof-item"><span>'+escapeHtml(it.n||'?')+(it.label?' <em>('+escapeHtml(it.label)+')</em>':'')+'</span><span class="prof-ikc">'+(it.kc||0)+'</span></div>').join('');
+  // Items: voor vandaag live uit de log, anders uit de bewaarde geschiedenis
+  let items, kcal, doel;
+  if(isVandaag){
+    items = log.map(it=>({ n:it.n, label:it.label||'', kc:rond(it.kc) }));
+    let kc=0; for(const it of log) kc+=it.kc; kcal = rond(kc);
+    doel = doelGezet ? DOEL.kcal : (entry ? entry.doel : null);
   } else {
-    html += '<div class="vr-leeg">Geen details bewaard voor deze dag.</div>';
+    items = entry.items || [];
+    kcal = entry.kcal; doel = entry.doel;
+  }
+  let html = '<div class="kd-kcal">'+(kcal||0).toLocaleString('nl-BE')+' <span>kcal</span>'+
+             (doel ? ' <span class="kd-doel">/ doel '+doel.toLocaleString('nl-BE')+'</span>' : '')+'</div>';
+  if(items && items.length){
+    html += items.map(it=>'<div class="prof-item"><span>'+escapeHtml(it.n||'?')+(it.label?' <em>('+escapeHtml(it.label)+')</em>':'')+'</span><span class="prof-ikc">'+(it.kc||0)+'</span></div>').join('');
+  } else {
+    html += '<div class="vr-leeg">Voor deze dag is enkel het totaal bewaard (van vóór deze versie). Vanaf nu wordt ook bewaard wat je precies at.</div>';
   }
   $('kalDagInhoud').innerHTML = html;
   $('kalDagOverlay').classList.add('open');
@@ -3213,7 +3224,25 @@ $('profOverlay').onclick = (e)=>{ if(e.target===$('profOverlay')) $('profOverlay
 // ----- Leaderboards + stats -----
 let lbKeuze = 'doel';
 const statsCache = {};
+function lokaleStats(){
+  const today = vandaagSleutel();
+  let totaal=0, hoogste=0, dagen=0, todayKcal=null, todayDoel=null, vandaagInHist=false;
+  for(const k in geschiedenis){
+    const e = geschiedenis[k]; const kc = e.kcal||0;
+    totaal += kc; if(kc>hoogste) hoogste = kc; if(kc>0) dagen++;
+    if(k===today){ vandaagInHist=true; todayKcal=kc; todayDoel=(e.doel!=null?e.doel:(doelGezet?DOEL.kcal:null)); }
+  }
+  if(!vandaagInHist){
+    let kc=0; for(const it of log) kc+=it.kc; kc=rond(kc);
+    if(kc>0){ totaal+=kc; if(kc>hoogste) hoogste=kc; dagen++; todayKcal=kc; }
+    todayDoel = doelGezet ? DOEL.kcal : null;
+  }
+  const start = weekStartKey(); const alle={}, week={};
+  for(const oef in woLog){ for(const s of (woLog[oef]||[])){ if(s.datum){ alle[s.datum]=1; if(s.datum>=start) week[s.datum]=1; } } }
+  return { totaalKcal:totaal, hoogsteDag:hoogste, dagenGeteld:dagen, todayKcal, todayDoel, trainingTotaal:Object.keys(alle).length, trainingWeek:Object.keys(week).length };
+}
 async function haalStats(uid){
+  if(uid === fbUid){ const st = lokaleStats(); statsCache[uid] = st; return st; }
   if(statsCache[uid]) return statsCache[uid];
   const today = vandaagSleutel();
   let totaalKcal=0, hoogsteDag=0, dagenGeteld=0, todayKcal=null, todayDoel=null;
