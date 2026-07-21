@@ -1803,37 +1803,58 @@ async function startScan(){
     scanStatus('Kon de scanner niet laden. Ben je online?', 'fout');
     return;
   }
-  try{
-    scanner = new Html5Qrcode('scanReader', {
-      formatsToSupport: [
-        Html5QrcodeSupportedFormats.EAN_13,
-        Html5QrcodeSupportedFormats.EAN_8,
-        Html5QrcodeSupportedFormats.UPC_A,
-        Html5QrcodeSupportedFormats.UPC_E,
-        Html5QrcodeSupportedFormats.CODE_128
-      ]
-    });
-    scanActief = true;
-    let bezigMetVerwerken = false;
-    await scanner.start(
-      { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
-      { fps: 10, qrbox: (vw, vh)=>({ width: Math.min(vw-20, 300), height: Math.min(vh-30, 110) }) },
-      async (tekst)=>{
-        if(bezigMetVerwerken) return;
-        bezigMetVerwerken = true;
-        await verwerkBarcode(tekst);
-      },
-      ()=>{}   // negeer "niet gevonden per frame"
-    );
-    scanStatus('Hou de barcode plat en volledig in het balkje, ~10 cm van de camera. Zorg voor genoeg licht en hou even stil.');
-  }catch(e){
-    scanStatus('Geen toegang tot de camera. Sta camera toe in je browserinstellingen.', 'fout');
+  // Zorg voor een schone reader (vorige poging kan resten achterlaten)
+  try{ document.getElementById('scanReader').innerHTML = ''; }catch(e){}
+  scanner = new Html5Qrcode('scanReader', {
+    formatsToSupport: [
+      Html5QrcodeSupportedFormats.EAN_13,
+      Html5QrcodeSupportedFormats.EAN_8,
+      Html5QrcodeSupportedFormats.UPC_A,
+      Html5QrcodeSupportedFormats.UPC_E,
+      Html5QrcodeSupportedFormats.CODE_128
+    ]
+  });
+  let bezigMetVerwerken = false;
+  const config = { fps: 10, qrbox: (vw, vh)=>({ width: Math.min(vw-20, 300), height: Math.min(vh-30, 110) }) };
+  const onDecode = async (tekst)=>{ if(bezigMetVerwerken) return; bezigMetVerwerken = true; await verwerkBarcode(tekst); };
+
+  // Probeer achtereenvolgens minder strenge camera-instellingen
+  const pogingen = [
+    { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
+    { facingMode: 'environment' },
+    true
+  ];
+  let laatsteFout = null;
+  for(const cam of pogingen){
+    try{
+      scanActief = true;
+      await scanner.start(cam, config, onDecode, ()=>{});
+      scanStatus('Hou de barcode plat en volledig in het balkje, ~10 cm van de camera. Zorg voor genoeg licht en hou even stil.');
+      return; // gelukt
+    }catch(e){
+      laatsteFout = e;
+      scanActief = false;
+      // Bij echte weigering heeft verder proberen geen zin
+      const naam = (e && (e.name || e.toString())) || '';
+      if(/NotAllowed|Permission|SecurityError/i.test(naam)) break;
+    }
+  }
+  // Alles mislukt → nette, juiste boodschap
+  const naam = (laatsteFout && (laatsteFout.name || laatsteFout.toString())) || '';
+  if(/NotAllowed|Permission/i.test(naam)){
+    scanStatus('Camera geweigerd. Tik op het slotje (of ⋮) naast de adresbalk → Instellingen voor site → Camera → Toestaan, en probeer opnieuw. Kies "Toestaan", niet "tijdens dit bezoek".', 'fout');
+  } else if(/NotReadable|TrackStart|NotFoundError/i.test(naam)){
+    scanStatus('Camera is niet beschikbaar — mogelijk in gebruik door een andere app. Sluit die app en probeer opnieuw.', 'fout');
+  } else if(/SecurityError/i.test(naam)){
+    scanStatus('Camera vereist een https-verbinding. Open de app via je github.io-link.', 'fout');
+  } else {
+    scanStatus('Kon de camera niet starten. Sluit het venster en probeer opnieuw.', 'fout');
   }
 }
 
 async function stopScan(){
-  if(scanner && scanActief){
-    try{ await scanner.stop(); }catch(e){}
+  if(scanner){
+    try{ if(scanActief) await scanner.stop(); }catch(e){}
     try{ scanner.clear(); }catch(e){}
   }
   scanActief = false;
