@@ -447,6 +447,8 @@
   .lb-naam{flex:1;font-weight:600;font-size:15px;}
   .lb-naam em{color:var(--muted);font-style:normal;font-size:12px;}
   .lb-extra{color:var(--muted);font-size:13px;font-family:'JetBrains Mono',monospace;}
+  .lb-diff{font-weight:700;margin-left:2px;}
+  .lb-diff.groen{color:var(--eiwit);} .lb-diff.rood{color:var(--danger);}
   /* Profiel */
   .prof-kcal{font-size:34px;font-weight:800;font-family:'JetBrains Mono',monospace;}
   .prof-kcal span{font-size:14px;font-weight:600;color:var(--muted);font-family:'Space Grotesk',sans-serif;}
@@ -3136,7 +3138,7 @@ function tekenLeaderboard(box, rijen){
   box.innerHTML = rijen.map((r,i)=>
     '<div class="lb-rij'+(r.mij?' ik':'')+'"><span class="lb-pos">'+(med[i]||(i+1))+'</span>'+
     '<span class="lb-naam">'+escapeHtml(r.naam)+(r.mij?' <em>(jij)</em>':'')+'</span>'+
-    '<span class="lb-extra">'+escapeHtml(r.extra)+'</span></div>'
+    '<span class="lb-extra">'+r.extra+'</span></div>'
   ).join('');
 }
 async function renderLeaderboard(){
@@ -3155,7 +3157,13 @@ async function renderLeaderboard(){
         return {...p, kcal:null, doel:null};
       }));
       const met = res.filter(r=> r.doel!=null && r.kcal!=null)
-        .map(r=>({...r, sort:Math.abs(r.kcal-r.doel), extra:r.kcal.toLocaleString('nl-BE')+' / '+r.doel.toLocaleString('nl-BE')}))
+        .map(r=>{
+          const diff = r.kcal - r.doel;
+          const kleur = diff>0 ? 'rood' : 'groen';
+          const teken = diff>0 ? '+' : (diff<0 ? '−' : '');
+          const verschil = '<span class="lb-diff '+kleur+'">'+teken+Math.abs(diff).toLocaleString('nl-BE')+'</span>';
+          return {...r, sort:Math.abs(diff), extra:r.kcal.toLocaleString('nl-BE')+' / '+r.doel.toLocaleString('nl-BE')+'  '+verschil};
+        })
         .sort((a,b)=>a.sort-b.sort);
       const zonder = res.filter(r=> !(r.doel!=null && r.kcal!=null)).map(r=>({...r, extra:'nog geen data'}));
       tekenLeaderboard(box, [...met, ...zonder]);
