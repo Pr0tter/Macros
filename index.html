@@ -309,12 +309,18 @@
 
   /* ===== Beginscherm ===== */
   .home-wrap{padding:16px 0;}
-  .home-merk{font-size:38px;font-weight:700;letter-spacing:-.02em;margin-top:44px;color:var(--text);}
+  .home-topbar{display:flex;align-items:flex-start;justify-content:space-between;margin-top:20px;}
+  .home-merk{font-size:38px;font-weight:700;letter-spacing:-.02em;margin-top:24px;color:var(--text);}
+  .account-btn{margin-top:26px;width:42px;height:42px;border-radius:50%;background:var(--surface);border:1px solid var(--line);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;position:relative;flex-shrink:0;}
+  .account-btn:active{transform:scale(.95);}
+  .account-btn .ab-av{width:34px;height:34px;border-radius:50%;background:var(--eiwit);color:#06120C;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;font-family:'Space Grotesk',sans-serif;}
+  .account-btn.heeft-verzoek::after{content:'';position:absolute;top:-1px;right:-1px;width:12px;height:12px;border-radius:50%;background:var(--danger);border:2px solid var(--bg);}
   .home-datum{color:var(--muted);font-size:15px;margin-bottom:36px;text-transform:capitalize;}
   .home-kaart{display:flex;align-items:center;gap:16px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:24px 20px;margin-bottom:16px;cursor:pointer;}
   .home-kaart:active{transform:scale(.98);}
   .home-kaart.k-voeding{border-color:rgba(94,230,168,.45);}
   .home-kaart.k-workout{border-color:rgba(125,163,255,.45);}
+  .home-kaart.k-leaderboard{border-color:rgba(240,190,90,.45);}
   .hk-icoon{width:60px;height:60px;border-radius:17px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:30px;}
   .hk-icoon.voeding{background:rgba(94,230,168,.14);gap:5px;}
   .hk-icoon.voeding span{width:7px;border-radius:3px;}
@@ -322,12 +328,17 @@
   .hk-icoon.voeding span:nth-child(2){height:30px;background:var(--koolh);}
   .hk-icoon.voeding span:nth-child(3){height:24px;background:var(--vet);}
   .hk-icoon.workout{background:rgba(125,163,255,.14);}
+  .hk-icoon.leaderboard{background:rgba(240,190,90,.14);}
   .hk-tekst{flex:1;min-width:0;}
   .hk-naam{font-size:22px;font-weight:700;color:var(--text);letter-spacing:-.01em;}
   .hk-sub{font-size:14px;color:var(--muted);margin-top:4px;}
   .home-kaart.k-voeding .hk-naam{color:var(--eiwit);}
   .home-kaart.k-workout .hk-naam{color:var(--vet);}
+  .home-kaart.k-leaderboard .hk-naam{color:#F0BE5A;}
   .hk-pijl{color:var(--muted);font-size:30px;font-weight:300;}
+  .lb-uitleg{color:var(--muted);font-size:14px;margin-bottom:16px;line-height:1.5;}
+  .acc-edit{margin-left:auto;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;color:var(--text);font-size:15px;padding:8px 11px;cursor:pointer;flex-shrink:0;}
+  .uname-annuleer{width:100%;margin-top:8px;background:none;border:none;color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:14px;padding:10px;cursor:pointer;}
 
   /* ===== Workout ===== */
   .wo-dagkiezer{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin:6px 0 18px;}
@@ -489,9 +500,11 @@
 <!-- ===== BEGINSCHERM ===== -->
 <div id="viewHome" class="view">
   <div class="home-wrap">
-    <div class="home-merk">FitLog</div>
+    <div class="home-topbar">
+      <div class="home-merk">FitLog</div>
+      <button class="account-btn" id="accountChip" aria-label="Account"><span class="ab-av" id="abAv">👤</span></button>
+    </div>
     <div class="home-datum" id="homeDatum"></div>
-    <button class="account-chip" id="accountChip">Account</button>
     <button class="home-kaart k-voeding" id="gaMacros">
       <div class="hk-icoon voeding"><span></span><span></span><span></span></div>
       <div class="hk-tekst"><div class="hk-naam">Voeding</div><div class="hk-sub" id="homeMacroSub">Calorieën &amp; macro's bijhouden</div></div>
@@ -502,7 +515,24 @@
       <div class="hk-tekst"><div class="hk-naam">Workout</div><div class="hk-sub" id="homeWorkoutSub">Training loggen</div></div>
       <div class="hk-pijl">›</div>
     </button>
+    <button class="home-kaart k-leaderboard" id="gaLeaderboard">
+      <div class="hk-icoon leaderboard">🏆</div>
+      <div class="hk-tekst"><div class="hk-naam">Leaderboards</div><div class="hk-sub" id="homeLbSub">Ranglijsten met je vrienden</div></div>
+      <div class="hk-pijl">›</div>
+    </button>
   </div>
+</div>
+
+<!-- ===== LEADERBOARDS ===== -->
+<div id="viewLeaderboard" class="view hidden">
+  <button class="terug" id="terugLeaderboard">‹ Home</button>
+  <header><div class="titel">Leaderboards</div></header>
+  <div class="lb-knoppen">
+    <button class="lb-kies actief" data-lb="doel">Doel gehaald</button>
+    <button class="lb-kies" data-lb="training">Trainingen</button>
+  </div>
+  <div class="lb-uitleg" id="lbUitleg">Wie zit vandaag het dichtst bij z'n caloriedoel?</div>
+  <div id="vrLeaderboards"><div class="vr-leeg">Voeg vrienden toe om een ranglijst te zien.</div></div>
 </div>
 
 <!-- ===== VOEDING ===== -->
@@ -769,6 +799,7 @@
         <div class="acc-naam" id="vrIk">—</div>
         <div class="acc-sub" id="accSub">Online account</div>
       </div>
+      <button class="acc-edit" id="accEdit" title="Naam aanpassen">✎</button>
     </div>
 
     <div class="vr-sectie">
@@ -789,15 +820,6 @@
       <div class="vr-kopje">Mijn vrienden</div>
       <div id="vrLijst"><div class="vr-leeg">Nog geen vrienden toegevoegd.</div></div>
     </div>
-
-    <div class="vr-sectie">
-      <div class="vr-kopje">Leaderboards</div>
-      <div class="lb-knoppen">
-        <button class="lb-kies actief" data-lb="doel">Doel gehaald (vandaag)</button>
-        <button class="lb-kies" data-lb="training">Trainingen (deze week)</button>
-      </div>
-      <div id="vrLeaderboards"><div class="vr-leeg">Voeg vrienden toe om een ranglijst te zien.</div></div>
-    </div>
   </div>
 </div>
 
@@ -815,12 +837,13 @@
 <!-- Gebruikersnaam kiezen (overlay) -->
 <div class="uname-overlay" id="unameOverlay">
   <div class="uname-paneel">
-    <div class="uname-titel">Kies je gebruikersnaam</div>
-    <div class="uname-uitleg">Zo vinden vrienden je later terug. Geen e-mail nodig — dit blijft op dit toestel.</div>
+    <div class="uname-titel" id="unameTitel">Kies je gebruikersnaam</div>
+    <div class="uname-uitleg">Zo vinden vrienden je terug. Geen e-mail nodig.</div>
     <input id="unameInput" type="text" maxlength="20" autocomplete="off" placeholder="Gebruikersnaam">
     <div class="uname-regels">3–20 tekens · letters, cijfers of _</div>
     <div class="uname-fout" id="unameFout"></div>
     <button class="uname-kies" id="unameKies">Klaar</button>
+    <button class="uname-annuleer" id="unameAnnuleer" style="display:none;">Annuleren</button>
   </div>
 </div>
 
@@ -2361,14 +2384,18 @@ function toonView(naam){
   $('viewHome').classList.toggle('hidden', naam!=='home');
   $('viewMacros').classList.toggle('hidden', naam!=='macros');
   $('viewWorkout').classList.toggle('hidden', naam!=='workout');
+  $('viewLeaderboard').classList.toggle('hidden', naam!=='leaderboard');
   window.scrollTo(0,0);
   if(naam==='workout'){ woGekozenDag = new Date().getDay(); renderWorkout(); }
+  if(naam==='leaderboard'){ renderLeaderboard(); }
   if(naam==='home') updateHomeTeasers();
 }
 $('gaMacros').onclick = ()=> toonView('macros');
 $('gaWorkout').onclick = ()=> toonView('workout');
+$('gaLeaderboard').onclick = ()=> toonView('leaderboard');
 $('terugMacros').onclick = ()=> toonView('home');
 $('terugWorkout').onclick = ()=> toonView('home');
+$('terugLeaderboard').onclick = ()=> toonView('home');
 
 function updateHomeTeasers(){
   let kc=0; for(const it of log) kc+=it.kc;
@@ -2821,13 +2848,29 @@ async function startFirebase(){
 function toonAccountChip(){
   const el = $('accountChip'); if(!el) return;
   el.style.display = 'flex';
-  if(fbNaam){ werkChipBij(); }
-  else { el.textContent = 'Account'; }
+  werkChipBij();
 }
 
+let unameEditModus = false;
 function vraagGebruikersnaam(){
+  unameEditModus = false;
+  $('unameTitel').textContent = 'Kies je gebruikersnaam';
+  $('unameKies').textContent = 'Klaar';
+  $('unameAnnuleer').style.display = 'none';
   $('unameFout').textContent = '';
   $('unameInput').value = '';
+  $('unameOverlay').classList.add('open');
+  setTimeout(()=>{ try{ $('unameInput').focus(); }catch(e){} }, 100);
+}
+function openNaamAanpassen(){
+  if(!fbKlaar){ return; }
+  unameEditModus = true;
+  $('unameTitel').textContent = 'Naam aanpassen';
+  $('unameKies').textContent = 'Opslaan';
+  $('unameAnnuleer').style.display = 'block';
+  $('unameFout').textContent = '';
+  $('unameInput').value = fbNaam || '';
+  $('vrOverlay').classList.remove('open');
   $('unameOverlay').classList.add('open');
   setTimeout(()=>{ try{ $('unameInput').focus(); }catch(e){} }, 100);
 }
@@ -2840,6 +2883,8 @@ async function kiesGebruikersnaam(){
   }
   if(!fbDb || !fbUid){ $('unameFout').textContent = 'Even geen verbinding — probeer zo opnieuw.'; return; }
   const lower = naam.toLowerCase();
+  const oudLower = (fbNaam||'').toLowerCase();
+  if(unameEditModus && lower === oudLower){ $('unameOverlay').classList.remove('open'); return; }
   $('unameKies').disabled = true; $('unameFout').textContent = 'Controleren…';
   try{
     const ref = fbDb.collection('usernames').doc(lower);
@@ -2853,6 +2898,10 @@ async function kiesGebruikersnaam(){
       username: naam, unameLower: lower,
       aangemaakt: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
+    // oude naam vrijgeven bij wijziging
+    if(unameEditModus && oudLower && oudLower !== lower){
+      try{ await fbDb.collection('usernames').doc(oudLower).delete(); }catch(e){}
+    }
     fbNaam = naam; fbKlaar = true;
     $('unameOverlay').classList.remove('open');
     $('unameKies').disabled = false;
@@ -2972,8 +3021,9 @@ function renderVrienden(){
   renderLeaderboard();
 }
 function werkChipBij(){
-  const el = $('accountChip'); if(!el || !fbNaam) return;
-  el.innerHTML = '<span class="chip-av">'+escapeHtml(fbNaam.charAt(0).toUpperCase())+'</span> '+escapeHtml(fbNaam)+(inkomendLijst.length ? ' <span class="stip"></span>' : '');
+  const av = $('abAv'), el = $('accountChip');
+  if(av) av.textContent = fbNaam ? fbNaam.charAt(0).toUpperCase() : '👤';
+  if(el) el.classList.toggle('heeft-verzoek', inkomendLijst.length>0);
 }
 
 async function zoekVriend(){
@@ -3113,9 +3163,12 @@ document.querySelectorAll('.lb-kies').forEach(b=>{
     lbKeuze = b.dataset.lb;
     document.querySelectorAll('.lb-kies').forEach(x=>x.classList.remove('actief'));
     b.classList.add('actief');
+    const u = $('lbUitleg'); if(u) u.textContent = (lbKeuze==='doel') ? "Wie zit vandaag het dichtst bij z'n caloriedoel?" : 'Wie trainde de meeste dagen deze week?';
     renderLeaderboard();
   };
 });
+$('accEdit').onclick = openNaamAanpassen;
+$('unameAnnuleer').onclick = ()=>{ $('unameOverlay').classList.remove('open'); };
 
 $('unameKies').onclick = kiesGebruikersnaam;
 $('unameInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') kiesGebruikersnaam(); });
