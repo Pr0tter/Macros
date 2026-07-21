@@ -696,7 +696,7 @@
       <button class="wo-sluit" id="scanSluit">✕</button>
     </div>
     <div id="scanReader" class="scan-reader"></div>
-    <div class="scan-status" id="scanStatus">Hou de barcode volledig in het balkje, ~10 cm van de camera.</div>
+    <div class="scan-status" id="scanStatus">Hou de barcode in het vak — genoeg licht en dicht genoeg.</div>
   </div>
 </div>
 
@@ -1862,7 +1862,7 @@ async function startNative(){
     await startFallback();
     return;
   }
-  scanStatus('Hou de barcode in beeld — hij zoomt en focust automatisch. Genoeg licht helpt.');
+  scanStatus('Hou de barcode in het vak — genoeg licht en dicht genoeg.');
   detecteerLus(video);
 }
 
@@ -1926,7 +1926,7 @@ async function startFallback(){
     try{
       scanActief = true;
       await scanner.start(cam, config, onDecode, ()=>{});
-      scanStatus('Hou de barcode plat en volledig in beeld, ~10 cm van de camera.');
+      scanStatus('Hou de barcode in het vak — genoeg licht en dicht genoeg.');
       return;
     }catch(e){
       laatsteFout = e; scanActief = false;
