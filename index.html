@@ -1767,9 +1767,15 @@ function herstelZoek(){ zoekInput.value=''; resBox.classList.remove('open'); res
 // ---------- Barcode scanner (Open Food Facts) ----------
 let scanCode = null;       // barcode dat bij een nieuw item bewaard wordt
 let scanSe = null;         // eenheidslabel voor portie (bv. 'portie') bij een scan
-let scanner = null;        // Html5Qrcode-instantie
+let scanner = null;        // Html5Qrcode-instantie (fallback)
 let scanActief = false;
-let scanLibLaadt = null;   // promise tijdens laden
+let scanLibLaadt = null;   // promise tijdens laden fallback-lib
+let scanStream = null;     // MediaStream (native pad)
+let scanTimer = null;      // detectielus (native pad)
+let scanDetector = null;   // BarcodeDetector
+let scanBezig = false;     // voorkomt dubbele verwerking
+
+function heeftNativeScanner(){ return ('BarcodeDetector' in window) && navigator.mediaDevices && navigator.mediaDevices.getUserMedia; }
 
 function laadScannerLib(){
   if(window.Html5Qrcode) return Promise.resolve();
@@ -1789,6 +1795,18 @@ function scanStatus(tekst, soort){
   el.textContent = tekst;
   el.className = 'scan-status' + (soort ? ' '+soort : '');
 }
+function scanFoutmelding(e){
+  const naam = (e && (e.name || e.toString())) || '';
+  if(/NotAllowed|Permission/i.test(naam)){
+    scanStatus('Camera geweigerd. Sta camera toe: telefoon Instellingen → Apps → Chrome → Permissions → Camera → Allow. Probeer daarna opnieuw.', 'fout');
+  } else if(/NotReadable|TrackStart|NotFound/i.test(naam)){
+    scanStatus('Camera niet beschikbaar — misschien in gebruik door een andere app. Sluit die app en probeer opnieuw.', 'fout');
+  } else if(/SecurityError/i.test(naam)){
+    scanStatus('Camera vereist https. Open de app via je github.io-link.', 'fout');
+  } else {
+    scanStatus('Kon de camera niet starten. Sluit het venster en probeer opnieuw.', 'fout');
+  }
+}
 
 $('scanKnop').onclick = startScan;
 $('scanSluit').onclick = stopScan;
@@ -1796,63 +1814,97 @@ $('scanSluit').onclick = stopScan;
 async function startScan(){
   sluitPortie(); sluitNieuw(); resBox.classList.remove('open');
   $('scanOverlay').classList.add('open');
+  scanBezig = false;
   scanStatus('Camera starten…', 'bezig');
+  if(heeftNativeScanner()){
+    await startNative();
+  } else {
+    await startFallback();
+  }
+}
+
+// --- Native pad: eigen getUserMedia + BarcodeDetector (Android Chrome) ---
+async function startNative(){
+  const reader = $('scanReader');
+  reader.innerHTML = '<video id="scanVideo" playsinline muted autoplay></video>';
+  const video = $('scanVideo');
   try{
-    await laadScannerLib();
+    scanStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false });
   }catch(e){
-    scanStatus('Kon de scanner niet laden. Ben je online?', 'fout');
+    try{ scanStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false }); }
+    catch(e2){ scanFoutmelding(e2); return; }
+  }
+  try{
+    video.srcObject = scanStream;
+    video.setAttribute('playsinline','');
+    await video.play().catch(()=>{});
+  }catch(e){ scanFoutmelding(e); return; }
+  try{
+    try{ scanDetector = new BarcodeDetector({ formats: ['ean_13','ean_8','upc_a','upc_e','code_128'] }); }
+    catch(_){ scanDetector = new BarcodeDetector(); }
+  }catch(e){
+    // BarcodeDetector kan toch niet → val terug op de bibliotheek
+    stopStream();
+    await startFallback();
     return;
   }
-  // Zorg voor een schone reader (vorige poging kan resten achterlaten)
-  try{ document.getElementById('scanReader').innerHTML = ''; }catch(e){}
+  scanStatus('Hou de barcode plat en volledig in beeld, ~10 cm van de camera. Zorg voor genoeg licht en hou even stil.');
+  detecteerLus(video);
+}
+function detecteerLus(video){
+  scanTimer = setTimeout(async ()=>{
+    if(!scanStream){ return; }
+    if(scanBezig){ detecteerLus(video); return; }
+    try{
+      const codes = await scanDetector.detect(video);
+      if(codes && codes.length){
+        scanBezig = true;
+        await verwerkBarcode(codes[0].rawValue);
+        if(scanStream){ scanBezig = false; }  // verwerking stopte de camera niet (bv. netwerkfout) → verder scannen
+      }
+    }catch(e){}
+    if(scanStream){ detecteerLus(video); }
+  }, 180);
+}
+function stopStream(){
+  if(scanTimer){ clearTimeout(scanTimer); scanTimer = null; }
+  if(scanStream){ try{ scanStream.getTracks().forEach(t=>t.stop()); }catch(e){} scanStream = null; }
+  scanDetector = null;
+}
+
+// --- Fallback: html5-qrcode (o.a. iPhone/Safari) ---
+async function startFallback(){
+  try{ await laadScannerLib(); }
+  catch(e){ scanStatus('Kon de scanner niet laden. Ben je online?', 'fout'); return; }
+  try{ $('scanReader').innerHTML = ''; }catch(e){}
   scanner = new Html5Qrcode('scanReader', {
     formatsToSupport: [
-      Html5QrcodeSupportedFormats.EAN_13,
-      Html5QrcodeSupportedFormats.EAN_8,
-      Html5QrcodeSupportedFormats.UPC_A,
-      Html5QrcodeSupportedFormats.UPC_E,
+      Html5QrcodeSupportedFormats.EAN_13, Html5QrcodeSupportedFormats.EAN_8,
+      Html5QrcodeSupportedFormats.UPC_A, Html5QrcodeSupportedFormats.UPC_E,
       Html5QrcodeSupportedFormats.CODE_128
     ]
   });
-  let bezigMetVerwerken = false;
   const config = { fps: 10, qrbox: (vw, vh)=>({ width: Math.min(vw-20, 300), height: Math.min(vh-30, 110) }) };
-  const onDecode = async (tekst)=>{ if(bezigMetVerwerken) return; bezigMetVerwerken = true; await verwerkBarcode(tekst); };
-
-  // Probeer achtereenvolgens minder strenge camera-instellingen
-  const pogingen = [
-    { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
-    { facingMode: 'environment' },
-    true
-  ];
+  const onDecode = async (tekst)=>{ if(scanBezig) return; scanBezig = true; await verwerkBarcode(tekst); };
+  const pogingen = [ { facingMode:'environment' }, true ];
   let laatsteFout = null;
   for(const cam of pogingen){
     try{
       scanActief = true;
       await scanner.start(cam, config, onDecode, ()=>{});
-      scanStatus('Hou de barcode plat en volledig in het balkje, ~10 cm van de camera. Zorg voor genoeg licht en hou even stil.');
-      return; // gelukt
+      scanStatus('Hou de barcode plat en volledig in beeld, ~10 cm van de camera.');
+      return;
     }catch(e){
-      laatsteFout = e;
-      scanActief = false;
-      // Bij echte weigering heeft verder proberen geen zin
+      laatsteFout = e; scanActief = false;
       const naam = (e && (e.name || e.toString())) || '';
-      if(/NotAllowed|Permission|SecurityError/i.test(naam)) break;
+      if(/NotAllowed|Permission/i.test(naam)) break;
     }
   }
-  // Alles mislukt → nette, juiste boodschap
-  const naam = (laatsteFout && (laatsteFout.name || laatsteFout.toString())) || '';
-  if(/NotAllowed|Permission/i.test(naam)){
-    scanStatus('Camera geweigerd. Tik op het slotje (of ⋮) naast de adresbalk → Instellingen voor site → Camera → Toestaan, en probeer opnieuw. Kies "Toestaan", niet "tijdens dit bezoek".', 'fout');
-  } else if(/NotReadable|TrackStart|NotFoundError/i.test(naam)){
-    scanStatus('Camera is niet beschikbaar — mogelijk in gebruik door een andere app. Sluit die app en probeer opnieuw.', 'fout');
-  } else if(/SecurityError/i.test(naam)){
-    scanStatus('Camera vereist een https-verbinding. Open de app via je github.io-link.', 'fout');
-  } else {
-    scanStatus('Kon de camera niet starten. Sluit het venster en probeer opnieuw.', 'fout');
-  }
+  scanFoutmelding(laatsteFout);
 }
 
 async function stopScan(){
+  stopStream();
   if(scanner){
     try{ if(scanActief) await scanner.stop(); }catch(e){}
     try{ scanner.clear(); }catch(e){}
@@ -1914,6 +1966,7 @@ async function verwerkBarcode(code){
       scanStatus('');
     }
   }catch(e){
+    scanBezig = false;
     scanStatus('Opzoeken mislukt. Probeer opnieuw of vul zelf in.', 'fout');
     setTimeout(()=>{ /* niets */ }, 10);
   }
@@ -2550,8 +2603,8 @@ function datumKort(sleutel){
   updateDashboard();
   renderLog();
   updateHomeTeasers();
-  // Scanner-bibliotheek alvast op de achtergrond laden zodat de camera later sneller opent
-  setTimeout(()=>{ laadScannerLib().catch(()=>{}); }, 1200);
+  // Fallback-scanner alvast laden op toestellen zonder ingebouwde lezer (bv. iPhone)
+  setTimeout(()=>{ if(!heeftNativeScanner()) laadScannerLib().catch(()=>{}); }, 1200);
 })();
 </script>
 </body>
