@@ -544,7 +544,7 @@
     <button class="lb-kies" data-lb="totaalTraining">Totaal training</button>
     <button class="lb-kies" data-lb="besteDag">Hoogste dag</button>
   </div>
-  <div class="lb-uitleg" id="lbUitleg">Wie zit vandaag het dichtst bij z'n doel? Groen = binnen 100 kcal, blauw = meer dan 100 eronder, rood = meer dan 100 erover.</div>
+  <div class="lb-uitleg" id="lbUitleg">Wie zit vandaag het dichtst bij z'n doel?</div>
   <div id="vrLeaderboards"><div class="vr-leeg">Voeg vrienden toe om een ranglijst te zien.</div></div>
 </div>
 
@@ -3324,7 +3324,7 @@ document.querySelectorAll('.lb-kies').forEach(b=>{
     b.classList.add('actief');
     const u = $('lbUitleg');
     const txt = {
-      doel: "Wie zit vandaag het dichtst bij z'n doel? Groen = binnen 100 kcal, blauw = meer dan 100 eronder, rood = meer dan 100 erover.",
+      doel: "Wie zit vandaag het dichtst bij z'n doel?",
       trainingWeek: 'Wie trainde de meeste dagen deze week?',
       totaalKcal: 'Totaal aantal calorieën ooit gelogd (alle dagen samen).',
       totaalTraining: 'Totaal aantal dagen getraind (aller tijden).',
