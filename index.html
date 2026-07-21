@@ -1837,17 +1837,22 @@ async function startNative(){
   reader.innerHTML = '<video id="scanVideo" playsinline muted autoplay></video>'
     + '<div class="scan-kader"><span></span><span></span><span></span><span></span><div class="scan-lijn"></div></div>';
   const video = $('scanVideo');
+  const videoConstraints = { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } };
   try{
-    scanStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false });
+    scanStream = await navigator.mediaDevices.getUserMedia({ video: videoConstraints, audio: false });
   }catch(e){
-    try{ scanStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false }); }
-    catch(e2){ scanFoutmelding(e2); return; }
+    try{ scanStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false }); }
+    catch(e2){
+      try{ scanStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false }); }
+      catch(e3){ scanFoutmelding(e3); return; }
+    }
   }
   try{
     video.srcObject = scanStream;
     video.setAttribute('playsinline','');
     await video.play().catch(()=>{});
   }catch(e){ scanFoutmelding(e); return; }
+  await stemCameraAf();   // autofocus + lichte zoom waar mogelijk
   try{
     try{ scanDetector = new BarcodeDetector({ formats: ['ean_13','ean_8','upc_a','upc_e','code_128'] }); }
     catch(_){ scanDetector = new BarcodeDetector(); }
@@ -1857,8 +1862,28 @@ async function startNative(){
     await startFallback();
     return;
   }
-  scanStatus('Hou de barcode plat en volledig in beeld, ~10 cm van de camera. Zorg voor genoeg licht en hou even stil.');
+  scanStatus('Hou de barcode in beeld — hij zoomt en focust automatisch. Genoeg licht helpt.');
   detecteerLus(video);
+}
+
+async function stemCameraAf(){
+  try{
+    if(!scanStream) return;
+    const track = scanStream.getVideoTracks()[0];
+    if(!track || !track.getCapabilities) return;
+    const caps = track.getCapabilities();
+    const adv = [];
+    if(caps.focusMode && caps.focusMode.includes && caps.focusMode.includes('continuous')) adv.push({ focusMode: 'continuous' });
+    if(caps.zoom && (caps.zoom.max||0) > (caps.zoom.min||0)){
+      const z = caps.zoom;
+      let doel = z.min + (z.max - z.min) * 0.35;   // matige zoom, ~1,5–2×
+      if(z.max >= 2 && doel > 2) doel = 2;
+      if(z.step){ doel = Math.round(doel / z.step) * z.step; }
+      doel = Math.min(Math.max(doel, z.min), z.max);
+      adv.push({ zoom: doel });
+    }
+    if(adv.length){ await track.applyConstraints({ advanced: adv }); }
+  }catch(e){}
 }
 function detecteerLus(video){
   scanTimer = setTimeout(async ()=>{
@@ -1873,7 +1898,7 @@ function detecteerLus(video){
       }
     }catch(e){}
     if(scanStream){ detecteerLus(video); }
-  }, 180);
+  }, 120);
 }
 function stopStream(){
   if(scanTimer){ clearTimeout(scanTimer); scanTimer = null; }
