@@ -419,6 +419,13 @@
   .vr-mini{font-size:12px;margin-top:6px;}
   .vr-mini.ok{color:var(--eiwit);} .vr-mini.fout{color:var(--danger);}
   .account-chip .stip{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--danger);margin-left:2px;}
+  .account-chip .chip-av{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--eiwit);color:#06120C;font-size:12px;font-weight:800;}
+  .acc-kaart{display:flex;align-items:center;gap:13px;background:var(--ink);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:6px;}
+  .acc-avatar{width:46px;height:46px;border-radius:50%;background:var(--eiwit);color:#06120C;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;flex-shrink:0;}
+  .acc-info{min-width:0;}
+  .acc-naam{font-size:18px;font-weight:700;line-height:1.2;}
+  .acc-sub{color:var(--muted);font-size:12px;margin-top:2px;}
+  .uname-regels{color:var(--muted);font-size:12px;margin:8px 2px 0;}
 
   /* Account chip + gebruikersnaam */
   .account-chip{display:inline-flex;align-items:center;gap:6px;margin:0 auto 18px;background:var(--surface);border:1px solid var(--line);border-radius:999px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;padding:7px 14px;cursor:pointer;}
@@ -729,20 +736,30 @@
   </div>
 </div>
 
-<!-- Vrienden (overlay) -->
+<!-- Account (overlay) -->
 <div class="vr-overlay" id="vrOverlay">
   <div class="vr-paneel">
     <div class="vr-kop">
-      <div class="vr-titel">Vrienden</div>
+      <div class="vr-titel">Account</div>
       <button class="wo-sluit" id="vrSluit">✕</button>
     </div>
-    <div class="vr-ik" id="vrIk"></div>
 
-    <div class="vr-zoekrij">
-      <input id="vrZoek" type="text" maxlength="20" autocomplete="off" placeholder="Zoek op gebruikersnaam…">
-      <button id="vrZoekKnop">Zoek</button>
+    <div class="acc-kaart" id="accKaart">
+      <div class="acc-avatar" id="accAvatar">👤</div>
+      <div class="acc-info">
+        <div class="acc-naam" id="vrIk">—</div>
+        <div class="acc-sub" id="accSub">Online account</div>
+      </div>
     </div>
-    <div class="vr-zoekres" id="vrZoekRes"></div>
+
+    <div class="vr-sectie">
+      <div class="vr-kopje">Vrienden toevoegen</div>
+      <div class="vr-zoekrij">
+        <input id="vrZoek" type="text" maxlength="20" autocomplete="off" placeholder="Zoek op gebruikersnaam…">
+        <button id="vrZoekKnop">Zoek</button>
+      </div>
+      <div class="vr-zoekres" id="vrZoekRes"></div>
+    </div>
 
     <div class="vr-sectie" id="vrVerzoekenSectie" style="display:none;">
       <div class="vr-kopje">Verzoeken</div>
@@ -753,6 +770,11 @@
       <div class="vr-kopje">Mijn vrienden</div>
       <div id="vrLijst"><div class="vr-leeg">Nog geen vrienden toegevoegd.</div></div>
     </div>
+
+    <div class="vr-sectie">
+      <div class="vr-kopje">Leaderboards</div>
+      <div id="vrLeaderboards"><div class="vr-leeg">Binnenkort: maak een ranglijst met je vrienden. 🏆</div></div>
+    </div>
   </div>
 </div>
 
@@ -761,7 +783,8 @@
   <div class="uname-paneel">
     <div class="uname-titel">Kies je gebruikersnaam</div>
     <div class="uname-uitleg">Zo vinden vrienden je later terug. Geen e-mail nodig — dit blijft op dit toestel.</div>
-    <input id="unameInput" type="text" maxlength="20" autocomplete="off" placeholder="bv. warre_09">
+    <input id="unameInput" type="text" maxlength="20" autocomplete="off" placeholder="Gebruikersnaam">
+    <div class="uname-regels">3–20 tekens · letters, cijfers of _</div>
     <div class="uname-fout" id="unameFout"></div>
     <button class="uname-kies" id="unameKies">Klaar</button>
   </div>
@@ -2763,7 +2786,7 @@ async function startFirebase(){
 
 function toonAccountChip(){
   const el = $('accountChip'); if(!el) return;
-  if(fbNaam){ el.textContent = '👤 ' + fbNaam; el.style.display = 'inline-flex'; }
+  if(fbNaam){ el.style.display = 'inline-flex'; werkChipBij(); }
   else { el.style.display = 'none'; }
 }
 
@@ -2862,7 +2885,8 @@ function mergeVrienden(){
 
 function openVrienden(){
   if(!fbKlaar){ alert('Je account wordt nog geladen — probeer zo opnieuw.'); return; }
-  $('vrIk').textContent = 'Jij bent: ' + fbNaam;
+  $('vrIk').textContent = fbNaam;
+  $('accAvatar').textContent = (fbNaam||'?').charAt(0).toUpperCase();
   $('vrZoek').value=''; $('vrZoekRes').innerHTML='';
   startVriendenListeners();
   renderVerzoeken(); renderVrienden();
@@ -2893,7 +2917,7 @@ function renderVrienden(){
 }
 function werkChipBij(){
   const el = $('accountChip'); if(!el || !fbNaam) return;
-  el.innerHTML = '👤 ' + escapeHtml(fbNaam) + (inkomendLijst.length ? ' <span class="stip"></span>' : '');
+  el.innerHTML = '<span class="chip-av">'+escapeHtml(fbNaam.charAt(0).toUpperCase())+'</span> '+escapeHtml(fbNaam)+(inkomendLijst.length ? ' <span class="stip"></span>' : '');
 }
 
 async function zoekVriend(){
