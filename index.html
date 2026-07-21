@@ -426,9 +426,28 @@
   .acc-naam{font-size:18px;font-weight:700;line-height:1.2;}
   .acc-sub{color:var(--muted);font-size:12px;margin-top:2px;}
   .uname-regels{color:var(--muted);font-size:12px;margin:8px 2px 0;}
+  /* Leaderboard */
+  .lb-knoppen{display:flex;gap:6px;margin-bottom:12px;}
+  .lb-kies{flex:1;background:var(--ink);border:1px solid var(--line);border-radius:10px;color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;padding:9px 6px;cursor:pointer;}
+  .lb-kies.actief{background:var(--eiwit);color:#06120C;border-color:var(--eiwit);}
+  .lb-rij{display:flex;align-items:center;gap:11px;background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:11px 13px;margin-bottom:7px;}
+  .lb-rij.ik{border-color:var(--eiwit);}
+  .lb-pos{font-size:16px;font-weight:800;width:26px;text-align:center;flex-shrink:0;}
+  .lb-naam{flex:1;font-weight:600;font-size:15px;}
+  .lb-naam em{color:var(--muted);font-style:normal;font-size:12px;}
+  .lb-extra{color:var(--muted);font-size:13px;font-family:'JetBrains Mono',monospace;}
+  /* Profiel */
+  .prof-kcal{font-size:34px;font-weight:800;font-family:'JetBrains Mono',monospace;}
+  .prof-kcal span{font-size:14px;font-weight:600;color:var(--muted);font-family:'Space Grotesk',sans-serif;}
+  .prof-doel{color:var(--muted);font-size:13px;margin-top:2px;}
+  .prof-macros{color:var(--muted);font-size:13px;margin-top:6px;font-family:'JetBrains Mono',monospace;}
+  .prof-item{display:flex;justify-content:space-between;gap:10px;background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin-bottom:6px;font-size:14px;}
+  .prof-item em{color:var(--muted);font-style:normal;font-size:12px;}
+  .prof-ikc{font-family:'JetBrains Mono',monospace;color:var(--muted);flex-shrink:0;}
+  .prof-wo{color:var(--muted);font-size:12px;font-family:'JetBrains Mono',monospace;text-align:right;}
 
   /* Account chip + gebruikersnaam */
-  .account-chip{display:inline-flex;align-items:center;gap:6px;margin:0 auto 18px;background:var(--surface);border:1px solid var(--line);border-radius:999px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;padding:7px 14px;cursor:pointer;}
+  .account-chip{display:flex;width:fit-content;align-items:center;gap:6px;margin:0 auto 18px;background:var(--surface);border:1px solid var(--line);border-radius:999px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;padding:7px 14px;cursor:pointer;}
   .account-chip:active{background:var(--surface-2);}
   .uname-overlay{position:fixed;inset:0;background:rgba(6,8,11,.94);display:none;align-items:center;justify-content:center;padding:24px;z-index:80;}
   .uname-overlay.open{display:flex;}
@@ -472,7 +491,7 @@
   <div class="home-wrap">
     <div class="home-merk">FitLog</div>
     <div class="home-datum" id="homeDatum"></div>
-    <button class="account-chip" id="accountChip" style="display:none;"></button>
+    <button class="account-chip" id="accountChip">Account</button>
     <button class="home-kaart k-voeding" id="gaMacros">
       <div class="hk-icoon voeding"><span></span><span></span><span></span></div>
       <div class="hk-tekst"><div class="hk-naam">Voeding</div><div class="hk-sub" id="homeMacroSub">Calorieën &amp; macro's bijhouden</div></div>
@@ -773,8 +792,23 @@
 
     <div class="vr-sectie">
       <div class="vr-kopje">Leaderboards</div>
-      <div id="vrLeaderboards"><div class="vr-leeg">Binnenkort: maak een ranglijst met je vrienden. 🏆</div></div>
+      <div class="lb-knoppen">
+        <button class="lb-kies actief" data-lb="doel">Doel gehaald (vandaag)</button>
+        <button class="lb-kies" data-lb="training">Trainingen (deze week)</button>
+      </div>
+      <div id="vrLeaderboards"><div class="vr-leeg">Voeg vrienden toe om een ranglijst te zien.</div></div>
     </div>
+  </div>
+</div>
+
+<!-- Vriend bekijken (overlay) -->
+<div class="vr-overlay" id="profOverlay">
+  <div class="vr-paneel">
+    <div class="vr-kop">
+      <div class="vr-titel" id="profNaam">—</div>
+      <button class="wo-sluit" id="profSluit">✕</button>
+    </div>
+    <div id="profInhoud"><div class="vr-leeg">Laden…</div></div>
   </div>
 </div>
 
@@ -2786,8 +2820,9 @@ async function startFirebase(){
 
 function toonAccountChip(){
   const el = $('accountChip'); if(!el) return;
-  if(fbNaam){ el.style.display = 'inline-flex'; werkChipBij(); }
-  else { el.style.display = 'none'; }
+  el.style.display = 'flex';
+  if(fbNaam){ werkChipBij(); }
+  else { el.textContent = 'Account'; }
 }
 
 function vraagGebruikersnaam(){
@@ -2828,6 +2863,18 @@ async function kiesGebruikersnaam(){
   }
 }
 
+function weekStartKey(){
+  const d = new Date(); const dag = (d.getDay()+6)%7; // maandag=0
+  d.setDate(d.getDate()-dag); d.setHours(0,0,0,0);
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function trainingenDezeWeek(){
+  const start = weekStartKey();
+  const dagen = {};
+  for(const oef in woLog){ for(const s of (woLog[oef]||[])){ if(s.datum && s.datum >= start) dagen[s.datum]=1; } }
+  return Object.keys(dagen).length;
+}
+
 function syncStraks(){
   if(!fbKlaar) return;
   clearTimeout(syncTimer);
@@ -2840,9 +2887,16 @@ async function syncNu(){
     const key = vandaagSleutel();
     const doel = doelGezet ? DOEL.kcal : null;
     const u = fbDb.collection('users').doc(fbUid);
-    await u.set({ username: fbNaam, doel: doel, laatste: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+    await u.set({
+      username: fbNaam, doel: doel,
+      vandaagDatum: key, vandaagKcal: Math.round(kc),
+      trainingWeek: trainingenDezeWeek(),
+      laatste: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
     await u.collection('dagen').doc(key).set({
-      kcal: Math.round(kc), e: Math.round(e), k: Math.round(k), v: Math.round(v), doel: doel
+      kcal: Math.round(kc), e: Math.round(e), k: Math.round(k), v: Math.round(v), doel: doel,
+      items: log.map(it=>({ n: it.n, label: it.label||'', kc: Math.round(it.kc) })),
+      trainingWeek: trainingenDezeWeek()
     }, { merge: true });
     await u.collection('data').doc('workout').set({ log: woLog, types: oefTypes });
   }catch(e){}
@@ -2889,7 +2943,7 @@ function openVrienden(){
   $('accAvatar').textContent = (fbNaam||'?').charAt(0).toUpperCase();
   $('vrZoek').value=''; $('vrZoekRes').innerHTML='';
   startVriendenListeners();
-  renderVerzoeken(); renderVrienden();
+  renderVerzoeken(); renderVrienden(); renderLeaderboard();
   $('vrOverlay').classList.add('open');
 }
 function sluitVrienden(){ $('vrOverlay').classList.remove('open'); }
@@ -2908,12 +2962,14 @@ function renderVerzoeken(){
 }
 function renderVrienden(){
   const box = $('vrLijst');
-  if(vriendenLijst.length===0){ box.innerHTML='<div class="vr-leeg">Nog geen vrienden toegevoegd.</div>'; return; }
+  if(vriendenLijst.length===0){ box.innerHTML='<div class="vr-leeg">Nog geen vrienden toegevoegd.</div>'; renderLeaderboard(); return; }
   box.innerHTML = vriendenLijst.map(v=>
-    '<div class="vr-rij"><span class="vr-naam">'+escapeHtml(v.naam||'?')+'</span>'+
+    '<div class="vr-rij"><span class="vr-naam vr-klik" data-uid="'+v.uid+'" data-naam="'+escapeHtml(v.naam||'?')+'">'+escapeHtml(v.naam||'?')+' ›</span>'+
     '<button class="vr-knop rood" data-verw="'+v.id+'">Verwijder</button></div>'
   ).join('');
   box.querySelectorAll('[data-verw]').forEach(b=> b.onclick=()=>verwijderVerzoek(b.dataset.verw, true));
+  box.querySelectorAll('.vr-klik').forEach(b=> b.onclick=()=>bekijkVriend(b.dataset.uid, b.dataset.naam));
+  renderLeaderboard();
 }
 function werkChipBij(){
   const el = $('accountChip'); if(!el || !fbNaam) return;
@@ -2958,10 +3014,108 @@ async function verwijderVerzoek(id){
   try{ await fbDb.collection('verzoeken').doc(id).delete(); }catch(e){}
 }
 
+// ----- Vriend bekijken -----
+async function bekijkVriend(uid, naam){
+  $('profNaam').textContent = naam;
+  $('profInhoud').innerHTML = '<div class="vr-leeg">Laden…</div>';
+  $('profOverlay').classList.add('open');
+  try{
+    const key = vandaagSleutel();
+    const [dagSnap, woSnap] = await Promise.all([
+      fbDb.collection('users').doc(uid).collection('dagen').doc(key).get(),
+      fbDb.collection('users').doc(uid).collection('data').doc('workout').get()
+    ]);
+    let html = '';
+    // Voeding vandaag
+    if(dagSnap.exists){
+      const d = dagSnap.data();
+      const doelTxt = d.doel ? ('doel '+d.doel.toLocaleString('nl-BE')+' kcal') : 'geen doel ingesteld';
+      html += '<div class="prof-kcal">'+(d.kcal||0).toLocaleString('nl-BE')+' <span>kcal vandaag</span></div>';
+      html += '<div class="prof-doel">'+doelTxt+'</div>';
+      html += '<div class="prof-macros">E '+(d.e||0)+'g · K '+(d.k||0)+'g · V '+(d.v||0)+'g</div>';
+      if(d.items && d.items.length){
+        html += '<div class="vr-kopje" style="margin-top:16px;">Gegeten vandaag</div>';
+        html += d.items.map(it=>'<div class="prof-item"><span>'+escapeHtml(it.n||'?')+(it.label?' <em>('+escapeHtml(it.label)+')</em>':'')+'</span><span class="prof-ikc">'+(it.kc||0)+'</span></div>').join('');
+      } else {
+        html += '<div class="vr-leeg" style="margin-top:12px;">Nog niets gegeten vandaag.</div>';
+      }
+    } else {
+      html += '<div class="vr-leeg">Nog niets gelogd vandaag.</div>';
+    }
+    // Training vandaag
+    html += '<div class="vr-kopje" style="margin-top:18px;">Training vandaag</div>';
+    let woHtml = '';
+    if(woSnap.exists){
+      const wl = woSnap.data().log || {};
+      const types = woSnap.data().types || {};
+      const key2 = vandaagSleutel();
+      for(const oef in wl){
+        const sessies = wl[oef]||[];
+        const vandaag = sessies.filter(s=>s.datum===key2);
+        if(vandaag.length){
+          const s = vandaag[vandaag.length-1];
+          let det;
+          if(types[oef]==='cardio'){
+            det = [s.duur?s.duur+' min':'', s.afstand?s.afstand+' km':''].filter(Boolean).join(' · ') || '—';
+          } else {
+            det = (s.sets||[]).map(x=>(x.reps||0)+'×'+(x.gewicht||0)+'kg').join(', ') || '—';
+          }
+          woHtml += '<div class="prof-item"><span>'+escapeHtml(oef)+'</span><span class="prof-wo">'+escapeHtml(det)+'</span></div>';
+        }
+      }
+    }
+    html += woHtml || '<div class="vr-leeg">Geen training vandaag.</div>';
+    $('profInhoud').innerHTML = html;
+  }catch(e){
+    $('profInhoud').innerHTML = '<div class="vr-leeg">Kon dit profiel niet laden.</div>';
+  }
+}
+$('profSluit').onclick = ()=> $('profOverlay').classList.remove('open');
+$('profOverlay').onclick = (e)=>{ if(e.target===$('profOverlay')) $('profOverlay').classList.remove('open'); };
+
+// ----- Leaderboards -----
+let lbKeuze = 'doel';
+async function renderLeaderboard(){
+  const box = $('vrLeaderboards'); if(!box) return;
+  if(vriendenLijst.length===0){ box.innerHTML='<div class="vr-leeg">Voeg vrienden toe om een ranglijst te zien.</div>'; return; }
+  const deelnemers = [{uid:fbUid, naam:fbNaam}, ...vriendenLijst];
+  box.innerHTML = '<div class="vr-leeg">Laden…</div>';
+  try{
+    const docs = await Promise.all(deelnemers.map(x=> fbDb.collection('users').doc(x.uid).get()));
+    const today = vandaagSleutel();
+    let rijen = docs.map((d,i)=>({ naam: deelnemers[i].naam, mij: deelnemers[i].uid===fbUid, data: d.exists?d.data():{} }));
+    if(lbKeuze==='doel'){
+      rijen = rijen
+        .filter(r=> r.data.doel && r.data.vandaagDatum===today)
+        .map(r=>{ const kc=r.data.vandaagKcal||0; return { naam:r.naam, mij:r.mij, sort:Math.abs(kc-r.data.doel), extra: kc.toLocaleString('nl-BE')+' / '+r.data.doel.toLocaleString('nl-BE')+' kcal' }; })
+        .sort((a,b)=>a.sort-b.sort);
+    } else {
+      rijen = rijen
+        .map(r=>{ const t=r.data.trainingWeek||0; return { naam:r.naam, mij:r.mij, sort:t, extra: t+' dag'+(t===1?'':'en') }; })
+        .sort((a,b)=>b.sort-a.sort);
+    }
+    if(rijen.length===0){ box.innerHTML='<div class="vr-leeg">Nog geen gegevens om te ranken.</div>'; return; }
+    const medaille = ['🥇','🥈','🥉'];
+    box.innerHTML = rijen.map((r,i)=>
+      '<div class="lb-rij'+(r.mij?' ik':'')+'"><span class="lb-pos">'+(medaille[i]||(i+1))+'</span>'+
+      '<span class="lb-naam">'+escapeHtml(r.naam)+(r.mij?' <em>(jij)</em>':'')+'</span>'+
+      '<span class="lb-extra">'+escapeHtml(r.extra)+'</span></div>'
+    ).join('');
+  }catch(e){ box.innerHTML='<div class="vr-leeg">Kon ranglijst niet laden.</div>'; }
+}
+
 $('vrSluit').onclick = sluitVrienden;
 $('vrOverlay').onclick = (e)=>{ if(e.target===$('vrOverlay')) sluitVrienden(); };
 $('vrZoekKnop').onclick = zoekVriend;
 $('vrZoek').addEventListener('keydown', (e)=>{ if(e.key==='Enter') zoekVriend(); });
+document.querySelectorAll('.lb-kies').forEach(b=>{
+  b.onclick = ()=>{
+    lbKeuze = b.dataset.lb;
+    document.querySelectorAll('.lb-kies').forEach(x=>x.classList.remove('actief'));
+    b.classList.add('actief');
+    renderLeaderboard();
+  };
+});
 
 $('unameKies').onclick = kiesGebruikersnaam;
 $('unameInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') kiesGebruikersnaam(); });
