@@ -394,6 +394,20 @@
   .wo-grafiek svg{width:100%;height:auto;display:block;}
   .wo-grafiek-leeg{text-align:center;color:var(--muted);font-size:13px;padding:24px 10px;}
 
+  /* Barcode scanner */
+  .scan-knop{width:100%;margin-top:8px;background:var(--surface);border:1px solid var(--vet);border-radius:14px;color:var(--vet);font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;padding:13px;cursor:pointer;}
+  .scan-knop:active{background:var(--surface-2);}
+  .scan-overlay{position:fixed;inset:0;background:rgba(6,8,11,.92);display:none;align-items:flex-start;justify-content:center;padding:24px 12px;overflow-y:auto;z-index:70;}
+  .scan-overlay.open{display:flex;}
+  .scan-paneel{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px;width:100%;max-width:460px;margin:auto;}
+  .scan-kop{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .scan-titel{font-size:17px;font-weight:600;}
+  .scan-reader{width:100%;border-radius:14px;overflow:hidden;background:#000;min-height:220px;}
+  .scan-reader video{width:100%!important;height:auto!important;display:block;border-radius:14px;}
+  .scan-status{text-align:center;color:var(--muted);font-size:13px;margin-top:14px;line-height:1.5;}
+  .scan-status.bezig{color:var(--vet);}
+  .scan-status.fout{color:var(--danger);}
+
 </style>
 </head>
 <body>
@@ -511,6 +525,7 @@
   <span class="zoek-icoon">⌕</span>
   <input class="zoek" id="zoek" type="text" placeholder="Typ iets van eten in…" autocomplete="off">
 </div>
+<button class="scan-knop" id="scanKnop">📷&nbsp;&nbsp;Scan barcode</button>
 
 <div class="resultaten" id="resultaten"></div>
 
@@ -662,6 +677,18 @@
     <div class="wo-metriek" id="woMetriek"></div>
     <div class="wo-grafiek" id="woGrafiek"></div>
     <div class="wo-grafiek-leeg" id="woGrafiekLeeg" style="display:none;">Log deze oefening minstens 2 keer om progressie te zien.</div>
+  </div>
+</div>
+
+<!-- Barcode scanner (overlay) -->
+<div class="scan-overlay" id="scanOverlay">
+  <div class="scan-paneel">
+    <div class="scan-kop">
+      <div class="scan-titel">Scan barcode</div>
+      <button class="wo-sluit" id="scanSluit">✕</button>
+    </div>
+    <div id="scanReader" class="scan-reader"></div>
+    <div class="scan-status" id="scanStatus">Richt de camera op de streepjescode…</div>
   </div>
 </div>
 
@@ -1617,7 +1644,7 @@ function zetNieuwSoort(drank){
 $('nSoortVast').onclick = ()=> zetNieuwSoort(false);
 $('nSoortDrank').onclick = ()=> zetNieuwSoort(true);
 
-function openNieuw(naam){
+function openNieuw(naam, vooraf){
   bewerk = null;
   resetVerwijderKnop();
   resBox.classList.remove('open');
@@ -1627,8 +1654,17 @@ function openNieuw(naam){
   $('nVerwijder').style.display = 'none';
   $('nNaam').readOnly = false;
   $('nNaam').value = naam || '';
-  $('nKcal').value=''; $('nE').value=''; $('nK').value=''; $('nV').value=''; $('nStuk').value='';
-  zetNieuwSoort(false);
+  if(vooraf){
+    $('nKcal').value = (vooraf.kcal!=null) ? vooraf.kcal : '';
+    $('nE').value = (vooraf.e!=null) ? vooraf.e : '';
+    $('nK').value = (vooraf.k!=null) ? vooraf.k : '';
+    $('nV').value = (vooraf.v!=null) ? vooraf.v : '';
+    $('nStuk').value = '';
+    zetNieuwSoort(!!vooraf.drank);
+  } else {
+    $('nKcal').value=''; $('nE').value=''; $('nK').value=''; $('nV').value=''; $('nStuk').value='';
+    zetNieuwSoort(false);
+  }
   $('nieuwForm').classList.add('open');
   if(!naam) $('nNaam').focus(); else $('nKcal').focus();
 }
@@ -1691,6 +1727,7 @@ $('nBewaar').onclick = ()=>{
     const f = { n:naam, kc:waarden.kc, e:waarden.e, k:waarden.k, v:waarden.v };
     if(nDrank){ f.drank=1; }
     if(!isNaN(st) && st>0){ f.stuk=st; f.se=seStandaard; }
+    if(scanCode){ f.code = scanCode; scanCode = null; }
     eigen.unshift(f);
     bewaarEigen(); sluitNieuw(); herstelZoek(); openPortie(f);
   }
@@ -1725,6 +1762,126 @@ $('nVerwijder').onclick = ()=>{
 };
 
 function herstelZoek(){ zoekInput.value=''; resBox.classList.remove('open'); resBox.innerHTML=''; }
+
+// ---------- Barcode scanner (Open Food Facts) ----------
+let scanCode = null;       // barcode dat bij een nieuw item bewaard wordt
+let scanner = null;        // Html5Qrcode-instantie
+let scanActief = false;
+let scanLibLaadt = null;   // promise tijdens laden
+
+function laadScannerLib(){
+  if(window.Html5Qrcode) return Promise.resolve();
+  if(scanLibLaadt) return scanLibLaadt;
+  scanLibLaadt = new Promise((resolve, reject)=>{
+    const sc = document.createElement('script');
+    sc.src = 'https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js';
+    sc.onload = ()=> resolve();
+    sc.onerror = ()=> reject(new Error('lib'));
+    document.head.appendChild(sc);
+  });
+  return scanLibLaadt;
+}
+
+function scanStatus(tekst, soort){
+  const el = $('scanStatus');
+  el.textContent = tekst;
+  el.className = 'scan-status' + (soort ? ' '+soort : '');
+}
+
+$('scanKnop').onclick = startScan;
+$('scanSluit').onclick = stopScan;
+
+async function startScan(){
+  sluitPortie(); sluitNieuw(); resBox.classList.remove('open');
+  $('scanOverlay').classList.add('open');
+  scanStatus('Camera starten…', 'bezig');
+  try{
+    await laadScannerLib();
+  }catch(e){
+    scanStatus('Kon de scanner niet laden. Ben je online?', 'fout');
+    return;
+  }
+  try{
+    scanner = new Html5Qrcode('scanReader', {
+      formatsToSupport: [
+        Html5QrcodeSupportedFormats.EAN_13,
+        Html5QrcodeSupportedFormats.EAN_8,
+        Html5QrcodeSupportedFormats.UPC_A,
+        Html5QrcodeSupportedFormats.UPC_E,
+        Html5QrcodeSupportedFormats.CODE_128
+      ]
+    });
+    scanActief = true;
+    let bezigMetVerwerken = false;
+    await scanner.start(
+      { facingMode: 'environment' },
+      { fps: 10, qrbox: { width: 260, height: 160 } },
+      async (tekst)=>{
+        if(bezigMetVerwerken) return;
+        bezigMetVerwerken = true;
+        await verwerkBarcode(tekst);
+      },
+      ()=>{}   // negeer "niet gevonden per frame"
+    );
+    scanStatus('Richt de camera op de streepjescode…');
+  }catch(e){
+    scanStatus('Geen toegang tot de camera. Sta camera toe in je browserinstellingen.', 'fout');
+  }
+}
+
+async function stopScan(){
+  if(scanner && scanActief){
+    try{ await scanner.stop(); }catch(e){}
+    try{ scanner.clear(); }catch(e){}
+  }
+  scanActief = false;
+  scanner = null;
+  $('scanOverlay').classList.remove('open');
+}
+
+async function verwerkBarcode(code){
+  scanStatus('Barcode '+code+' — opzoeken…', 'bezig');
+  // 1) Al bij mijn eigen producten? → meteen loggen
+  const bestaand = eigen.find(x=> x.code === code);
+  if(bestaand){ await stopScan(); openPortie(bestaand); return; }
+  // 2) Open Food Facts
+  try{
+    const res = await fetch('https://world.openfoodfacts.org/api/v2/product/'+encodeURIComponent(code)+'.json?fields=product_name,brands,nutriments');
+    const data = await res.json();
+    if(data.status === 1 && data.product){
+      const p = data.product;
+      const n = p.nutriments || {};
+      let kcal = n['energy-kcal_100g'];
+      if(kcal==null && n['energy-kj_100g']!=null) kcal = n['energy-kj_100g']/4.184;
+      if(kcal==null && n['energy_100g']!=null) kcal = n['energy_100g']/4.184;
+      const naam = [p.brands ? p.brands.split(',')[0].trim() : '', p.product_name || ''].filter(Boolean).join(' ').trim() || ('Product '+code);
+      scanCode = code;
+      await stopScan();
+      if(kcal!=null){
+        openNieuw(naam, {
+          kcal: Math.round(kcal),
+          e: n['proteins_100g']!=null ? Math.round(n['proteins_100g']*10)/10 : '',
+          k: n['carbohydrates_100g']!=null ? Math.round(n['carbohydrates_100g']*10)/10 : '',
+          v: n['fat_100g']!=null ? Math.round(n['fat_100g']*10)/10 : ''
+        });
+      } else {
+        // gevonden, maar zonder calorieën → naam invullen, rest zelf
+        openNieuw(naam);
+      }
+    } else {
+      // niet gevonden → leeg formulier openen om zelf in te vullen
+      scanCode = code;
+      await stopScan();
+      openNieuw('');
+      scanStatus('');
+    }
+  }catch(e){
+    scanStatus('Opzoeken mislukt. Probeer opnieuw of vul zelf in.', 'fout');
+    // laat scanner even open; gebruiker kan sluiten
+    setTimeout(()=>{ /* niets */ }, 10);
+  }
+}
+
 
 // ---------- Caloriecalculator ----------
 let calcState = { geslacht:'man', factor:1.375, doel:'onderhoud', tempo:'rustig' };
