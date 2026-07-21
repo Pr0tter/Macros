@@ -438,9 +438,13 @@
   .acc-sub{color:var(--muted);font-size:12px;margin-top:2px;}
   .uname-regels{color:var(--muted);font-size:12px;margin:8px 2px 0;}
   /* Leaderboard */
-  .lb-knoppen{display:flex;gap:6px;margin-bottom:12px;}
-  .lb-kies{flex:1;background:var(--ink);border:1px solid var(--line);border-radius:10px;color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;padding:9px 6px;cursor:pointer;}
+  .lb-knoppen{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;}
+  .lb-kies{flex:1 1 auto;min-width:0;background:var(--ink);border:1px solid var(--line);border-radius:10px;color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;padding:9px 8px;cursor:pointer;white-space:nowrap;}
   .lb-kies.actief{background:var(--eiwit);color:#06120C;border-color:var(--eiwit);}
+  .stats-rij{display:flex;gap:8px;margin:14px 0 4px;}
+  .stat-vak{flex:1;background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:12px 8px;text-align:center;}
+  .stat-getal{font-size:18px;font-weight:800;font-family:'JetBrains Mono',monospace;line-height:1.1;}
+  .stat-lab{font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-top:4px;}
   .lb-rij{display:flex;align-items:center;gap:11px;background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:11px 13px;margin-bottom:7px;}
   .lb-rij.ik{border-color:var(--eiwit);}
   .lb-pos{font-size:16px;font-weight:800;width:26px;text-align:center;flex-shrink:0;}
@@ -448,7 +452,7 @@
   .lb-naam em{color:var(--muted);font-style:normal;font-size:12px;}
   .lb-extra{color:var(--muted);font-size:13px;font-family:'JetBrains Mono',monospace;}
   .lb-diff{font-weight:700;margin-left:2px;}
-  .lb-diff.groen{color:var(--eiwit);} .lb-diff.rood{color:var(--danger);}
+  .lb-diff.groen{color:var(--eiwit);} .lb-diff.rood{color:var(--danger);} .lb-diff.blauw{color:#5B8DEF;}
   /* Profiel */
   .prof-kcal{font-size:34px;font-weight:800;font-family:'JetBrains Mono',monospace;}
   .prof-kcal span{font-size:14px;font-weight:600;color:var(--muted);font-family:'Space Grotesk',sans-serif;}
@@ -458,6 +462,10 @@
   .prof-item em{color:var(--muted);font-style:normal;font-size:12px;}
   .prof-ikc{font-family:'JetBrains Mono',monospace;color:var(--muted);flex-shrink:0;}
   .prof-wo{color:var(--muted);font-size:12px;font-family:'JetBrains Mono',monospace;text-align:right;}
+  .kd-kcal{font-size:28px;font-weight:800;font-family:'JetBrains Mono',monospace;margin-bottom:14px;}
+  .kd-kcal span{font-size:14px;font-weight:600;color:var(--muted);font-family:'Space Grotesk',sans-serif;}
+  .kd-kcal .kd-doel{font-size:13px;}
+  .kal-cel.klikbaar{cursor:pointer;}
 
   /* Account chip + gebruikersnaam */
   .account-chip{display:flex;width:fit-content;align-items:center;gap:6px;margin:0 auto 18px;background:var(--surface);border:1px solid var(--line);border-radius:999px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;padding:7px 14px;cursor:pointer;}
@@ -530,8 +538,11 @@
   <button class="terug" id="terugLeaderboard">‹ Home</button>
   <header><div class="titel">Leaderboards</div></header>
   <div class="lb-knoppen">
-    <button class="lb-kies actief" data-lb="doel">Doel gehaald</button>
-    <button class="lb-kies" data-lb="training">Trainingen</button>
+    <button class="lb-kies actief" data-lb="doel">Doel vandaag</button>
+    <button class="lb-kies" data-lb="trainingWeek">Training / week</button>
+    <button class="lb-kies" data-lb="totaalKcal">Totaal kcal</button>
+    <button class="lb-kies" data-lb="totaalTraining">Totaal training</button>
+    <button class="lb-kies" data-lb="besteDag">Hoogste dag</button>
   </div>
   <div class="lb-uitleg" id="lbUitleg">Wie zit vandaag het dichtst bij z'n caloriedoel?</div>
   <div id="vrLeaderboards"><div class="vr-leeg">Voeg vrienden toe om een ranglijst te zien.</div></div>
@@ -716,6 +727,17 @@
     <div class="kal-leeg-tekst" id="kalLeegTekst" style="display:none;">Stel eerst een caloriedoel in om de kleuren te zien.</div>
   </div>
 </div>
+
+<!-- Dag-detail (overlay) -->
+<div class="vr-overlay" id="kalDagOverlay">
+  <div class="vr-paneel">
+    <div class="vr-kop">
+      <div class="vr-titel" id="kalDagTitel">—</div>
+      <button class="wo-sluit" id="kalDagSluit">✕</button>
+    </div>
+    <div id="kalDagInhoud"></div>
+  </div>
+</div>
 </div><!-- /viewMacros -->
 
 <!-- ===== WORKOUT ===== -->
@@ -803,6 +825,7 @@
       </div>
       <button class="acc-edit" id="accEdit" title="Naam aanpassen">✎</button>
     </div>
+    <div id="accStats"></div>
 
     <div class="vr-sectie">
       <div class="vr-kopje">Vrienden toevoegen</div>
@@ -1523,7 +1546,27 @@ const DB = [
   {n:"Dame blanche",kc:200,e:3.5,k:24,v:10,stuk:150,se:"stuk"},
   {n:"Religieuse",kc:300,e:5,k:30,v:18,stuk:90,se:"stuk"},
   {n:"Rijsttaart",kc:250,e:6,k:32,v:11,stuk:120,se:"stuk"},
-  {n:"Fruitvlaai",kc:220,e:3.5,k:36,v:6,stuk:120,se:"stuk"}
+  {n:"Fruitvlaai",kc:220,e:3.5,k:36,v:6,stuk:120,se:"stuk"},
+  // === Zero / light dranken (per 100 ml) ===
+  {n:"Sprite Zero",kc:1,e:0,k:0,v:0,stuk:330,se:"blikje",drank:1},
+  {n:"Cola Light",kc:0.3,e:0,k:0,v:0,stuk:330,se:"blikje",drank:1},
+  {n:"7up Zero",kc:1,e:0,k:0,v:0,stuk:330,se:"blikje",drank:1},
+  {n:"Lipton Ice Tea Zero",kc:1,e:0,k:0,v:0,stuk:330,se:"blikje",drank:1},
+  {n:"Fuze Tea Zero",kc:2,e:0,k:0.3,v:0,stuk:400,se:"fles",drank:1},
+  {n:"Schweppes Zero",kc:2,e:0,k:0.3,v:0,stuk:330,se:"blikje",drank:1},
+  {n:"Monster Zero",kc:1,e:0,k:0.2,v:0,stuk:500,se:"blikje",drank:1},
+  {n:"Aquarius",kc:24,e:0,k:5.8,v:0,stuk:500,se:"fles",drank:1},
+  {n:"Spuitwater",kc:0,e:0,k:0,v:0,stuk:250,se:"glas",drank:1},
+  {n:"Plat water",kc:0,e:0,k:0,v:0,stuk:250,se:"glas",drank:1},
+  // === Extra eten ===
+  {n:"Kwark mager",kc:57,e:10,k:4,v:0.2},
+  {n:"Hüttenkäse (cottage cheese)",kc:98,e:11,k:3,v:4.3},
+  {n:"Kipfilet (gebakken)",kc:165,e:31,k:0,v:3.6},
+  {n:"Tonijn (blik, in water)",kc:116,e:26,k:0,v:1,stuk:80,se:"blikje"},
+  {n:"Zalm (gebakken)",kc:208,e:22,k:0,v:13},
+  {n:"Ei (gekookt)",kc:155,e:13,k:1.1,v:11,stuk:55,se:"ei"},
+  {n:"Rijst (gekookt)",kc:130,e:2.7,k:28,v:0.3},
+  {n:"Zoete aardappel",kc:86,e:1.6,k:20,v:0.1}
 ];
 
 // Doelwaarden voor de balkjes. Standaard tot je eigen doel is berekend.
@@ -1598,7 +1641,13 @@ async function bewaarOverrides(){
 async function bewaarGeschiedenis(){
   let kc=0; for(const it of log) kc += it.kc;
   const key = vandaagSleutel();
-  if(kc > 0){ geschiedenis[key] = { kcal: rond(kc), doel: doelGezet ? DOEL.kcal : null }; }
+  if(kc > 0){
+    geschiedenis[key] = {
+      kcal: rond(kc),
+      doel: doelGezet ? DOEL.kcal : null,
+      items: log.map(it=>({ n: it.n, label: it.label||'', kc: rond(it.kc) }))
+    };
+  }
   else { delete geschiedenis[key]; }
   await opslaanRaw('geschiedenis', JSON.stringify(geschiedenis));
 }
@@ -2326,6 +2375,8 @@ $('kalKnop').onclick = ()=>{
   $('kalOverlay').classList.add('open');
 };
 $('kalSluit').onclick = ()=> $('kalOverlay').classList.remove('open');
+$('kalDagSluit').onclick = ()=> $('kalDagOverlay').classList.remove('open');
+$('kalDagOverlay').onclick = (e)=>{ if(e.target===$('kalDagOverlay')) $('kalDagOverlay').classList.remove('open'); };
 $('kalOverlay').onclick = (e)=>{ if(e.target === $('kalOverlay')) $('kalOverlay').classList.remove('open'); };
 $('kalVorige').onclick = ()=>{ kalMaand.setMonth(kalMaand.getMonth()-1); renderKalender(); };
 $('kalVolgende').onclick = ()=>{ kalMaand.setMonth(kalMaand.getMonth()+1); renderKalender(); };
@@ -2357,15 +2408,38 @@ function renderKalender(){
     const isVandaag = key === vandaag;
     let cls = 'kal-cel';
     let binnen = '<span class="dag">'+d+'</span>';
+    let attr = '';
     if(entry){
       const kleur = kleurVoor(entry);
       if(kleur) cls += ' ' + kleur;
       binnen += '<span class="cal">'+entry.kcal.toLocaleString('nl-BE')+'</span>';
+      cls += ' klikbaar';
+      attr = ' data-dag="'+key+'"';
     }
     if(isVandaag) cls += ' vandaag';
-    html += '<div class="'+cls+'">'+binnen+'</div>';
+    html += '<div class="'+cls+'"'+attr+'>'+binnen+'</div>';
   }
   $('kalGrid').innerHTML = html;
+  $('kalGrid').querySelectorAll('[data-dag]').forEach(c=> c.onclick=()=>toonDagDetail(c.dataset.dag));
+}
+
+function toonDagDetail(key){
+  const entry = geschiedenis[key];
+  if(!entry) return;
+  const [j,m,d] = key.split('-');
+  const dagenVol=['zondag','maandag','dinsdag','woensdag','donderdag','vrijdag','zaterdag'];
+  const maandenVol=['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'];
+  const dt = new Date(+j, +m-1, +d);
+  $('kalDagTitel').textContent = dagenVol[dt.getDay()]+' '+(+d)+' '+maandenVol[+m-1];
+  let html = '<div class="kd-kcal">'+entry.kcal.toLocaleString('nl-BE')+' <span>kcal</span>'+
+             (entry.doel ? ' <span class="kd-doel">/ doel '+entry.doel.toLocaleString('nl-BE')+'</span>' : '')+'</div>';
+  if(entry.items && entry.items.length){
+    html += entry.items.map(it=>'<div class="prof-item"><span>'+escapeHtml(it.n||'?')+(it.label?' <em>('+escapeHtml(it.label)+')</em>':'')+'</span><span class="prof-ikc">'+(it.kc||0)+'</span></div>').join('');
+  } else {
+    html += '<div class="vr-leeg">Geen details bewaard voor deze dag.</div>';
+  }
+  $('kalDagInhoud').innerHTML = html;
+  $('kalDagOverlay').classList.add('open');
 }
 
 // ---------- Datum ----------
@@ -2993,6 +3067,8 @@ function openVrienden(){
   $('vrIk').textContent = fbNaam;
   $('accAvatar').textContent = (fbNaam||'?').charAt(0).toUpperCase();
   $('vrZoek').value=''; $('vrZoekRes').innerHTML='';
+  $('accStats').innerHTML = '';
+  if(fbDb && fbUid){ for(const k in statsCache) delete statsCache[k]; haalStats(fbUid).then(st=>{ $('accStats').innerHTML = statsBlok(st); }).catch(()=>{}); }
   startVriendenListeners();
   renderVerzoeken(); renderVrienden(); renderLeaderboard();
   $('vrOverlay').classList.add('open');
@@ -3067,17 +3143,26 @@ async function verwijderVerzoek(id){
 }
 
 // ----- Vriend bekijken -----
+function statsBlok(st){
+  return '<div class="stats-rij">'+
+    '<div class="stat-vak"><div class="stat-getal">'+(st.totaalKcal||0).toLocaleString('nl-BE')+'</div><div class="stat-lab">totaal kcal</div></div>'+
+    '<div class="stat-vak"><div class="stat-getal">'+(st.trainingTotaal||0)+'</div><div class="stat-lab">trainingen</div></div>'+
+    '<div class="stat-vak"><div class="stat-getal">'+(st.hoogsteDag||0).toLocaleString('nl-BE')+'</div><div class="stat-lab">hoogste dag</div></div>'+
+  '</div>';
+}
 async function bekijkVriend(uid, naam){
   $('profNaam').textContent = naam;
   $('profInhoud').innerHTML = '<div class="vr-leeg">Laden…</div>';
   $('profOverlay').classList.add('open');
   try{
     const key = vandaagSleutel();
-    const [dagSnap, woSnap] = await Promise.all([
+    const [dagSnap, woSnap, st] = await Promise.all([
       fbDb.collection('users').doc(uid).collection('dagen').doc(key).get(),
-      fbDb.collection('users').doc(uid).collection('data').doc('workout').get()
+      fbDb.collection('users').doc(uid).collection('data').doc('workout').get(),
+      haalStats(uid)
     ]);
     let html = '';
+    html += statsBlok(st);
     // Voeding vandaag
     if(dagSnap.exists){
       const d = dagSnap.data();
@@ -3125,12 +3210,40 @@ async function bekijkVriend(uid, naam){
 $('profSluit').onclick = ()=> $('profOverlay').classList.remove('open');
 $('profOverlay').onclick = (e)=>{ if(e.target===$('profOverlay')) $('profOverlay').classList.remove('open'); };
 
-// ----- Leaderboards -----
+// ----- Leaderboards + stats -----
 let lbKeuze = 'doel';
-function telWeekTrainingen(logObj){
-  const start = weekStartKey(); const d = {};
-  for(const oef in logObj){ for(const s of (logObj[oef]||[])){ if(s.datum && s.datum >= start) d[s.datum]=1; } }
-  return Object.keys(d).length;
+const statsCache = {};
+async function haalStats(uid){
+  if(statsCache[uid]) return statsCache[uid];
+  const today = vandaagSleutel();
+  let totaalKcal=0, hoogsteDag=0, dagenGeteld=0, todayKcal=null, todayDoel=null;
+  try{
+    const qs = await fbDb.collection('users').doc(uid).collection('dagen').get();
+    qs.forEach(doc=>{
+      const d = doc.data(); const kc = d.kcal||0;
+      totaalKcal += kc; if(kc>hoogsteDag) hoogsteDag = kc; if(kc>0) dagenGeteld++;
+      if(doc.id===today){ todayKcal = (d.kcal!=null?d.kcal:null); todayDoel = (d.doel!=null?d.doel:null); }
+    });
+  }catch(e){}
+  let trainingTotaal=0, trainingWeek=0;
+  try{
+    const w = await fbDb.collection('users').doc(uid).collection('data').doc('workout').get();
+    if(w.exists){
+      const log = w.data().log||{}; const start = weekStartKey();
+      const alle={}, week={};
+      for(const oef in log){ for(const s of (log[oef]||[])){ if(s.datum){ alle[s.datum]=1; if(s.datum>=start) week[s.datum]=1; } } }
+      trainingTotaal = Object.keys(alle).length; trainingWeek = Object.keys(week).length;
+    }
+  }catch(e){}
+  const st = { totaalKcal, hoogsteDag, dagenGeteld, todayKcal, todayDoel, trainingTotaal, trainingWeek };
+  statsCache[uid] = st; return st;
+}
+
+function doelKleurDiff(kcal, doel){
+  const diff = kcal - doel;
+  const kleur = Math.abs(diff) <= 100 ? 'blauw' : 'rood';   // binnen 100 = blauw, anders rood
+  const teken = diff>0 ? '+' : (diff<0 ? '−' : '');
+  return '<span class="lb-diff '+kleur+'">'+teken+Math.abs(diff).toLocaleString('nl-BE')+'</span>';
 }
 function tekenLeaderboard(box, rijen){
   if(rijen.length===0){ box.innerHTML='<div class="vr-leeg">Nog geen gegevens om te ranken.</div>'; return; }
@@ -3146,38 +3259,24 @@ async function renderLeaderboard(){
   if(vriendenLijst.length===0){ box.innerHTML='<div class="vr-leeg">Voeg vrienden toe om een ranglijst te zien.</div>'; return; }
   const deelnemers = [{uid:fbUid, naam:fbNaam, mij:true}, ...vriendenLijst.map(v=>({uid:v.uid, naam:v.naam, mij:false}))];
   box.innerHTML = '<div class="vr-leeg">Laden…</div>';
-  const today = vandaagSleutel();
+  for(const k in statsCache) delete statsCache[k];   // verse cijfers per keer
   try{
+    const stats = await Promise.all(deelnemers.map(p=> haalStats(p.uid)));
+    let rijen = deelnemers.map((p,i)=>({ ...p, st: stats[i] }));
     if(lbKeuze==='doel'){
-      const res = await Promise.all(deelnemers.map(async p=>{
-        try{
-          const s = await fbDb.collection('users').doc(p.uid).collection('dagen').doc(today).get();
-          if(s.exists){ const d=s.data(); return {...p, kcal:(d.kcal!=null?d.kcal:null), doel:(d.doel!=null?d.doel:null)}; }
-        }catch(e){}
-        return {...p, kcal:null, doel:null};
-      }));
-      const met = res.filter(r=> r.doel!=null && r.kcal!=null)
-        .map(r=>{
-          const diff = r.kcal - r.doel;
-          const kleur = diff>0 ? 'rood' : 'groen';
-          const teken = diff>0 ? '+' : (diff<0 ? '−' : '');
-          const verschil = '<span class="lb-diff '+kleur+'">'+teken+Math.abs(diff).toLocaleString('nl-BE')+'</span>';
-          return {...r, sort:Math.abs(diff), extra:r.kcal.toLocaleString('nl-BE')+' / '+r.doel.toLocaleString('nl-BE')+'  '+verschil};
-        })
+      const met = rijen.filter(r=> r.st.todayDoel!=null && r.st.todayKcal!=null)
+        .map(r=>({...r, sort:Math.abs(r.st.todayKcal-r.st.todayDoel), extra:r.st.todayKcal.toLocaleString('nl-BE')+' / '+r.st.todayDoel.toLocaleString('nl-BE')+'  '+doelKleurDiff(r.st.todayKcal, r.st.todayDoel)}))
         .sort((a,b)=>a.sort-b.sort);
-      const zonder = res.filter(r=> !(r.doel!=null && r.kcal!=null)).map(r=>({...r, extra:'nog geen data'}));
+      const zonder = rijen.filter(r=> !(r.st.todayDoel!=null && r.st.todayKcal!=null)).map(r=>({...r, extra:'nog geen data'}));
       tekenLeaderboard(box, [...met, ...zonder]);
-    } else {
-      const res = await Promise.all(deelnemers.map(async p=>{
-        try{
-          const s = await fbDb.collection('users').doc(p.uid).collection('data').doc('workout').get();
-          if(s.exists){ return {...p, aantal: telWeekTrainingen(s.data().log||{})}; }
-        }catch(e){}
-        return {...p, aantal:0};
-      }));
-      const rijen = res.map(r=>({...r, sort:r.aantal, extra:r.aantal+' dag'+(r.aantal===1?'':'en')}))
-        .sort((a,b)=>b.sort-a.sort);
-      tekenLeaderboard(box, rijen);
+    } else if(lbKeuze==='trainingWeek'){
+      tekenLeaderboard(box, rijen.map(r=>({...r, sort:r.st.trainingWeek, extra:r.st.trainingWeek+' dag'+(r.st.trainingWeek===1?'':'en')})).sort((a,b)=>b.sort-a.sort));
+    } else if(lbKeuze==='totaalKcal'){
+      tekenLeaderboard(box, rijen.map(r=>({...r, sort:r.st.totaalKcal, extra:r.st.totaalKcal.toLocaleString('nl-BE')+' kcal'})).sort((a,b)=>b.sort-a.sort));
+    } else if(lbKeuze==='totaalTraining'){
+      tekenLeaderboard(box, rijen.map(r=>({...r, sort:r.st.trainingTotaal, extra:r.st.trainingTotaal+' dag'+(r.st.trainingTotaal===1?'':'en')})).sort((a,b)=>b.sort-a.sort));
+    } else { // besteDag
+      tekenLeaderboard(box, rijen.map(r=>({...r, sort:r.st.hoogsteDag, extra:r.st.hoogsteDag.toLocaleString('nl-BE')+' kcal'})).sort((a,b)=>b.sort-a.sort));
     }
   }catch(e){ box.innerHTML='<div class="vr-leeg">Kon ranglijst niet laden.</div>'; }
 }
@@ -3191,7 +3290,15 @@ document.querySelectorAll('.lb-kies').forEach(b=>{
     lbKeuze = b.dataset.lb;
     document.querySelectorAll('.lb-kies').forEach(x=>x.classList.remove('actief'));
     b.classList.add('actief');
-    const u = $('lbUitleg'); if(u) u.textContent = (lbKeuze==='doel') ? "Wie zit vandaag het dichtst bij z'n caloriedoel?" : 'Wie trainde de meeste dagen deze week?';
+    const u = $('lbUitleg');
+    const txt = {
+      doel: "Wie zit vandaag het dichtst bij z'n doel? Blauw = binnen 100 kcal, rood = meer dan 100 kcal ernaast.",
+      trainingWeek: 'Wie trainde de meeste dagen deze week?',
+      totaalKcal: 'Totaal aantal calorieën ooit gelogd (alle dagen samen).',
+      totaalTraining: 'Totaal aantal dagen getraind (aller tijden).',
+      besteDag: 'Hoogste aantal calorieën op één dag.'
+    };
+    if(u) u.textContent = txt[lbKeuze] || '';
     renderLeaderboard();
   };
 });
