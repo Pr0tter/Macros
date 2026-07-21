@@ -394,6 +394,20 @@
   .wo-grafiek svg{width:100%;height:auto;display:block;}
   .wo-grafiek-leeg{text-align:center;color:var(--muted);font-size:13px;padding:24px 10px;}
 
+  /* Account chip + gebruikersnaam */
+  .account-chip{display:inline-flex;align-items:center;gap:6px;margin:0 auto 18px;background:var(--surface);border:1px solid var(--line);border-radius:999px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;padding:7px 14px;cursor:pointer;}
+  .account-chip:active{background:var(--surface-2);}
+  .uname-overlay{position:fixed;inset:0;background:rgba(6,8,11,.94);display:none;align-items:center;justify-content:center;padding:24px;z-index:80;}
+  .uname-overlay.open{display:flex;}
+  .uname-paneel{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px;width:100%;max-width:400px;}
+  .uname-titel{font-size:20px;font-weight:700;margin-bottom:8px;}
+  .uname-uitleg{color:var(--muted);font-size:13px;line-height:1.5;margin-bottom:18px;}
+  .uname-paneel input{width:100%;background:var(--ink);border:1px solid var(--line);border-radius:12px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:17px;padding:13px 14px;outline:none;}
+  .uname-paneel input:focus{border-color:var(--eiwit);}
+  .uname-fout{color:var(--danger);font-size:13px;min-height:18px;margin:8px 2px 0;}
+  .uname-kies{width:100%;margin-top:12px;background:var(--eiwit);border:none;border-radius:12px;color:#06120C;font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;padding:14px;cursor:pointer;}
+  .uname-kies:disabled{opacity:.6;}
+
   /* Barcode scanner */
   .scan-knop{width:100%;margin-top:8px;background:var(--surface);border:1px solid var(--vet);border-radius:14px;color:var(--vet);font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;padding:13px;cursor:pointer;}
   .scan-knop:active{background:var(--surface-2);}
@@ -425,6 +439,7 @@
   <div class="home-wrap">
     <div class="home-merk">FitLog</div>
     <div class="home-datum" id="homeDatum"></div>
+    <button class="account-chip" id="accountChip" style="display:none;"></button>
     <button class="home-kaart k-voeding" id="gaMacros">
       <div class="hk-icoon voeding"><span></span><span></span><span></span></div>
       <div class="hk-tekst"><div class="hk-naam">Voeding</div><div class="hk-sub" id="homeMacroSub">Calorieën &amp; macro's bijhouden</div></div>
@@ -685,6 +700,17 @@
     <div class="wo-metriek" id="woMetriek"></div>
     <div class="wo-grafiek" id="woGrafiek"></div>
     <div class="wo-grafiek-leeg" id="woGrafiekLeeg" style="display:none;">Log deze oefening minstens 2 keer om progressie te zien.</div>
+  </div>
+</div>
+
+<!-- Gebruikersnaam kiezen (overlay) -->
+<div class="uname-overlay" id="unameOverlay">
+  <div class="uname-paneel">
+    <div class="uname-titel">Kies je gebruikersnaam</div>
+    <div class="uname-uitleg">Zo vinden vrienden je later terug. Geen e-mail nodig — dit blijft op dit toestel.</div>
+    <input id="unameInput" type="text" maxlength="20" autocomplete="off" placeholder="bv. warre_09">
+    <div class="uname-fout" id="unameFout"></div>
+    <button class="uname-kies" id="unameKies">Klaar</button>
   </div>
 </div>
 
@@ -1426,6 +1452,7 @@ async function laad(){
 async function bewaarLog(){
   await opslaanRaw('dag-log', JSON.stringify({datum:vandaagSleutel(), items:log}));
   await bewaarGeschiedenis();
+  syncStraks();
 }
 async function bewaarEigen(){
   await opslaanRaw('eigen-eten', JSON.stringify(eigen));
@@ -2115,6 +2142,7 @@ async function bewaarDoel(){
       leeftijd:$('cLeeftijd').value, lengte:$('cLengte').value, gewicht:$('cGewicht').value
     }
   }));
+  syncStraks();
 }
 
 function syncCalcUI(iv){
@@ -2261,7 +2289,7 @@ async function laadWorkout(){
   if(t){ try{ oefTypes = JSON.parse(t); }catch(e){} }
 }
 async function bewaarSjablonen(){ await opslaanRaw('workout-sjablonen', JSON.stringify(sjablonen)); }
-async function bewaarWorkoutLog(){ await opslaanRaw('workout-log', JSON.stringify(woLog)); }
+async function bewaarWorkoutLog(){ await opslaanRaw('workout-log', JSON.stringify(woLog)); syncStraks(); }
 async function bewaarTypes(){ await opslaanRaw('workout-types', JSON.stringify(oefTypes)); }
 function isCardio(oef){ return oefTypes[oef] === 'cardio'; }
 
@@ -2628,6 +2656,126 @@ function datumKort(sleutel){
 }
 
 // ---------- Start ----------
+// ---------- Firebase / sociaal (fase 1: account + gebruikersnaam + sync) ----------
+const firebaseConfig = {
+  apiKey: "AIzaSyD41Le7bUXHD3oUSHN1fyldRKhEs9OzM48",
+  authDomain: "fitlog-app-fb469.firebaseapp.com",
+  projectId: "fitlog-app-fb469",
+  storageBucket: "fitlog-app-fb469.firebasestorage.app",
+  messagingSenderId: "862661468874",
+  appId: "1:862661468874:web:479086ec36f59f7e328a33"
+};
+let fbDb = null, fbUid = null, fbNaam = null, fbKlaar = false, syncTimer = null;
+
+function laadFirebase(){
+  return new Promise((resolve)=>{
+    if(window.firebase && firebase.firestore) return resolve(true);
+    const urls = [
+      'https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js',
+      'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js',
+      'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js'
+    ];
+    let i = 0;
+    (function volgende(){
+      if(i >= urls.length) return resolve(!!(window.firebase && firebase.firestore));
+      const s = document.createElement('script');
+      s.src = urls[i++]; s.onload = volgende; s.onerror = ()=>resolve(false);
+      document.head.appendChild(s);
+    })();
+  });
+}
+
+async function startFirebase(){
+  const ok = await laadFirebase();
+  if(!ok || !window.firebase){ return; }   // offline/geblokkeerd → app werkt gewoon lokaal verder
+  try{
+    if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    fbDb = firebase.firestore();
+    firebase.auth().onAuthStateChanged(async (user)=>{
+      if(!user) return;
+      fbUid = user.uid;
+      try{
+        const snap = await fbDb.collection('users').doc(fbUid).get();
+        if(snap.exists && snap.data().username){
+          fbNaam = snap.data().username; fbKlaar = true;
+          toonAccountChip(); syncNu();
+        } else {
+          vraagGebruikersnaam();
+        }
+      }catch(e){}
+    });
+    await firebase.auth().signInAnonymously();
+  }catch(e){}
+}
+
+function toonAccountChip(){
+  const el = $('accountChip'); if(!el) return;
+  if(fbNaam){ el.textContent = '👤 ' + fbNaam; el.style.display = 'inline-flex'; }
+  else { el.style.display = 'none'; }
+}
+
+function vraagGebruikersnaam(){
+  $('unameFout').textContent = '';
+  $('unameInput').value = '';
+  $('unameOverlay').classList.add('open');
+  setTimeout(()=>{ try{ $('unameInput').focus(); }catch(e){} }, 100);
+}
+
+async function kiesGebruikersnaam(){
+  const naam = $('unameInput').value.trim();
+  if(!/^[A-Za-z0-9_]{3,20}$/.test(naam)){
+    $('unameFout').textContent = '3–20 tekens: letters, cijfers of _';
+    return;
+  }
+  if(!fbDb || !fbUid){ $('unameFout').textContent = 'Even geen verbinding — probeer zo opnieuw.'; return; }
+  const lower = naam.toLowerCase();
+  $('unameKies').disabled = true; $('unameFout').textContent = 'Controleren…';
+  try{
+    const ref = fbDb.collection('usernames').doc(lower);
+    const bestaat = await ref.get();
+    if(bestaat.exists && bestaat.data().uid !== fbUid){
+      $('unameFout').textContent = 'Die naam is al bezet, kies een andere.';
+      $('unameKies').disabled = false; return;
+    }
+    await ref.set({ uid: fbUid });
+    await fbDb.collection('users').doc(fbUid).set({
+      username: naam, unameLower: lower,
+      aangemaakt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+    fbNaam = naam; fbKlaar = true;
+    $('unameOverlay').classList.remove('open');
+    $('unameKies').disabled = false;
+    toonAccountChip(); syncNu();
+  }catch(e){
+    $('unameFout').textContent = 'Er ging iets mis. Probeer opnieuw.';
+    $('unameKies').disabled = false;
+  }
+}
+
+function syncStraks(){
+  if(!fbKlaar) return;
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(syncNu, 1500);
+}
+async function syncNu(){
+  if(!fbKlaar || !fbDb || !fbUid) return;
+  try{
+    let kc=0,e=0,k=0,v=0; for(const it of log){ kc+=it.kc; e+=it.e; k+=it.k; v+=it.v; }
+    const key = vandaagSleutel();
+    const doel = doelGezet ? DOEL.kcal : null;
+    const u = fbDb.collection('users').doc(fbUid);
+    await u.set({ username: fbNaam, doel: doel, laatste: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+    await u.collection('dagen').doc(key).set({
+      kcal: Math.round(kc), e: Math.round(e), k: Math.round(k), v: Math.round(v), doel: doel
+    }, { merge: true });
+    await u.collection('data').doc('workout').set({ log: woLog, types: oefTypes });
+  }catch(e){}
+}
+
+$('unameKies').onclick = kiesGebruikersnaam;
+$('unameInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') kiesGebruikersnaam(); });
+$('accountChip').onclick = ()=>{ alert('Ingelogd als ' + (fbNaam||'') + '.\nVrienden en leaderboards komen in de volgende stap.'); };
+
 (async function init(){
   toonDatum();
   await laad();
@@ -2639,6 +2787,8 @@ function datumKort(sleutel){
   updateHomeTeasers();
   // Fallback-scanner alvast laden op toestellen zonder ingebouwde lezer (bv. iPhone)
   setTimeout(()=>{ if(!heeftNativeScanner()) laadScannerLib().catch(()=>{}); }, 1200);
+  // Sociaal (fase 1): anoniem account + gebruikersnaam + cloud-sync
+  setTimeout(()=>{ startFirebase(); }, 400);
 })();
 </script>
 </body>
