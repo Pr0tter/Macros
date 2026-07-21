@@ -688,7 +688,7 @@
       <button class="wo-sluit" id="scanSluit">✕</button>
     </div>
     <div id="scanReader" class="scan-reader"></div>
-    <div class="scan-status" id="scanStatus">Richt de camera op de streepjescode…</div>
+    <div class="scan-status" id="scanStatus">Hou de barcode volledig in het balkje, ~10 cm van de camera.</div>
   </div>
 </div>
 
@@ -1659,7 +1659,7 @@ function openNieuw(naam, vooraf){
     $('nE').value = (vooraf.e!=null) ? vooraf.e : '';
     $('nK').value = (vooraf.k!=null) ? vooraf.k : '';
     $('nV').value = (vooraf.v!=null) ? vooraf.v : '';
-    $('nStuk').value = '';
+    $('nStuk').value = (vooraf.stuk!=null && vooraf.stuk!=='') ? vooraf.stuk : '';
     zetNieuwSoort(!!vooraf.drank);
   } else {
     $('nKcal').value=''; $('nE').value=''; $('nK').value=''; $('nV').value=''; $('nStuk').value='';
@@ -1726,8 +1726,9 @@ $('nBewaar').onclick = ()=>{
   } else {
     const f = { n:naam, kc:waarden.kc, e:waarden.e, k:waarden.k, v:waarden.v };
     if(nDrank){ f.drank=1; }
-    if(!isNaN(st) && st>0){ f.stuk=st; f.se=seStandaard; }
+    if(!isNaN(st) && st>0){ f.stuk=st; f.se = scanSe || seStandaard; }
     if(scanCode){ f.code = scanCode; scanCode = null; }
+    scanSe = null;
     eigen.unshift(f);
     bewaarEigen(); sluitNieuw(); herstelZoek(); openPortie(f);
   }
@@ -1765,6 +1766,7 @@ function herstelZoek(){ zoekInput.value=''; resBox.classList.remove('open'); res
 
 // ---------- Barcode scanner (Open Food Facts) ----------
 let scanCode = null;       // barcode dat bij een nieuw item bewaard wordt
+let scanSe = null;         // eenheidslabel voor portie (bv. 'portie') bij een scan
 let scanner = null;        // Html5Qrcode-instantie
 let scanActief = false;
 let scanLibLaadt = null;   // promise tijdens laden
@@ -1814,7 +1816,7 @@ async function startScan(){
     scanActief = true;
     let bezigMetVerwerken = false;
     await scanner.start(
-      { facingMode: 'environment' },
+      { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
       { fps: 10, qrbox: (vw, vh)=>({ width: Math.min(vw-20, 300), height: Math.min(vh-30, 110) }) },
       async (tekst)=>{
         if(bezigMetVerwerken) return;
@@ -1823,7 +1825,7 @@ async function startScan(){
       },
       ()=>{}   // negeer "niet gevonden per frame"
     );
-    scanStatus('Richt de camera op de streepjescode…');
+    scanStatus('Hou de barcode plat en volledig in het balkje, ~10 cm van de camera. Zorg voor genoeg licht en hou even stil.');
   }catch(e){
     scanStatus('Geen toegang tot de camera. Sta camera toe in je browserinstellingen.', 'fout');
   }
@@ -1839,6 +1841,14 @@ async function stopScan(){
   $('scanOverlay').classList.remove('open');
 }
 
+function lijktDrank(p){
+  const tags = (p.categories_tags || []).join(' ');
+  if(/beverage|drink|soda|water|juice|iced-tea|tea|coffee|energy-drink|beer|wine|milk|smoothie|cola|limonade|nectar|squash|cordial/.test(tags)) return true;
+  const q = ((p.quantity||'') + ' ' + (p.serving_size||'')).toLowerCase();
+  if(/(\d|\s)(ml|cl|l|litre|liter)\b/.test(q) && !/(\d|\s)(g|kg|gram)\b/.test(q)) return true;
+  return false;
+}
+
 async function verwerkBarcode(code){
   scanStatus('Barcode '+code+' — opzoeken…', 'bezig');
   // 1) Al bij mijn eigen producten? → meteen loggen
@@ -1846,7 +1856,7 @@ async function verwerkBarcode(code){
   if(bestaand){ await stopScan(); openPortie(bestaand); return; }
   // 2) Open Food Facts
   try{
-    const res = await fetch('https://world.openfoodfacts.org/api/v2/product/'+encodeURIComponent(code)+'.json?fields=product_name,brands,nutriments');
+    const res = await fetch('https://world.openfoodfacts.org/api/v2/product/'+encodeURIComponent(code)+'.json?fields=product_name,brands,nutriments,categories_tags,quantity,serving_size,serving_quantity');
     const data = await res.json();
     if(data.status === 1 && data.product){
       const p = data.product;
@@ -1855,18 +1865,25 @@ async function verwerkBarcode(code){
       if(kcal==null && n['energy-kj_100g']!=null) kcal = n['energy-kj_100g']/4.184;
       if(kcal==null && n['energy_100g']!=null) kcal = n['energy_100g']/4.184;
       const naam = [p.brands ? p.brands.split(',')[0].trim() : '', p.product_name || ''].filter(Boolean).join(' ').trim() || ('Product '+code);
+      const drank = lijktDrank(p);
+      // portiegrootte van de verpakking (bv. noten: portie 20 g)
+      let portie = parseFloat(p.serving_quantity);
+      if(isNaN(portie) || portie<=0) portie = null;
       scanCode = code;
+      scanSe = portie ? 'portie' : null;
       await stopScan();
       if(kcal!=null){
         openNieuw(naam, {
           kcal: Math.round(kcal),
           e: n['proteins_100g']!=null ? Math.round(n['proteins_100g']*10)/10 : '',
           k: n['carbohydrates_100g']!=null ? Math.round(n['carbohydrates_100g']*10)/10 : '',
-          v: n['fat_100g']!=null ? Math.round(n['fat_100g']*10)/10 : ''
+          v: n['fat_100g']!=null ? Math.round(n['fat_100g']*10)/10 : '',
+          drank: drank,
+          stuk: portie || ''
         });
       } else {
-        // gevonden, maar zonder calorieën → naam invullen, rest zelf
-        openNieuw(naam);
+        // gevonden, maar zonder calorieën → naam + type invullen, rest zelf
+        openNieuw(naam, { drank: drank, stuk: portie || '' });
       }
     } else {
       // niet gevonden → leeg formulier openen om zelf in te vullen
@@ -1877,7 +1894,6 @@ async function verwerkBarcode(code){
     }
   }catch(e){
     scanStatus('Opzoeken mislukt. Probeer opnieuw of vul zelf in.', 'fout');
-    // laat scanner even open; gebruiker kan sluiten
     setTimeout(()=>{ /* niets */ }, 10);
   }
 }
