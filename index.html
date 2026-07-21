@@ -1918,19 +1918,14 @@ async function startFallback(){
       Html5QrcodeSupportedFormats.CODE_128
     ]
   });
-  const config = { fps: 12, qrbox: (vw, vh)=>({ width: Math.min(vw-16, 340), height: Math.min(vh-24, 130) }) };
+  const config = { fps: 10, qrbox: (vw, vh)=>({ width: Math.min(vw-20, 300), height: Math.min(vh-30, 110) }) };
   const onDecode = async (tekst)=>{ if(scanBezig) return; scanBezig = true; await verwerkBarcode(tekst); };
-  const pogingen = [
-    { facingMode:'environment', width:{ ideal:1920 }, height:{ ideal:1080 } },
-    { facingMode:'environment' },
-    true
-  ];
+  const pogingen = [ { facingMode:'environment' }, true ];
   let laatsteFout = null;
   for(const cam of pogingen){
     try{
       scanActief = true;
       await scanner.start(cam, config, onDecode, ()=>{});
-      pasDigitaleZoomToe();  // beeld softwarematig uitvergroten (vooral voor iPhone)
       scanStatus('Hou de barcode in het vak — genoeg licht en dicht genoeg.');
       return;
     }catch(e){
@@ -1940,13 +1935,6 @@ async function startFallback(){
     }
   }
   scanFoutmelding(laatsteFout);
-}
-
-function pasDigitaleZoomToe(){
-  try{
-    const v = $('scanReader').querySelector('video');
-    if(v){ v.style.transform = 'scale(1.5)'; v.style.transformOrigin = 'center center'; }
-  }catch(e){}
 }
 
 async function stopScan(){
