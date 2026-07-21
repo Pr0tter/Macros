@@ -3125,32 +3125,52 @@ $('profOverlay').onclick = (e)=>{ if(e.target===$('profOverlay')) $('profOverlay
 
 // ----- Leaderboards -----
 let lbKeuze = 'doel';
+function telWeekTrainingen(logObj){
+  const start = weekStartKey(); const d = {};
+  for(const oef in logObj){ for(const s of (logObj[oef]||[])){ if(s.datum && s.datum >= start) d[s.datum]=1; } }
+  return Object.keys(d).length;
+}
+function tekenLeaderboard(box, rijen){
+  if(rijen.length===0){ box.innerHTML='<div class="vr-leeg">Nog geen gegevens om te ranken.</div>'; return; }
+  const med = ['🥇','🥈','🥉'];
+  box.innerHTML = rijen.map((r,i)=>
+    '<div class="lb-rij'+(r.mij?' ik':'')+'"><span class="lb-pos">'+(med[i]||(i+1))+'</span>'+
+    '<span class="lb-naam">'+escapeHtml(r.naam)+(r.mij?' <em>(jij)</em>':'')+'</span>'+
+    '<span class="lb-extra">'+escapeHtml(r.extra)+'</span></div>'
+  ).join('');
+}
 async function renderLeaderboard(){
   const box = $('vrLeaderboards'); if(!box) return;
   if(vriendenLijst.length===0){ box.innerHTML='<div class="vr-leeg">Voeg vrienden toe om een ranglijst te zien.</div>'; return; }
-  const deelnemers = [{uid:fbUid, naam:fbNaam}, ...vriendenLijst];
+  const deelnemers = [{uid:fbUid, naam:fbNaam, mij:true}, ...vriendenLijst.map(v=>({uid:v.uid, naam:v.naam, mij:false}))];
   box.innerHTML = '<div class="vr-leeg">Laden…</div>';
+  const today = vandaagSleutel();
   try{
-    const docs = await Promise.all(deelnemers.map(x=> fbDb.collection('users').doc(x.uid).get()));
-    const today = vandaagSleutel();
-    let rijen = docs.map((d,i)=>({ naam: deelnemers[i].naam, mij: deelnemers[i].uid===fbUid, data: d.exists?d.data():{} }));
     if(lbKeuze==='doel'){
-      rijen = rijen
-        .filter(r=> r.data.doel && r.data.vandaagDatum===today)
-        .map(r=>{ const kc=r.data.vandaagKcal||0; return { naam:r.naam, mij:r.mij, sort:Math.abs(kc-r.data.doel), extra: kc.toLocaleString('nl-BE')+' / '+r.data.doel.toLocaleString('nl-BE')+' kcal' }; })
+      const res = await Promise.all(deelnemers.map(async p=>{
+        try{
+          const s = await fbDb.collection('users').doc(p.uid).collection('dagen').doc(today).get();
+          if(s.exists){ const d=s.data(); return {...p, kcal:(d.kcal!=null?d.kcal:null), doel:(d.doel!=null?d.doel:null)}; }
+        }catch(e){}
+        return {...p, kcal:null, doel:null};
+      }));
+      const met = res.filter(r=> r.doel!=null && r.kcal!=null)
+        .map(r=>({...r, sort:Math.abs(r.kcal-r.doel), extra:r.kcal.toLocaleString('nl-BE')+' / '+r.doel.toLocaleString('nl-BE')}))
         .sort((a,b)=>a.sort-b.sort);
+      const zonder = res.filter(r=> !(r.doel!=null && r.kcal!=null)).map(r=>({...r, extra:'nog geen data'}));
+      tekenLeaderboard(box, [...met, ...zonder]);
     } else {
-      rijen = rijen
-        .map(r=>{ const t=r.data.trainingWeek||0; return { naam:r.naam, mij:r.mij, sort:t, extra: t+' dag'+(t===1?'':'en') }; })
+      const res = await Promise.all(deelnemers.map(async p=>{
+        try{
+          const s = await fbDb.collection('users').doc(p.uid).collection('data').doc('workout').get();
+          if(s.exists){ return {...p, aantal: telWeekTrainingen(s.data().log||{})}; }
+        }catch(e){}
+        return {...p, aantal:0};
+      }));
+      const rijen = res.map(r=>({...r, sort:r.aantal, extra:r.aantal+' dag'+(r.aantal===1?'':'en')}))
         .sort((a,b)=>b.sort-a.sort);
+      tekenLeaderboard(box, rijen);
     }
-    if(rijen.length===0){ box.innerHTML='<div class="vr-leeg">Nog geen gegevens om te ranken.</div>'; return; }
-    const medaille = ['🥇','🥈','🥉'];
-    box.innerHTML = rijen.map((r,i)=>
-      '<div class="lb-rij'+(r.mij?' ik':'')+'"><span class="lb-pos">'+(medaille[i]||(i+1))+'</span>'+
-      '<span class="lb-naam">'+escapeHtml(r.naam)+(r.mij?' <em>(jij)</em>':'')+'</span>'+
-      '<span class="lb-extra">'+escapeHtml(r.extra)+'</span></div>'
-    ).join('');
   }catch(e){ box.innerHTML='<div class="vr-leeg">Kon ranglijst niet laden.</div>'; }
 }
 
