@@ -373,6 +373,19 @@
   .wo-progressie{width:100%;margin-top:10px;background:none;border:1px solid var(--vet);border-radius:12px;color:var(--vet);font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;padding:12px;cursor:pointer;}
   .wo-verwijder-oef{width:100%;margin-top:10px;background:none;border:1px solid var(--line);border-radius:12px;color:var(--danger);font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;padding:11px;cursor:pointer;}
 
+  /* Cardio */
+  .wo-typekeuze{display:flex;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:4px;margin-bottom:10px;}
+  .wo-typekeuze button{flex:1;background:none;border:none;border-radius:9px;color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;padding:10px 0;cursor:pointer;}
+  .wo-typekeuze button.actief{background:var(--vet);color:#04122E;}
+  .wo-cardio-rij{display:flex;align-items:center;gap:9px;margin-bottom:11px;}
+  .wo-cardio-rij .lab{width:78px;font-size:13px;color:var(--muted);flex-shrink:0;}
+  .wo-cardio-rij input{flex:1;background:var(--ink);border:1px solid var(--line);border-radius:10px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;text-align:center;padding:11px 4px;outline:none;min-width:0;}
+  .wo-cardio-rij input:focus{border-color:var(--vet);}
+  .wo-cardio-rij .eh{color:var(--muted);font-size:12px;flex-shrink:0;width:30px;}
+  .wo-cardio-rij .delta{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;width:56px;flex-shrink:0;text-align:right;}
+  .wo-cardio-rij .delta.op{color:var(--eiwit);} .wo-cardio-rij .delta.neer{color:var(--danger);} .wo-cardio-rij .delta.gelijk{color:var(--muted);}
+  .wo-oef .badge{display:inline-block;font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:var(--vet);border:1px solid rgba(125,163,255,.5);border-radius:6px;padding:1px 5px;margin-left:8px;vertical-align:middle;}
+
   /* Grafiek */
   .wo-metriek{display:flex;gap:6px;background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:4px;margin-bottom:14px;}
   .wo-metriek button{flex:1;background:none;border:none;border-radius:9px;color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;padding:9px 0;cursor:pointer;}
@@ -595,6 +608,10 @@
 
   <div id="woLijst"></div>
 
+  <div class="wo-typekeuze" id="woTypeKeuze">
+    <button data-t="kracht" class="actief">Kracht</button>
+    <button data-t="cardio">Cardio</button>
+  </div>
   <div class="wo-toevoeg">
     <input id="woNieuwOef" type="text" placeholder="Oefening toevoegen…" autocomplete="off">
     <button id="woVoegToe">+</button>
@@ -611,9 +628,23 @@
     </div>
     <div class="wo-vorige" id="woVorige"></div>
     <div class="wo-sets" id="woSets"></div>
-    <div class="wo-set-knoppen">
+    <div class="wo-set-knoppen" id="woSetKnoppen">
       <button id="woMinSet">− set</button>
       <button id="woPlusSet">+ set</button>
+    </div>
+    <div id="woCardio" style="display:none;">
+      <div class="wo-cardio-rij">
+        <span class="lab">Tijd</span>
+        <input class="cDuur" id="cDuur" type="number" inputmode="decimal" placeholder="min">
+        <span class="eh">min</span>
+        <span class="delta gelijk" id="cDuurDelta"></span>
+      </div>
+      <div class="wo-cardio-rij">
+        <span class="lab">Afstand</span>
+        <input class="cAfstand" id="cAfstand" type="number" inputmode="decimal" placeholder="km">
+        <span class="eh">km</span>
+        <span class="delta gelijk" id="cAfstandDelta"></span>
+      </div>
     </div>
     <button class="wo-opslaan" id="woOpslaan">Opslaan</button>
     <button class="wo-progressie" id="woProgressie">📈 Progressie bekijken</button>
@@ -628,11 +659,7 @@
       <div class="wo-oef-naam" id="woGrafiekNaam">—</div>
       <button class="wo-sluit" id="woGrafiekSluit">✕</button>
     </div>
-    <div class="wo-metriek" id="woMetriek">
-      <button data-m="gewicht" class="actief">Gewicht</button>
-      <button data-m="volume">Volume</button>
-      <button data-m="reps">Reps</button>
-    </div>
+    <div class="wo-metriek" id="woMetriek"></div>
     <div class="wo-grafiek" id="woGrafiek"></div>
     <div class="wo-grafiek-leeg" id="woGrafiekLeeg" style="display:none;">Log deze oefening minstens 2 keer om progressie te zien.</div>
   </div>
@@ -1228,7 +1255,78 @@ const DB = [
   {n:"Sojamelk",kc:42,e:3.3,k:2.5,v:1.8,stuk:250,se:"glas",drank:1},
   {n:"Amandelmelk",kc:24,e:0.5,k:3,v:1.1,stuk:250,se:"glas",drank:1},
   {n:"Kokoswater",kc:19,e:0.7,k:3.7,v:0.2,stuk:250,se:"glas",drank:1},
-  {n:"IJskoffie",kc:60,e:1.5,k:9,v:1.5,stuk:250,se:"glas",drank:1}
+  {n:"IJskoffie",kc:60,e:1.5,k:9,v:1.5,stuk:250,se:"glas",drank:1},
+  // === Merkchips & hartige snacks ===
+  {n:"Lays Naturel",kc:536,e:6,k:50,v:35},
+  {n:"Lays Paprika",kc:525,e:6,k:53,v:32},
+  {n:"Lays Sour Cream & Onion",kc:530,e:6,k:52,v:33},
+  {n:"Lays Barbecue",kc:525,e:6,k:54,v:31},
+  {n:"Lays Bolognese",kc:520,e:6,k:54,v:30},
+  {n:"Lays Wokkels",kc:510,e:5,k:58,v:28},
+  {n:"Doritos Nacho Cheese",kc:498,e:7,k:62,v:25},
+  {n:"Doritos Cool American",kc:500,e:6.5,k:62,v:25},
+  {n:"Doritos Sweet Chili Pepper",kc:490,e:6,k:64,v:23},
+  {n:"Pringles Original",kc:536,e:4,k:51,v:34},
+  {n:"Pringles Paprika",kc:530,e:4,k:52,v:33},
+  {n:"Pringles Sour Cream & Onion",kc:535,e:4.5,k:51,v:34},
+  {n:"Cheetos",kc:540,e:6,k:54,v:33},
+  {n:"Bugles",kc:525,e:5,k:60,v:29},
+  {n:"Croky Naturel",kc:540,e:6,k:50,v:35},
+  {n:"Croky Paprika",kc:530,e:6,k:52,v:33},
+  {n:"Croky Bicky",kc:535,e:6,k:51,v:34},
+  {n:"Chipsfrietjes",kc:520,e:5,k:58,v:29},
+  {n:"Borrelnootjes",kc:500,e:13,k:45,v:28},
+  // === Merksnoep ===
+  {n:"Sour Patch Kids",kc:350,e:0,k:82,v:0},
+  {n:"Fizzy cola bottles",kc:330,e:6,k:74,v:0.1},
+  {n:"Nerds",kc:380,e:0,k:95,v:0},
+  {n:"Trolli Sour Worms",kc:330,e:5,k:76,v:0.2},
+  {n:"Katja Mega Zuur",kc:340,e:5,k:78,v:0.5},
+  // === Merkchocolade ===
+  {n:"Reese's",kc:515,e:11,k:52,v:29},
+  {n:"Côte d'Or Bouchée",kc:540,e:6,k:52,v:34},
+  {n:"Nutella B-ready",kc:518,e:8,k:57,v:28,stuk:22,se:"reepje"},
+  // === Merkdranken (per 100 ml) ===
+  {n:"Monster Energy",kc:47,e:0,k:11,v:0,stuk:500,se:"blikje",drank:1},
+  {n:"Rockstar",kc:52,e:0,k:13,v:0,stuk:500,se:"blikje",drank:1},
+  {n:"Prime Hydration",kc:4,e:0,k:1,v:0,stuk:500,se:"fles",drank:1},
+  {n:"Powerade",kc:26,e:0,k:6,v:0,stuk:500,se:"fles",drank:1},
+  {n:"Gatorade",kc:24,e:0,k:6,v:0,stuk:500,se:"fles",drank:1},
+  {n:"Tropicana sinaasappelsap",kc:45,e:0.7,k:10,v:0.2,stuk:200,se:"glas",drank:1},
+  {n:"Looza appelsap",kc:46,e:0.1,k:11,v:0.1,stuk:200,se:"glas",drank:1},
+  {n:"Innocent smoothie",kc:55,e:0.6,k:13,v:0.2,stuk:250,se:"flesje",drank:1},
+  {n:"Minute Maid",kc:45,e:0.5,k:10,v:0.1,stuk:200,se:"glas",drank:1},
+  {n:"Chocomel",kc:76,e:3.4,k:12,v:1.6,stuk:250,se:"glas",drank:1},
+  // === Bakker: brood & viennoiserie ===
+  {n:"Suikerbrood",kc:330,e:7,k:58,v:8,stuk:35,se:"snee"},
+  {n:"Sandwich (bakker)",kc:300,e:8,k:48,v:9,stuk:50,se:"stuk"},
+  {n:"Pain au chocolat",kc:414,e:7,k:45,v:23,stuk:70,se:"stuk"},
+  {n:"Amandelcroissant",kc:450,e:9,k:42,v:27,stuk:80,se:"stuk"},
+  {n:"Rozijnenkoek (bakker)",kc:360,e:7,k:52,v:14,stuk:80,se:"stuk"},
+  {n:"Worstenbroodje",kc:280,e:9,k:26,v:15,stuk:100,se:"stuk"},
+  {n:"Kaasbroodje",kc:320,e:10,k:30,v:17,stuk:90,se:"stuk"},
+  {n:"Saucijzenbroodje",kc:300,e:9,k:28,v:16,stuk:90,se:"stuk"},
+  {n:"Appelflap",kc:300,e:3.5,k:38,v:15,stuk:100,se:"stuk"},
+  {n:"Kerststol",kc:330,e:7,k:56,v:8,stuk:40,se:"snee"},
+  {n:"Craquelin",kc:350,e:8,k:54,v:11,stuk:35,se:"snee"},
+  {n:"Chouquette",kc:380,e:7,k:45,v:18,stuk:15,se:"stuk"},
+  {n:"Cannelé",kc:300,e:5,k:45,v:10,stuk:50,se:"stuk"},
+  {n:"Palmier (koekje)",kc:480,e:6,k:60,v:24,stuk:25,se:"stuk"},
+  // === Bakker: patisserie & dessertjes ===
+  {n:"Macaron",kc:404,e:6,k:60,v:16,stuk:12,se:"stuk"},
+  {n:"Financier",kc:430,e:7,k:48,v:24,stuk:40,se:"stuk"},
+  {n:"Crème brûlée",kc:260,e:4,k:24,v:16,stuk:100,se:"stuk"},
+  {n:"Profiteroles",kc:300,e:5,k:28,v:19},
+  {n:"Tompouce",kc:280,e:3.5,k:33,v:15,stuk:100,se:"stuk"},
+  {n:"Opera-taart",kc:400,e:5,k:42,v:24,stuk:100,se:"stuk"},
+  {n:"Fruittaartje",kc:250,e:3,k:33,v:12,stuk:110,se:"stuk"},
+  {n:"Slagroomtaart",kc:300,e:4,k:30,v:18,stuk:110,se:"stuk"},
+  {n:"Chocoladetaart",kc:380,e:5,k:44,v:21,stuk:100,se:"stuk"},
+  {n:"Bavarois",kc:200,e:3,k:22,v:11,stuk:100,se:"stuk"},
+  {n:"Dame blanche",kc:200,e:3.5,k:24,v:10,stuk:150,se:"stuk"},
+  {n:"Religieuse",kc:300,e:5,k:30,v:18,stuk:90,se:"stuk"},
+  {n:"Rijsttaart",kc:250,e:6,k:32,v:11,stuk:120,se:"stuk"},
+  {n:"Fruitvlaai",kc:220,e:3.5,k:36,v:6,stuk:120,se:"stuk"}
 ];
 
 // Doelwaarden voor de balkjes. Standaard tot je eigen doel is berekend.
@@ -1369,11 +1467,12 @@ function escapeHtml(s){ return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','
 // ---------- Zoeken ----------
 const zoekInput = $('zoek');
 const resBox = $('resultaten');
+function zonderAccent(s){ return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(); }
 zoekInput.addEventListener('input', ()=>{
-  const q = zoekInput.value.trim().toLowerCase();
+  const q = zonderAccent(zoekInput.value.trim());
   sluitPortie(); sluitNieuw();
   if(q.length===0){ resBox.classList.remove('open'); resBox.innerHTML=''; return; }
-  const treffers = alleEten().filter(f=>f.n.toLowerCase().includes(q)).slice(0,8);
+  const treffers = alleEten().filter(f=>zonderAccent(f.n).includes(q)).slice(0,8);
   resBox.classList.add('open');
   let html='';
   if(treffers.length===0){
@@ -1862,7 +1961,9 @@ function updateHomeTeasers(){
 
 // ================= WORKOUT =================
 let sjablonen = {};   // {weekdag(0-6): [oefeningnaam, ...]}
-let woLog = {};       // {oefeningnaam: [{datum, sets:[{reps,gewicht}]}]}
+let woLog = {};       // {oefeningnaam: [{datum, sets:[...]} of {datum, cardio, duur, afstand}]}
+let oefTypes = {};    // {oefeningnaam: 'cardio'}  (afwezig = kracht)
+let woNieuwType = 'kracht';
 let woGekozenDag = new Date().getDay();
 let woHuidigeOef = null;
 let woReferentie = null;   // laatste sessie die NIET van vandaag is (voor vergelijking ▲▼)
@@ -1874,9 +1975,13 @@ async function laadWorkout(){
   if(s){ try{ sjablonen = JSON.parse(s); }catch(e){} }
   const l = await ladenRaw('workout-log');
   if(l){ try{ woLog = JSON.parse(l); }catch(e){} }
+  const t = await ladenRaw('workout-types');
+  if(t){ try{ oefTypes = JSON.parse(t); }catch(e){} }
 }
 async function bewaarSjablonen(){ await opslaanRaw('workout-sjablonen', JSON.stringify(sjablonen)); }
 async function bewaarWorkoutLog(){ await opslaanRaw('workout-log', JSON.stringify(woLog)); }
+async function bewaarTypes(){ await opslaanRaw('workout-types', JSON.stringify(oefTypes)); }
+function isCardio(oef){ return oefTypes[oef] === 'cardio'; }
 
 function laatsteSessie(oef){
   const s = woLog[oef];
@@ -1899,6 +2004,15 @@ function referentieSessie(oef){
 function setsTekst(sets){
   return sets.map(x=> (x.reps||0)+'×'+(x.gewicht||0)+'kg').join(', ');
 }
+function cardioTekst(sessie){
+  const d = []; 
+  if(sessie.duur) d.push(sessie.duur+' min');
+  if(sessie.afstand) d.push(sessie.afstand+' km');
+  return d.join(' · ') || '—';
+}
+function sessieTekst(oef, sessie){
+  return isCardio(oef) ? cardioTekst(sessie) : setsTekst(sessie.sets||[]);
+}
 
 function renderWorkout(){
   // Dagkiezer
@@ -1920,9 +2034,10 @@ function renderWorkout(){
     lijst.forEach(oef=>{
       const laatste = laatsteSessie(oef);
       const gedaanVandaag = isVandaag && laatste && laatste.datum === vandaagSleutel();
-      const laatsteStr = laatste ? ('laatst: '+setsTekst(laatste.sets)) : 'nog niet gelogd';
+      const laatsteStr = laatste ? ('laatst: '+sessieTekst(oef, laatste)) : 'nog niet gelogd';
+      const badge = isCardio(oef) ? '<span class="badge">cardio</span>' : '';
       html += '<div class="wo-oef" data-oef="'+encodeURIComponent(oef)+'">'+
-                '<div class="info"><div class="n">'+escapeHtml(oef)+'</div><div class="laatste">'+escapeHtml(laatsteStr)+'</div></div>'+
+                '<div class="info"><div class="n">'+escapeHtml(oef)+badge+'</div><div class="laatste">'+escapeHtml(laatsteStr)+'</div></div>'+
                 (gedaanVandaag ? '<span class="vink">✓</span>' : '')+
                 '<span class="pijl">›</span>'+
               '</div>';
@@ -1945,6 +2060,15 @@ function woDagKnop(i){
   return '<button class="'+c+'" data-d="'+i+'">'+WDAGEN[i]+'</button>';
 }
 
+$('woTypeKeuze').querySelectorAll('button').forEach(b=>{
+  b.onclick = ()=>{
+    woNieuwType = b.dataset.t;
+    $('woTypeKeuze').querySelectorAll('button').forEach(x=>x.classList.remove('actief'));
+    b.classList.add('actief');
+    $('woNieuwOef').placeholder = woNieuwType==='cardio' ? 'Cardio toevoegen (bv. Lopen)…' : 'Oefening toevoegen…';
+  };
+});
+
 $('woVoegToe').onclick = ()=>{
   const naam = $('woNieuwOef').value.trim();
   if(!naam) return;
@@ -1953,6 +2077,8 @@ $('woVoegToe').onclick = ()=>{
     sjablonen[woGekozenDag].push(naam);
     bewaarSjablonen();
   }
+  if(woNieuwType==='cardio'){ oefTypes[naam]='cardio'; } else { delete oefTypes[naam]; }
+  bewaarTypes();
   $('woNieuwOef').value='';
   renderWorkout();
 };
@@ -1965,25 +2091,50 @@ function openLog(oef){
   const ref = referentieSessie(oef);   // vorige keer (niet vandaag)
   const vandaag = sessieVandaag(oef);   // al gelogd vandaag?
   woReferentie = ref;
+  const cardio = isCardio(oef);
+
+  // Juiste sectie tonen
+  $('woSets').style.display = cardio ? 'none' : 'block';
+  $('woSetKnoppen').style.display = cardio ? 'none' : 'flex';
+  $('woCardio').style.display = cardio ? 'block' : 'none';
 
   if(ref){
-    $('woVorige').innerHTML = 'Vorige keer ('+datumKort(ref.datum)+'):<br><b>'+escapeHtml(setsTekst(ref.sets))+'</b>';
-    $('woVorige').style.display='block';
+    $('woVorige').innerHTML = 'Vorige keer ('+datumKort(ref.datum)+'):<br><b>'+escapeHtml(sessieTekst(oef, ref))+'</b>';
   } else {
     $('woVorige').innerHTML = 'Nog geen eerdere sessie — dit wordt je startpunt.';
-    $('woVorige').style.display='block';
   }
+  $('woVorige').style.display='block';
+  $('woOpslaan').textContent = vandaag ? 'Bijwerken' : 'Opslaan';
 
-  if(vandaag){
-    // Al gelogd vandaag → toon de ingevulde waarden zodat je ze kan aanpassen
-    $('woOpslaan').textContent = 'Bijwerken';
-    herbouwMetWaarden(vandaag.sets.map(s=>({reps:s.reps, gewicht:s.gewicht})), ref ? ref.sets : []);
+  if(cardio){
+    $('cDuur').value = vandaag && vandaag.duur ? vandaag.duur : '';
+    $('cAfstand').value = vandaag && vandaag.afstand ? vandaag.afstand : '';
+    $('cDuur').placeholder = ref && ref.duur ? ref.duur : 'min';
+    $('cAfstand').placeholder = ref && ref.afstand ? ref.afstand : 'km';
+    updateCardioDelta();
   } else {
-    $('woOpslaan').textContent = 'Opslaan';
-    const aantal = ref ? ref.sets.length : 3;
-    bouwSetRijen(aantal, ref ? ref.sets : []);
+    if(vandaag){
+      herbouwMetWaarden(vandaag.sets.map(s=>({reps:s.reps, gewicht:s.gewicht})), ref ? ref.sets : []);
+    } else {
+      const aantal = ref ? ref.sets.length : 3;
+      bouwSetRijen(aantal, ref ? ref.sets : []);
+    }
   }
   $('woLogOverlay').classList.add('open');
+}
+function updateCardioDelta(){
+  const ref = woReferentie;
+  function zet(inputId, delId, veld){
+    const val = parseFloat($(inputId).value);
+    const del = $(delId);
+    if(!ref || !ref[veld] || isNaN(val)){ del.textContent=''; del.className='delta gelijk'; return; }
+    const diff = Math.round((val - ref[veld])*100)/100;
+    if(diff>0){ del.textContent='▲ +'+diff; del.className='delta op'; }
+    else if(diff<0){ del.textContent='▼ '+diff; del.className='delta neer'; }
+    else { del.textContent='='; del.className='delta gelijk'; }
+  }
+  zet('cDuur','cDuurDelta','duur');
+  zet('cAfstand','cAfstandDelta','afstand');
 }
 function bouwSetRijen(aantal, vorige){
   const leeg = [];
@@ -2046,19 +2197,31 @@ function herbouwMetWaarden(sets, vorige){
 }
 $('woLogSluit').onclick = ()=> $('woLogOverlay').classList.remove('open');
 $('woLogOverlay').onclick = (e)=>{ if(e.target===$('woLogOverlay')) $('woLogOverlay').classList.remove('open'); };
+$('cDuur').addEventListener('input', updateCardioDelta);
+$('cAfstand').addEventListener('input', updateCardioDelta);
 
 $('woOpslaan').onclick = ()=>{
-  const sets = [];
-  $('woSets').querySelectorAll('.wo-set').forEach(rij=>{
-    const reps = parseFloat(rij.querySelector('.reps').value);
-    const gew = parseFloat(rij.querySelector('.gew').value);
-    if(!isNaN(reps) && !isNaN(gew)){ sets.push({reps:reps, gewicht:gew}); }
-  });
-  if(sets.length===0){ return; }
+  const key = vandaagSleutel();
+  let sessie;
+  if(isCardio(woHuidigeOef)){
+    const duur = parseFloat($('cDuur').value);
+    const afstand = parseFloat($('cAfstand').value);
+    if(isNaN(duur) && isNaN(afstand)){ return; }
+    sessie = { datum:key, cardio:1 };
+    if(!isNaN(duur)) sessie.duur = duur;
+    if(!isNaN(afstand)) sessie.afstand = afstand;
+  } else {
+    const sets = [];
+    $('woSets').querySelectorAll('.wo-set').forEach(rij=>{
+      const reps = parseFloat(rij.querySelector('.reps').value);
+      const gew = parseFloat(rij.querySelector('.gew').value);
+      if(!isNaN(reps) && !isNaN(gew)){ sets.push({reps:reps, gewicht:gew}); }
+    });
+    if(sets.length===0){ return; }
+    sessie = { datum:key, sets:sets };
+  }
   if(!woLog[woHuidigeOef]) woLog[woHuidigeOef] = [];
   const arr = woLog[woHuidigeOef];
-  const key = vandaagSleutel();
-  const sessie = { datum:key, sets:sets };
   if(arr.length>0 && arr[arr.length-1].datum===key){ arr[arr.length-1] = sessie; }
   else { arr.push(sessie); }
   bewaarWorkoutLog();
@@ -2076,6 +2239,10 @@ $('woVerwijderOef').onclick = ()=>{
 
 // ----- Progressiegrafiek -----
 let woMetriek = 'gewicht';
+const METRIEKEN = {
+  kracht: [['gewicht','Gewicht'],['volume','Volume'],['reps','Reps']],
+  cardio: [['afstand','Afstand'],['duur','Tijd'],['tempo','Tempo']]
+};
 $('woProgressie').onclick = ()=>{
   $('woLogOverlay').classList.remove('open');
   openGrafiek(woHuidigeOef);
@@ -2083,29 +2250,43 @@ $('woProgressie').onclick = ()=>{
 function openGrafiek(oef){
   woHuidigeOef = oef;
   $('woGrafiekNaam').textContent = oef;
-  woMetriek = 'gewicht';
-  $('woMetriek').querySelectorAll('button').forEach(b=> b.classList.toggle('actief', b.dataset.m==='gewicht'));
+  const set = isCardio(oef) ? METRIEKEN.cardio : METRIEKEN.kracht;
+  woMetriek = set[0][0];
+  $('woMetriek').innerHTML = set.map((m,i)=>
+    '<button data-m="'+m[0]+'"'+(i===0?' class="actief"':'')+'>'+m[1]+'</button>'
+  ).join('');
   tekenGrafiek();
   $('woGrafiekOverlay').classList.add('open');
 }
-$('woMetriek').querySelectorAll('button').forEach(b=>{
-  b.onclick = ()=>{
-    woMetriek = b.dataset.m;
-    $('woMetriek').querySelectorAll('button').forEach(x=>x.classList.remove('actief'));
-    b.classList.add('actief');
-    tekenGrafiek();
-  };
-});
+// event-delegatie: knoppen worden dynamisch opgebouwd
+$('woMetriek').onclick = (e)=>{
+  const b = e.target.closest('button');
+  if(!b) return;
+  woMetriek = b.dataset.m;
+  $('woMetriek').querySelectorAll('button').forEach(x=>x.classList.remove('actief'));
+  b.classList.add('actief');
+  tekenGrafiek();
+};
 $('woGrafiekSluit').onclick = ()=> $('woGrafiekOverlay').classList.remove('open');
 $('woGrafiekOverlay').onclick = (e)=>{ if(e.target===$('woGrafiekOverlay')) $('woGrafiekOverlay').classList.remove('open'); };
 
 function metriekWaarde(sessie){
+  if(isCardio(woHuidigeOef)){
+    if(woMetriek==='afstand') return sessie.afstand||0;
+    if(woMetriek==='duur') return sessie.duur||0;
+    // tempo = minuten per km (lager = sneller); alleen zinvol met beide
+    return (sessie.afstand && sessie.duur) ? Math.round((sessie.duur/sessie.afstand)*100)/100 : 0;
+  }
   if(woMetriek==='gewicht') return Math.max(...sessie.sets.map(s=>s.gewicht||0));
   if(woMetriek==='reps') return sessie.sets.reduce((a,s)=>a+(s.reps||0),0);
   return sessie.sets.reduce((a,s)=>a+(s.reps||0)*(s.gewicht||0),0); // volume
 }
 function tekenGrafiek(){
-  const sessies = (woLog[woHuidigeOef]||[]).slice(-12);
+  let sessies = (woLog[woHuidigeOef]||[]).slice(-12);
+  // voor tempo enkel sessies met afstand+duur
+  if(isCardio(woHuidigeOef) && woMetriek==='tempo'){
+    sessies = sessies.filter(s=> s.afstand && s.duur);
+  }
   if(sessies.length<2){
     $('woGrafiek').style.display='none';
     $('woGrafiekLeeg').style.display='block';
@@ -2114,7 +2295,12 @@ function tekenGrafiek(){
   $('woGrafiek').style.display='block';
   $('woGrafiekLeeg').style.display='none';
   const data = sessies.map(s=> ({ x: datumKort(s.datum), y: metriekWaarde(s) }));
-  const eenheid = woMetriek==='gewicht' ? ' kg' : (woMetriek==='volume' ? ' kg' : '');
+  let eenheid = '';
+  if(isCardio(woHuidigeOef)){
+    eenheid = woMetriek==='afstand' ? ' km' : (woMetriek==='duur' ? ' min' : ' min/km');
+  } else {
+    eenheid = (woMetriek==='gewicht' || woMetriek==='volume') ? ' kg' : '';
+  }
   $('woGrafiek').innerHTML = svgLijnGrafiek(data, eenheid);
 }
 function svgLijnGrafiek(data, eenheid){
