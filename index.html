@@ -480,6 +480,9 @@
   .uname-fout{color:var(--danger);font-size:13px;min-height:18px;margin:8px 2px 0;}
   .uname-kies{width:100%;margin-top:12px;background:var(--eiwit);border:none;border-radius:12px;color:#06120C;font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;padding:14px;cursor:pointer;}
   .uname-kies:disabled{opacity:.6;}
+  /* Toast melding */
+  .toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(20px);background:var(--surface-2);border:1px solid var(--line);border-radius:14px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;padding:13px 18px;max-width:88%;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:120;}
+  .toast.open{opacity:1;transform:translateX(-50%) translateY(0);}
 
   /* Barcode scanner */
   .scan-knop{width:100%;margin-top:8px;background:var(--surface);border:1px solid var(--vet);border-radius:14px;color:var(--vet);font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;padding:13px;cursor:pointer;}
@@ -2172,49 +2175,64 @@ async function verwerkBarcode(code){
   // 1) Al bij mijn eigen producten? → meteen loggen
   const bestaand = eigen.find(x=> x.code === code);
   if(bestaand){ await stopScan(); openPortie(bestaand); return; }
-  // 2) Open Food Facts
+  // 2) Open Food Facts (wereldwijd: BE + FR + rest)
   try{
     const res = await fetch('https://world.openfoodfacts.org/api/v2/product/'+encodeURIComponent(code)+'.json?fields=product_name,brands,nutriments,categories_tags,quantity,serving_size,serving_quantity');
     const data = await res.json();
-    if(data.status === 1 && data.product){
-      const p = data.product;
-      const n = p.nutriments || {};
-      let kcal = n['energy-kcal_100g'];
-      if(kcal==null && n['energy-kj_100g']!=null) kcal = n['energy-kj_100g']/4.184;
-      if(kcal==null && n['energy_100g']!=null) kcal = n['energy_100g']/4.184;
-      const naam = [p.brands ? p.brands.split(',')[0].trim() : '', p.product_name || ''].filter(Boolean).join(' ').trim() || ('Product '+code);
+    const p = (data && data.status === 1) ? data.product : null;
+    const n = p ? (p.nutriments || {}) : {};
+
+    // kcal bepalen
+    let kcal = n['energy-kcal_100g'];
+    if(kcal==null && n['energy-kj_100g']!=null) kcal = n['energy-kj_100g']/4.184;
+    if(kcal==null && n['energy_100g']!=null && n['energy_100g']>0) kcal = n['energy_100g']/4.184;
+    if(kcal!=null && (isNaN(kcal) || kcal<=0)) kcal = null;
+
+    const naam = p ? [p.brands ? p.brands.split(',')[0].trim() : '', p.product_name || ''].filter(Boolean).join(' ').trim() : '';
+
+    scanCode = code;   // barcode onthouden zodat je hem daarna niet opnieuw hoeft in te vullen
+    await stopScan();
+
+    if(p && kcal!=null){
+      // Betrouwbaar gevonden → invullen ter controle
       const drank = lijktDrank(p);
-      // portiegrootte van de verpakking (bv. noten: portie 20 g)
       let portie = parseFloat(p.serving_quantity);
       if(isNaN(portie) || portie<=0) portie = null;
-      scanCode = code;
       scanSe = portie ? 'portie' : null;
-      await stopScan();
-      if(kcal!=null){
-        openNieuw(naam, {
-          kcal: Math.round(kcal),
-          e: n['proteins_100g']!=null ? Math.round(n['proteins_100g']*10)/10 : '',
-          k: n['carbohydrates_100g']!=null ? Math.round(n['carbohydrates_100g']*10)/10 : '',
-          v: n['fat_100g']!=null ? Math.round(n['fat_100g']*10)/10 : '',
-          drank: drank,
-          stuk: portie || ''
-        });
-      } else {
-        // gevonden, maar zonder calorieën → naam + type invullen, rest zelf
-        openNieuw(naam, { drank: drank, stuk: portie || '' });
-      }
+      toonToast('Gevonden: ' + (naam || 'product') + ' — controleer de waarden.');
+      openNieuw(naam || ('Product '+code), {
+        kcal: Math.round(kcal),
+        e: n['proteins_100g']!=null ? Math.round(n['proteins_100g']*10)/10 : '',
+        k: n['carbohydrates_100g']!=null ? Math.round(n['carbohydrates_100g']*10)/10 : '',
+        v: n['fat_100g']!=null ? Math.round(n['fat_100g']*10)/10 : '',
+        drank: drank,
+        stuk: portie || ''
+      });
+    } else if(p && kcal==null){
+      // Wel een product, maar geen (betrouwbare) voedingswaarden → naam invullen, rest zelf
+      scanSe = null;
+      toonToast('Product gevonden, maar zonder voedingswaarden. Vul ze zelf aan.');
+      openNieuw(naam, { drank: lijktDrank(p) });
     } else {
-      // niet gevonden → leeg formulier openen om zelf in te vullen
-      scanCode = code;
-      await stopScan();
+      // Helemaal niet gevonden
+      scanSe = null;
+      toonToast('Product niet herkend. Vul de gegevens zelf in.');
       openNieuw('');
-      scanStatus('');
     }
   }catch(e){
     scanBezig = false;
-    scanStatus('Opzoeken mislukt. Probeer opnieuw of vul zelf in.', 'fout');
-    setTimeout(()=>{ /* niets */ }, 10);
+    scanStatus('Opzoeken mislukt — ben je online? Probeer opnieuw of vul zelf in.', 'fout');
   }
+}
+
+let toastTimer = null;
+function toonToast(tekst){
+  let el = document.getElementById('toast');
+  if(!el){ el = document.createElement('div'); el.id='toast'; el.className='toast'; document.body.appendChild(el); }
+  el.textContent = tekst;
+  el.classList.add('open');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ el.classList.remove('open'); }, 3800);
 }
 
 
