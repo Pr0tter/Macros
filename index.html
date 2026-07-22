@@ -440,6 +440,10 @@
   .uname-regels{color:var(--muted);font-size:12px;margin:8px 2px 0;}
   .mn-status{color:var(--muted);font-size:13px;line-height:1.5;margin-bottom:10px;}
   .mn-status b{color:var(--text);}
+  .ww-wrap{position:relative;margin-top:10px;}
+  .ww-wrap input{width:100%;}
+  .ww-oog{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:18px;cursor:pointer;padding:6px 8px;opacity:.7;}
+  .ww-oog.aan{opacity:1;}
   .mn-status span{color:var(--muted);}
   #accMeenemen .vr-knop{margin-top:4px;margin-right:6px;}
   /* Leaderboard */
@@ -902,7 +906,10 @@
     <div class="uname-titel" id="emailTitel">E-mail koppelen</div>
     <div class="uname-uitleg" id="emailUitleg">Koppel een e-mail + wachtwoord zodat je je account op een ander toestel kan gebruiken. Dit is optioneel.</div>
     <input id="emailInput" type="email" autocomplete="email" placeholder="E-mailadres">
-    <input id="emailWw" type="password" autocomplete="current-password" placeholder="Wachtwoord (min. 6 tekens)" style="margin-top:10px;">
+    <div class="ww-wrap">
+      <input id="emailWw" type="password" autocomplete="current-password" placeholder="Wachtwoord (min. 6 tekens)">
+      <button type="button" class="ww-oog" id="wwOog" aria-label="Wachtwoord tonen">👁</button>
+    </div>
     <div class="uname-fout" id="emailFout"></div>
     <button class="uname-kies" id="emailKnop">Koppelen</button>
     <button class="uname-annuleer" id="emailAnnuleer">Annuleren</button>
@@ -3418,7 +3425,8 @@ async function stuurVerzoek(naarUid, naarNaam){
     if(!bestaand.empty){ res.innerHTML='<div class="vr-mini ok">Verzoek al verstuurd.</div>'; return; }
     await V.add({ van:fbUid, vanNaam:fbNaam, naar:naarUid, naarNaam:naarNaam, status:'open',
       tijd: firebase.firestore.FieldValue.serverTimestamp() });
-    res.innerHTML='<div class="vr-mini ok">Verzoek verstuurd naar '+escapeHtml(naarNaam)+'! ✓</div>';
+    res.innerHTML='<div class="vr-mini ok">✓ Vriendschapsverzoek verstuurd naar '+escapeHtml(naarNaam)+'</div>';
+    toonToast('Vriendschapsverzoek verstuurd naar ' + naarNaam + ' ✓');
     $('vrZoek').value='';
   }catch(e){ res.innerHTML='<div class="vr-mini fout">Versturen mislukt. Probeer opnieuw.</div>'; }
 }
@@ -3627,6 +3635,11 @@ document.querySelectorAll('.lb-kies').forEach(b=>{
 $('accEdit').onclick = openNaamAanpassen;
 $('unameAnnuleer').onclick = ()=>{ $('unameOverlay').classList.remove('open'); };
 $('emailKnop').onclick = doeEmailActie;
+$('wwOog').onclick = ()=>{
+  const inp = $('emailWw'); const oog = $('wwOog');
+  if(inp.type === 'password'){ inp.type='text'; oog.classList.add('aan'); }
+  else { inp.type='password'; oog.classList.remove('aan'); }
+};
 $('emailAnnuleer').onclick = ()=>{ $('emailOverlay').classList.remove('open'); $('vrOverlay').classList.add('open'); };
 $('emailWw').addEventListener('keydown', (e)=>{ if(e.key==='Enter') doeEmailActie(); });
 
