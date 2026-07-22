@@ -442,8 +442,13 @@
   .mn-status b{color:var(--text);}
   .ww-wrap{position:relative;margin-top:10px;}
   .ww-wrap input{width:100%;}
-  .ww-oog{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:18px;cursor:pointer;padding:6px 8px;opacity:.7;}
-  .ww-oog.aan{opacity:1;}
+  .ww-oog{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:6px 8px;color:var(--muted);display:flex;align-items:center;}
+  .ww-oog:active{transform:translateY(-50%) scale(.9);}
+  .ww-oog .oog-streep{opacity:0;transition:opacity .15s;}
+  .ww-oog.aan{color:var(--eiwit);}
+  .ww-oog.aan .oog-streep{opacity:1;}
+  .uname-login-knop{width:100%;margin-top:16px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;padding:13px;cursor:pointer;}
+  .uname-login-knop:active{opacity:.85;}
   .mn-status span{color:var(--muted);}
   #accMeenemen .vr-knop{margin-top:4px;margin-right:6px;}
   /* Leaderboard */
@@ -908,7 +913,13 @@
     <input id="emailInput" type="email" autocomplete="email" placeholder="E-mailadres">
     <div class="ww-wrap">
       <input id="emailWw" type="password" autocomplete="current-password" placeholder="Wachtwoord (min. 6 tekens)">
-      <button type="button" class="ww-oog" id="wwOog" aria-label="Wachtwoord tonen">👁</button>
+      <button type="button" class="ww-oog" id="wwOog" aria-label="Wachtwoord tonen">
+        <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 12s3.6-6.2 10-6.2 10 6.2 10 6.2-3.6 6.2-10 6.2S2 12 2 12z"/>
+          <circle cx="12" cy="12" r="2.6" fill="currentColor" stroke="none"/>
+          <line class="oog-streep" x1="4" y1="20" x2="20" y2="4"/>
+        </svg>
+      </button>
     </div>
     <div class="uname-fout" id="emailFout"></div>
     <button class="uname-kies" id="emailKnop">Koppelen</button>
@@ -937,7 +948,7 @@
     <div class="uname-fout" id="unameFout"></div>
     <button class="uname-kies" id="unameKies">Klaar</button>
     <button class="uname-annuleer" id="unameAnnuleer" style="display:none;">Annuleren</button>
-    <button class="uname-annuleer" id="unameLogin">Ik heb al een account — inloggen met e-mail</button>
+    <button class="uname-login-knop" id="unameLogin">Ik heb al een account — inloggen</button>
   </div>
 </div>
 
