@@ -2,7 +2,7 @@
 // Strategie: "network-first" voor eigen bestanden — als je online bent krijg je
 // altijd de nieuwste versie, offline valt hij terug op de opgeslagen versie.
 // Gevolg: om te updaten hoef je enkel index.html op GitHub te vervangen.
-const CACHE = 'macros-v4';
+const CACHE = 'macros-v5';
 const BESTANDEN = [
   './',
   './index.html',

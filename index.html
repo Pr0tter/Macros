@@ -937,6 +937,7 @@
     <div class="uname-fout" id="unameFout"></div>
     <button class="uname-kies" id="unameKies">Klaar</button>
     <button class="uname-annuleer" id="unameAnnuleer" style="display:none;">Annuleren</button>
+    <button class="uname-annuleer" id="unameLogin">Ik heb al een account — inloggen met e-mail</button>
   </div>
 </div>
 
@@ -3101,7 +3102,7 @@ const firebaseConfig = {
   appId: "1:862661468874:web:479086ec36f59f7e328a33"
 };
 let fbDb = null, fbUid = null, fbNaam = null, fbKlaar = false, syncTimer = null;
-let fbEmail = null, fbAnoniem = true, emailModus = 'koppel';
+let fbEmail = null, fbAnoniem = true, emailModus = 'koppel', emailVanaf = 'account';
 
 function laadFirebase(){
   return new Promise((resolve)=>{
@@ -3320,8 +3321,9 @@ function renderMeenemen(){
   }
 }
 
-function openEmailForm(modus){
+function openEmailForm(modus, vanaf){
   emailModus = modus;
+  emailVanaf = vanaf || 'account';
   const koppel = (modus==='koppel');
   $('emailTitel').textContent = koppel ? 'E-mail koppelen' : 'Inloggen op bestaand account';
   $('emailUitleg').textContent = koppel
@@ -3645,7 +3647,12 @@ $('wwOog').onclick = ()=>{
   if(inp.type === 'password'){ inp.type='text'; oog.classList.add('aan'); }
   else { inp.type='password'; oog.classList.remove('aan'); }
 };
-$('emailAnnuleer').onclick = ()=>{ $('emailOverlay').classList.remove('open'); $('vrOverlay').classList.add('open'); };
+$('emailAnnuleer').onclick = ()=>{
+  $('emailOverlay').classList.remove('open');
+  if(emailVanaf==='uname') $('unameOverlay').classList.add('open');
+  else $('vrOverlay').classList.add('open');
+};
+$('unameLogin').onclick = ()=>{ $('unameOverlay').classList.remove('open'); openEmailForm('login','uname'); };
 $('emailWw').addEventListener('keydown', (e)=>{ if(e.key==='Enter') doeEmailActie(); });
 
 $('unameKies').onclick = kiesGebruikersnaam;
