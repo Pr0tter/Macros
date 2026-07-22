@@ -441,8 +441,8 @@
   .lb-knoppen{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;}
   .lb-kies{flex:1 1 auto;min-width:0;background:var(--ink);border:1px solid var(--line);border-radius:10px;color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:600;padding:9px 8px;cursor:pointer;white-space:nowrap;}
   .lb-kies.actief{background:var(--eiwit);color:#06120C;border-color:var(--eiwit);}
-  .stats-rij{display:flex;gap:8px;margin:14px 0 4px;}
-  .stat-vak{flex:1;background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:12px 8px;text-align:center;}
+  .stats-rij{display:flex;gap:8px;margin:14px 0 4px;flex-wrap:wrap;}
+  .stat-vak{flex:1 1 calc(50% - 4px);background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:12px 8px;text-align:center;}
   .stat-getal{font-size:18px;font-weight:800;font-family:'JetBrains Mono',monospace;line-height:1.1;}
   .stat-lab{font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-top:4px;}
   .lb-rij{display:flex;align-items:center;gap:11px;background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:11px 13px;margin-bottom:7px;}
@@ -479,7 +479,25 @@
   .uname-paneel input:focus{border-color:var(--eiwit);}
   .uname-fout{color:var(--danger);font-size:13px;min-height:18px;margin:8px 2px 0;}
   .uname-kies{width:100%;margin-top:12px;background:var(--eiwit);border:none;border-radius:12px;color:#06120C;font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;padding:14px;cursor:pointer;}
-  .uname-kies:disabled{opacity:.6;}
+  .uname-kies:disabled{opacity:.6;}  .lb-rij.klik{cursor:pointer;}
+  .log-item .info[data-edit]{cursor:pointer;}
+
+  /* Water */
+  .water-kaart{background:var(--surface);border:1px solid rgba(91,141,239,.4);border-radius:18px;padding:16px 16px 14px;margin:18px 0 22px;}
+  .water-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+  .water-titel{font-size:16px;font-weight:700;}
+  .water-cijfer{font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--text);}
+  .water-cijfer #waterDoel{color:var(--muted);}
+  .water-balk{height:10px;background:var(--ink);border-radius:6px;overflow:hidden;margin-bottom:14px;}
+  .water-vul{height:100%;width:0;background:linear-gradient(90deg,#4a86e8,#5B8DEF);border-radius:6px;transition:width .3s ease;}
+  .water-knoppen{display:flex;gap:8px;}
+  .water-knoppen button{border:1px solid var(--line);border-radius:12px;background:var(--ink);color:var(--text);font-family:'Space Grotesk',sans-serif;font-weight:600;cursor:pointer;}
+  .water-min{width:48px;font-size:20px;flex-shrink:0;}
+  .water-add{flex:1;padding:11px 4px;font-size:14px;display:flex;flex-direction:column;align-items:center;gap:1px;}
+  .water-add span{font-size:11px;color:var(--muted);font-weight:500;}
+  .water-add:active,.water-min:active{background:var(--surface-2);}
+  .water-hint{color:var(--muted);font-size:12px;margin-top:10px;text-align:center;}
+
   /* Toast melding */
   .toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(20px);background:var(--surface-2);border:1px solid var(--line);border-radius:14px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;padding:13px 18px;max-width:88%;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:120;}
   .toast.open{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -546,6 +564,8 @@
     <button class="lb-kies" data-lb="totaalKcal">Totaal kcal</button>
     <button class="lb-kies" data-lb="totaalTraining">Totaal training</button>
     <button class="lb-kies" data-lb="besteDag">Hoogste dag</button>
+    <button class="lb-kies" data-lb="waterDag">Water vandaag</button>
+    <button class="lb-kies" data-lb="waterTotaal">Water totaal</button>
   </div>
   <div class="lb-uitleg" id="lbUitleg">Wie zit vandaag het dichtst bij z'n doel?</div>
   <div id="vrLeaderboards"><div class="vr-leeg">Voeg vrienden toe om een ranglijst te zien.</div></div>
@@ -697,6 +717,21 @@
   <input id="nStuk" type="number" inputmode="numeric" placeholder="gram per stuk (bv. 120)">
   <button class="bewaar" id="nBewaar">Bewaren & kiezen</button>
   <button class="verwijder" id="nVerwijder" style="display:none;">Verwijderen</button>
+</div>
+
+<!-- Water -->
+<div class="water-kaart" id="waterKaart">
+  <div class="water-top">
+    <div class="water-titel">💧 Water</div>
+    <div class="water-cijfer"><span id="waterMl">0</span> / <span id="waterDoel">–</span> ml</div>
+  </div>
+  <div class="water-balk"><div class="water-vul" id="waterVul"></div></div>
+  <div class="water-knoppen">
+    <button class="water-min" id="waterMin">−</button>
+    <button class="water-add" data-add="250">+ klein <span>250 ml</span></button>
+    <button class="water-add" data-add="330">+ groot <span>330 ml</span></button>
+  </div>
+  <div class="water-hint" id="waterHint"></div>
 </div>
 
 <!-- Log -->
@@ -1635,6 +1670,49 @@ async function bewaarLog(){
   await bewaarGeschiedenis();
   syncStraks();
 }
+// ---------- Water ----------
+let waterLijst = [];        // ml per toevoeging vandaag (stack)
+let waterGesch = {};        // {datum: ml-totaal} voor all-time
+const WATER_PER_KG = 35;    // ml per kg lichaamsgewicht (vuistregel)
+function waterTotaal(){ return waterLijst.reduce((a,b)=>a+b,0); }
+async function laadWater(){
+  const raw = await ladenRaw('water-log');
+  if(raw){ try{ const w = JSON.parse(raw); waterLijst = (w.datum===vandaagSleutel() && Array.isArray(w.lijst)) ? w.lijst : []; }catch(e){ waterLijst=[]; } }
+  const g = await ladenRaw('water-geschiedenis');
+  if(g){ try{ waterGesch = JSON.parse(g) || {}; }catch(e){ waterGesch={}; } }
+}
+async function bewaarWater(){
+  await opslaanRaw('water-log', JSON.stringify({ datum: vandaagSleutel(), lijst: waterLijst }));
+  const t = waterTotaal();
+  if(t>0) waterGesch[vandaagSleutel()] = t; else delete waterGesch[vandaagSleutel()];
+  await opslaanRaw('water-geschiedenis', JSON.stringify(waterGesch));
+  syncStraks();
+}
+function waterDoelMl(){
+  let g = parseFloat($('cGewicht').value);
+  if((isNaN(g) || g<=0) && geladenInvoer && geladenInvoer.gewicht) g = parseFloat(geladenInvoer.gewicht);
+  if(isNaN(g) || g<=0) return null;
+  return Math.round(g * WATER_PER_KG / 50) * 50;   // afgerond op 50 ml
+}
+function updateWater(){
+  const doel = waterDoelMl();
+  const tot = waterTotaal();
+  $('waterMl').textContent = tot.toLocaleString('nl-BE');
+  if(doel){
+    $('waterDoel').textContent = doel.toLocaleString('nl-BE');
+    const pct = Math.max(0, Math.min(100, tot/doel*100));
+    $('waterVul').style.width = pct + '%';
+    const glazen = Math.round(tot/250);
+    $('waterHint').textContent = tot>=doel ? 'Doel gehaald! 💪' : ('≈ '+glazen+' '+(glazen===1?'glas':'glazen')+' · nog '+Math.max(0,doel-tot).toLocaleString('nl-BE')+' ml te gaan');
+  } else {
+    $('waterDoel').textContent = '–';
+    $('waterVul').style.width = '0%';
+    $('waterHint').textContent = 'Stel je gewicht in bij het caloriedoel om een waterdoel te berekenen.';
+  }
+}
+function voegWaterGlas(ml){ waterLijst.push(ml); bewaarWater(); updateWater(); }
+function verwijderLaatsteWater(){ if(waterLijst.length){ waterLijst.pop(); bewaarWater(); updateWater(); } }
+
 async function bewaarEigen(){
   await opslaanRaw('eigen-eten', JSON.stringify(eigen));
 }
@@ -1699,13 +1777,16 @@ function renderLog(){
     const el = document.createElement('div');
     el.className='log-item';
     el.innerHTML =
-      '<div class="info">'+
+      '<div class="info" data-edit="'+i+'">'+
         '<div class="n">'+escapeHtml(it.n)+'</div>'+
         '<div class="sub">'+(function(){var eh=(it.eenheid==='ml')?' ml':'g'; var hoev=rond(it.gram)+eh; return it.label ? it.label+' · '+hoev : hoev;})()+' · <span class="e">'+rond1(it.e)+'e</span> · <span class="k">'+rond1(it.k)+'k</span> · <span class="v">'+rond1(it.v)+'v</span></div>'+
       '</div>'+
       '<div class="kc mono">'+rond(it.kc)+'</div>'+
       '<button class="del" data-i="'+i+'">✕</button>';
     wrap.appendChild(el);
+  });
+  wrap.querySelectorAll('.info[data-edit]').forEach(b=>{
+    b.onclick = ()=> bewerkLogItem(parseInt(b.dataset.edit));
   });
   wrap.querySelectorAll('.del').forEach(b=>{
     b.onclick = ()=>{ log.splice(parseInt(b.dataset.i),1); bewaarLog(); updateDashboard(); renderLog(); };
@@ -1757,22 +1838,36 @@ zoekInput.addEventListener('input', ()=>{
 // ---------- Portie ----------
 let modus = 'gram';   // 'gram' of 'stuk'
 
-function openPortie(f){
+let bewerkLogIndex = null;
+function openPortie(f, bewerkIndex, voorafGram){
   gekozen = f;
+  bewerkLogIndex = (bewerkIndex!=null) ? bewerkIndex : null;
   resBox.classList.remove('open');
   $('pNaam').textContent = f.n;
+  $('pToevoeg').textContent = (bewerkLogIndex!=null) ? 'Bijwerken' : 'Toevoegen';
   // Knoplabels aanpassen: drank = ml, vast = gram
   $('uGram').textContent = f.drank ? 'Ml' : 'Gram';
   $('uStuk').textContent = f.drank ? ('Per ' + (f.se || 'glas')) : 'Per stuk';
-  // Toggle alleen tonen als dit item een gemiddeld stuk/glas heeft
   if(f.stuk){ $('unitToggle').style.display = 'flex'; }
   else { $('unitToggle').style.display = 'none'; }
   zetModus('gram');
+  if(voorafGram!=null){ $('pGram').value = rond(voorafGram); berekenPortie(); }
   $('portie').classList.add('open');
   $('pGram').focus();
   $('pGram').select();
 }
-function sluitPortie(){ $('portie').classList.remove('open'); }
+function sluitPortie(){ $('portie').classList.remove('open'); bewerkLogIndex = null; $('pToevoeg').textContent = 'Toevoegen'; }
+
+function bewerkLogItem(i){
+  const it = log[i]; if(!it) return;
+  const g = it.gram || 0;
+  const f = alleEten().find(x=>x.n===it.n) || {
+    n: it.n,
+    kc: g? it.kc/g*100 : 0, e: g? it.e/g*100 : 0, k: g? it.k/g*100 : 0, v: g? it.v/g*100 : 0,
+    drank: it.eenheid==='ml' ? 1 : 0
+  };
+  openPortie(f, i, it.gram);
+}
 
 function zetModus(m){
   modus = m;
@@ -1839,10 +1934,14 @@ $('pToevoeg').onclick = ()=>{
     const aantalTekst = (inv % 1 === 0) ? inv : inv.toString().replace('.',',');
     label = aantalTekst + ' ' + se;
   }
-  log.push({
+  const nieuw = {
     n: gekozen.n, gram: g, eenheid: eenheid, label: label,
     kc: gekozen.kc*f, e: gekozen.e*f, k: gekozen.k*f, v: gekozen.v*f
-  });
+  };
+  if(bewerkLogIndex!=null && log[bewerkLogIndex]){ log[bewerkLogIndex] = nieuw; }
+  else { log.push(nieuw); }
+  bewerkLogIndex = null;
+  $('pToevoeg').textContent = 'Toevoegen';
   bewaarLog();
   gekozen=null;
   sluitPortie();
@@ -2327,6 +2426,7 @@ $('cInstel').onclick = ()=>{
   markeerDoelKnop();
   $('calc').classList.remove('open');
   updateDashboard();
+  updateWater();
 };
 
 function markeerDoelKnop(){
@@ -2494,6 +2594,7 @@ function toonView(naam){
   if(naam==='workout'){ woGekozenDag = new Date().getDay(); renderWorkout(); }
   if(naam==='leaderboard'){ renderLeaderboard(); }
   if(naam==='home') updateHomeTeasers();
+  if(naam==='macros') updateWater();
 }
 $('gaMacros').onclick = ()=> toonView('macros');
 $('gaWorkout').onclick = ()=> toonView('workout');
@@ -3050,7 +3151,8 @@ async function syncNu(){
     await u.collection('dagen').doc(key).set({
       kcal: Math.round(kc), e: Math.round(e), k: Math.round(k), v: Math.round(v), doel: doel,
       items: log.map(it=>({ n: it.n, label: it.label||'', kc: Math.round(it.kc) })),
-      trainingWeek: trainingenDezeWeek()
+      trainingWeek: trainingenDezeWeek(),
+      water: waterTotaal()
     }, { merge: true });
     await u.collection('data').doc('workout').set({ log: woLog, types: oefTypes });
   }catch(e){}
@@ -3173,10 +3275,12 @@ async function verwijderVerzoek(id){
 
 // ----- Vriend bekijken -----
 function statsBlok(st){
+  const glazen = Math.round((st.totaalWater||0)/250);
   return '<div class="stats-rij">'+
     '<div class="stat-vak"><div class="stat-getal">'+(st.totaalKcal||0).toLocaleString('nl-BE')+'</div><div class="stat-lab">totaal kcal</div></div>'+
     '<div class="stat-vak"><div class="stat-getal">'+(st.trainingTotaal||0)+'</div><div class="stat-lab">trainingen</div></div>'+
     '<div class="stat-vak"><div class="stat-getal">'+(st.hoogsteDag||0).toLocaleString('nl-BE')+'</div><div class="stat-lab">hoogste dag</div></div>'+
+    '<div class="stat-vak"><div class="stat-getal">'+glazen.toLocaleString('nl-BE')+'</div><div class="stat-lab">glazen water</div></div>'+
   '</div>';
 }
 async function bekijkVriend(uid, naam){
@@ -3257,19 +3361,23 @@ function lokaleStats(){
   }
   const start = weekStartKey(); const alle={}, week={};
   for(const oef in woLog){ for(const s of (woLog[oef]||[])){ if(s.datum){ alle[s.datum]=1; if(s.datum>=start) week[s.datum]=1; } } }
-  return { totaalKcal:totaal, hoogsteDag:hoogste, dagenGeteld:dagen, todayKcal, todayDoel, trainingTotaal:Object.keys(alle).length, trainingWeek:Object.keys(week).length };
+  let totaalWater=0; for(const k in waterGesch){ totaalWater += (waterGesch[k]||0); }
+  const todayWater = waterTotaal();
+  if(!waterGesch[today]) totaalWater += todayWater;   // vandaag meetellen als nog niet in geschiedenis
+  return { totaalKcal:totaal, hoogsteDag:hoogste, dagenGeteld:dagen, todayKcal, todayDoel, trainingTotaal:Object.keys(alle).length, trainingWeek:Object.keys(week).length, totaalWater, todayWater };
 }
 async function haalStats(uid){
   if(uid === fbUid){ const st = lokaleStats(); statsCache[uid] = st; return st; }
   if(statsCache[uid]) return statsCache[uid];
   const today = vandaagSleutel();
-  let totaalKcal=0, hoogsteDag=0, dagenGeteld=0, todayKcal=null, todayDoel=null;
+  let totaalKcal=0, hoogsteDag=0, dagenGeteld=0, todayKcal=null, todayDoel=null, totaalWater=0, todayWater=0;
   try{
     const qs = await fbDb.collection('users').doc(uid).collection('dagen').get();
     qs.forEach(doc=>{
       const d = doc.data(); const kc = d.kcal||0;
       totaalKcal += kc; if(kc>hoogsteDag) hoogsteDag = kc; if(kc>0) dagenGeteld++;
-      if(doc.id===today){ todayKcal = (d.kcal!=null?d.kcal:null); todayDoel = (d.doel!=null?d.doel:null); }
+      totaalWater += (d.water||0);
+      if(doc.id===today){ todayKcal = (d.kcal!=null?d.kcal:null); todayDoel = (d.doel!=null?d.doel:null); todayWater = d.water||0; }
     });
   }catch(e){}
   let trainingTotaal=0, trainingWeek=0;
@@ -3282,7 +3390,7 @@ async function haalStats(uid){
       trainingTotaal = Object.keys(alle).length; trainingWeek = Object.keys(week).length;
     }
   }catch(e){}
-  const st = { totaalKcal, hoogsteDag, dagenGeteld, todayKcal, todayDoel, trainingTotaal, trainingWeek };
+  const st = { totaalKcal, hoogsteDag, dagenGeteld, todayKcal, todayDoel, trainingTotaal, trainingWeek, totaalWater, todayWater };
   statsCache[uid] = st; return st;
 }
 
@@ -3299,10 +3407,12 @@ function tekenLeaderboard(box, rijen){
   if(rijen.length===0){ box.innerHTML='<div class="vr-leeg">Nog geen gegevens om te ranken.</div>'; return; }
   const med = ['🥇','🥈','🥉'];
   box.innerHTML = rijen.map((r,i)=>
-    '<div class="lb-rij'+(r.mij?' ik':'')+'"><span class="lb-pos">'+(med[i]||(i+1))+'</span>'+
+    '<div class="lb-rij'+(r.mij?' ik':'')+(r.mij?'':' klik')+'"'+(r.mij?'':' data-uid="'+r.uid+'" data-naam="'+escapeHtml(r.naam||'?')+'"')+'>'+
+    '<span class="lb-pos">'+(med[i]||(i+1))+'</span>'+
     '<span class="lb-naam">'+escapeHtml(r.naam)+(r.mij?' <em>(jij)</em>':'')+'</span>'+
     '<span class="lb-extra">'+r.extra+'</span></div>'
   ).join('');
+  box.querySelectorAll('.lb-rij.klik').forEach(rij=> rij.onclick=()=>bekijkVriend(rij.dataset.uid, rij.dataset.naam));
 }
 async function renderLeaderboard(){
   const box = $('vrLeaderboards'); if(!box) return;
@@ -3325,8 +3435,12 @@ async function renderLeaderboard(){
       tekenLeaderboard(box, rijen.map(r=>({...r, sort:r.st.totaalKcal, extra:r.st.totaalKcal.toLocaleString('nl-BE')+' kcal'})).sort((a,b)=>b.sort-a.sort));
     } else if(lbKeuze==='totaalTraining'){
       tekenLeaderboard(box, rijen.map(r=>({...r, sort:r.st.trainingTotaal, extra:r.st.trainingTotaal+' dag'+(r.st.trainingTotaal===1?'':'en')})).sort((a,b)=>b.sort-a.sort));
-    } else { // besteDag
+    } else if(lbKeuze==='besteDag'){
       tekenLeaderboard(box, rijen.map(r=>({...r, sort:r.st.hoogsteDag, extra:r.st.hoogsteDag.toLocaleString('nl-BE')+' kcal'})).sort((a,b)=>b.sort-a.sort));
+    } else if(lbKeuze==='waterDag'){
+      tekenLeaderboard(box, rijen.map(r=>({...r, sort:r.st.todayWater||0, extra:(r.st.todayWater||0).toLocaleString('nl-BE')+' ml'})).sort((a,b)=>b.sort-a.sort));
+    } else { // waterTotaal
+      tekenLeaderboard(box, rijen.map(r=>{ const gl=Math.round((r.st.totaalWater||0)/250); return {...r, sort:r.st.totaalWater||0, extra:gl.toLocaleString('nl-BE')+' '+(gl===1?'glas':'glazen')}; }).sort((a,b)=>b.sort-a.sort));
     }
   }catch(e){ box.innerHTML='<div class="vr-leeg">Kon ranglijst niet laden.</div>'; }
 }
@@ -3346,7 +3460,9 @@ document.querySelectorAll('.lb-kies').forEach(b=>{
       trainingWeek: 'Wie trainde de meeste dagen deze week?',
       totaalKcal: 'Totaal aantal calorieën ooit gelogd (alle dagen samen).',
       totaalTraining: 'Totaal aantal dagen getraind (aller tijden).',
-      besteDag: 'Hoogste aantal calorieën op één dag.'
+      besteDag: 'Hoogste aantal calorieën op één dag.',
+      waterDag: 'Wie dronk vandaag het meeste water?',
+      waterTotaal: 'Wie dronk in totaal de meeste glazen water? (1 glas = 250 ml)'
     };
     if(u) u.textContent = txt[lbKeuze] || '';
     renderLeaderboard();
@@ -3367,6 +3483,10 @@ $('accountChip').onclick = openVrienden;
   markeerDoelKnop();
   updateDashboard();
   renderLog();
+  await laadWater();
+  $('waterMin').onclick = verwijderLaatsteWater;
+  document.querySelectorAll('.water-add').forEach(b=> b.onclick=()=> voegWaterGlas(parseInt(b.dataset.add)) );
+  updateWater();
   updateHomeTeasers();
   // Fallback-scanner alvast laden op toestellen zonder ingebouwde lezer (bv. iPhone)
   setTimeout(()=>{ if(!heeftNativeScanner()) laadScannerLib().catch(()=>{}); }, 1200);
