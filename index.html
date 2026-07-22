@@ -3127,8 +3127,13 @@ async function startFirebase(){
   try{
     if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     fbDb = firebase.firestore();
+    try{ await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL); }catch(e){}
     firebase.auth().onAuthStateChanged(async (user)=>{
-      if(!user) return;
+      if(!user){
+        // Geen sessie → eenmalig anoniem inloggen (nieuwe gebruiker of uitgelogd)
+        try{ await firebase.auth().signInAnonymously(); }catch(e){}
+        return;   // deze functie vuurt opnieuw met de nieuwe gebruiker
+      }
       fbUid = user.uid;
       fbEmail = user.email || null;
       fbAnoniem = user.isAnonymous;
@@ -3142,7 +3147,7 @@ async function startFirebase(){
         }
       }catch(e){}
     });
-    await firebase.auth().signInAnonymously();
+    // GEEN onvoorwaardelijke signInAnonymously() meer — dat verving je e-mailaccount.
   }catch(e){}
 }
 
