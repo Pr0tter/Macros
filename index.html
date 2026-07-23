@@ -558,6 +558,9 @@
   .prof-item.import .imp-actie{color:var(--eiwit);font-size:12px;font-weight:700;white-space:nowrap;}
   .prof-item.import.heb{border-color:var(--line);cursor:default;opacity:.65;}
   .prof-item.import.heb .imp-actie{color:var(--muted);}
+  .prof-tabs{margin:10px 0 12px;}
+  .prof-item.heb-vast{opacity:.6;}
+  .prof-item.heb-vast .imp-actie{color:var(--muted);font-size:12px;white-space:nowrap;}
   .prof-item em{color:var(--muted);font-style:normal;font-size:12px;}
   .prof-ikc{font-family:'JetBrains Mono',monospace;color:var(--muted);flex-shrink:0;}
   .prof-wo{color:var(--muted);font-size:12px;font-family:'JetBrains Mono',monospace;text-align:right;}
@@ -4057,6 +4060,7 @@ async function syncNu(){
     const st = lokaleStats();
     await u.set({
       username: fbNaam, doel: doel,
+      geslacht: calcState.geslacht,
       vandaagDatum: key, vandaagKcal: Math.round(kc),
       trainingWeek: trainingenDezeWeek(),
       // Samenvatting: hiermee hoeven leaderboards niet alle dagen te lezen
@@ -4077,6 +4081,7 @@ async function syncNu(){
     }, { merge: true });
     await u.collection('data').doc('workout').set({ log: woLog, types: oefTypes });
     await u.collection('data').doc('eigen').set({ lijst: eigen });
+    await u.collection('data').doc('maaltijden').set({ lijst: maaltijden });
     await u.collection('data').doc('gewicht').set({ log: gewichtLog, auto: gewichtAuto, correctie: doelCorrectie, kalAuto: kalibreerAuto, laatsteKal: laatsteKalibratie });
   }catch(e){}
 }
@@ -4277,19 +4282,28 @@ function statsBlok(st){
     '<div class="stat-vak"><div class="stat-getal">🔥 '+(st.streak||0)+'</div><div class="stat-lab">dagen op rij</div></div>'+
   '</div>';
 }
+let vriendData = null;   // {naam, bezit, eigen, maaltijden}
 async function bekijkVriend(uid, naam){
   $('profNaam').textContent = naam;
   $('profInhoud').innerHTML = '<div class="vr-leeg">Laden…</div>';
   $('profOverlay').classList.add('open');
   try{
     const key = vandaagSleutel();
-    const [dagSnap, woSnap, eigenSnap, st] = await Promise.all([
+    const [dagSnap, woSnap, eigenSnap, mtSnap, userSnap, st] = await Promise.all([
       fbDb.collection('users').doc(uid).collection('dagen').doc(key).get(),
       fbDb.collection('users').doc(uid).collection('data').doc('workout').get(),
       fbDb.collection('users').doc(uid).collection('data').doc('eigen').get(),
+      fbDb.collection('users').doc(uid).collection('data').doc('maaltijden').get(),
+      fbDb.collection('users').doc(uid).get(),
       haalStats(uid)
     ]);
-    const vriendEigen = (eigenSnap.exists && Array.isArray(eigenSnap.data().lijst)) ? eigenSnap.data().lijst : [];
+    const geslacht = (userSnap.exists && userSnap.data().geslacht) ? userSnap.data().geslacht : null;
+    const bezit = geslacht==='vrouw' ? 'Haar' : (geslacht==='man' ? 'Zijn' : 'Hun');
+    vriendData = {
+      naam: naam, bezit: bezit,
+      eigen: (eigenSnap.exists && Array.isArray(eigenSnap.data().lijst)) ? eigenSnap.data().lijst : [],
+      maaltijden: (mtSnap.exists && Array.isArray(mtSnap.data().lijst)) ? mtSnap.data().lijst : []
+    };
     let html = '';
     html += statsBlok(st);
     // Voeding vandaag
@@ -4308,19 +4322,17 @@ async function bekijkVriend(uid, naam){
     } else {
       html += '<div class="vr-leeg">Nog niets gelogd vandaag.</div>';
     }
-    // Eigen producten van deze vriend → aantikbaar om over te nemen
-    if(vriendEigen.length){
-      html += '<div class="vr-kopje" style="margin-top:18px;">Producten van '+escapeHtml(naam)+'</div>';
-      html += '<div class="prof-tip">Tik op een product om het aan jouw lijst toe te voegen.</div>';
-      html += vriendEigen.map((f,i)=>{
-        const heb = eigen.some(x=> (f.code && x.code===f.code) || x.n===f.n);
-        return '<div class="prof-item import'+(heb?' heb':'')+'" data-imp="'+i+'">'+
-                 '<span>'+escapeHtml(f.n||'?')+(f.drank?' <em>(drank)</em>':'')+'</span>'+
-                 '<span class="imp-actie">'+(heb?'✓ heb je':'+ toevoegen')+'</span></div>';
-      }).join('');
-    }
+    // Producten & maaltijden overnemen
+    const nieuwAantal = vriendData.eigen.filter(f=>!heeftProduct(f)).length;
+    const hebAantal = vriendData.eigen.length - nieuwAantal;
+    html += '<div class="vr-kopje" style="margin-top:20px;">'+bezit+' producten &amp; maaltijden</div>';
+    html += '<div class="lb-knoppen prof-tabs">'+
+      '<button class="lb-kies actief" data-ptab="nieuw">Nieuw ('+nieuwAantal+')</button>'+
+      '<button class="lb-kies" data-ptab="heb">Heb je al ('+hebAantal+')</button>'+
+      '<button class="lb-kies" data-ptab="maaltijd">Maaltijden ('+vriendData.maaltijden.length+')</button>'+
+      '</div><div id="profTab"></div>';
     // Training vandaag
-    html += '<div class="vr-kopje" style="margin-top:18px;">Training vandaag</div>';
+    html += '<div class="vr-kopje" style="margin-top:20px;">Training vandaag</div>';
     let woHtml = '';
     if(woSnap.exists){
       const wl = woSnap.data().log || {};
@@ -4343,18 +4355,70 @@ async function bekijkVriend(uid, naam){
     }
     html += woHtml || '<div class="vr-leeg">Geen training vandaag.</div>';
     $('profInhoud').innerHTML = html;
-    // Import-knoppen koppelen
-    $('profInhoud').querySelectorAll('[data-imp]').forEach(el=>{
-      el.onclick = ()=> importeerProduct(vriendEigen[parseInt(el.dataset.imp)], el);
+    $('profInhoud').querySelectorAll('[data-ptab]').forEach(b=>{
+      b.onclick = ()=>{
+        $('profInhoud').querySelectorAll('[data-ptab]').forEach(x=>x.classList.remove('actief'));
+        b.classList.add('actief');
+        renderVriendTab(b.dataset.ptab);
+      };
     });
+    renderVriendTab('nieuw');
   }catch(e){
     $('profInhoud').innerHTML = '<div class="vr-leeg">Kon dit profiel niet laden.</div>';
   }
 }
+function heeftProduct(f){
+  return eigen.some(x=> (f.code && x.code===f.code) || x.n===f.n) ||
+         DB.some(x=> x.n===f.n);
+}
+function heeftMaaltijd(m){
+  return maaltijden.some(x=> x.naam.toLowerCase() === (m.naam||'').toLowerCase());
+}
+function renderVriendTab(tab){
+  const box = $('profTab'); if(!box || !vriendData) return;
+  const v = vriendData;
+  if(tab==='maaltijd'){
+    if(!v.maaltijden.length){ box.innerHTML = '<div class="vr-leeg">'+escapeHtml(v.naam)+' heeft nog geen maaltijden gemaakt.</div>'; return; }
+    box.innerHTML = '<div class="prof-tip">Tik op een maaltijd om ze bij jouw maaltijden te zetten.</div>' +
+      v.maaltijden.map((m,i)=>{
+        const heb = heeftMaaltijd(m);
+        let kc=0; for(const it of (m.items||[])) kc+=it.kc||0;
+        return '<div class="prof-item import'+(heb?' heb':'')+'" data-impmt="'+i+'">'+
+          '<span>'+escapeHtml(m.naam||'?')+' <em>('+(m.items||[]).length+' items · '+rond(kc)+' kcal)</em></span>'+
+          '<span class="imp-actie">'+(heb?'✓ heb je':'+ toevoegen')+'</span></div>';
+      }).join('');
+    box.querySelectorAll('[data-impmt]').forEach(el=>{
+      el.onclick = ()=> importeerMaaltijd(v.maaltijden[parseInt(el.dataset.impmt)], el);
+    });
+    return;
+  }
+  const nieuw = (tab==='nieuw');
+  const lijst = v.eigen.map((f,i)=>({f,i})).filter(x=> nieuw ? !heeftProduct(x.f) : heeftProduct(x.f));
+  if(!lijst.length){
+    box.innerHTML = '<div class="vr-leeg">'+(nieuw
+      ? (v.eigen.length ? 'Je hebt al alles van '+escapeHtml(v.naam)+'.' : escapeHtml(v.naam)+' heeft nog geen eigen producten.')
+      : 'Nog niets gemeenschappelijk.')+'</div>';
+    return;
+  }
+  box.innerHTML = (nieuw ? '<div class="prof-tip">Tik op een product om het aan jouw lijst toe te voegen.</div>' : '') +
+    lijst.map(x=>'<div class="prof-item'+(nieuw?' import':' heb-vast')+'"'+(nieuw?' data-imp="'+x.i+'"':'')+'>'+
+      '<span>'+escapeHtml(x.f.n||'?')+(x.f.drank?' <em>(drank)</em>':'')+'</span>'+
+      '<span class="imp-actie">'+(nieuw?'+ toevoegen':'✓ heb je')+'</span></div>').join('');
+  box.querySelectorAll('[data-imp]').forEach(el=>{
+    el.onclick = ()=> importeerProduct(v.eigen[parseInt(el.dataset.imp)], el);
+  });
+}
+function importeerMaaltijd(m, el){
+  if(!m) return;
+  if(heeftMaaltijd(m)){ toonToast('Die maaltijd heb je al.'); return; }
+  maaltijden.unshift({ naam: m.naam, items: (m.items||[]).map(x=>Object.assign({}, x)), fav:false });
+  bewaarSnel(); renderSnel();
+  toonToast('"'+m.naam+'" bij jouw maaltijden ✓');
+  if(el){ el.classList.add('heb'); el.querySelector('.imp-actie').textContent='✓ toegevoegd'; el.onclick=null; }
+}
 function importeerProduct(f, el){
   if(!f) return;
-  const heb = eigen.some(x=> (f.code && x.code===f.code) || x.n===f.n);
-  if(heb){ toonToast('Dit product staat al bij jou.'); return; }
+  if(heeftProduct(f)){ toonToast('Dit product staat al bij jou.'); return; }
   const nieuw = { n:f.n, kc:f.kc, e:f.e, k:f.k, v:f.v };
   if(f.drank) nieuw.drank = 1;
   if(f.stuk){ nieuw.stuk = f.stuk; nieuw.se = f.se || (f.drank?'glas':'stuk'); }
