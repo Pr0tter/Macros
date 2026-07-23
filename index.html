@@ -338,6 +338,39 @@
   .home-kaart.k-leaderboard .hk-naam{color:#F0BE5A;}
   .hk-pijl{color:var(--muted);font-size:30px;font-weight:300;}
   .lb-uitleg{color:var(--muted);font-size:14px;margin-bottom:16px;line-height:1.5;}
+  .home-kaart.k-gewicht{border-color:rgba(190,150,255,.45);}
+  .hk-icoon.gewicht{background:rgba(190,150,255,.14);}
+  .home-kaart.k-gewicht .hk-naam{color:#BE96FF;}
+  /* Gewicht */
+  .gw-invoer{background:var(--surface);border:1px solid rgba(190,150,255,.4);border-radius:18px;padding:16px;margin-bottom:16px;}
+  .gw-lab{font-size:15px;font-weight:700;margin-bottom:10px;}
+  .gw-rij{display:flex;gap:8px;}
+  .gw-rij input{flex:1;min-width:0;}
+  .gw-rij button{background:#BE96FF;border:none;border-radius:12px;color:#1A0B2E;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;padding:0 20px;cursor:pointer;}
+  .gw-rij button:active{opacity:.85;}
+  .gw-hint{color:var(--muted);font-size:12px;margin-top:9px;}
+  .gw-stats{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+  .gw-knoppen{margin-bottom:14px;}
+  .gw-auto{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-top:18px;}
+  .gw-auto-tekst{flex:1;min-width:0;}
+  .gw-auto-titel{font-size:15px;font-weight:700;}
+  .gw-auto-sub{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.45;}
+  .gw-schakel{width:52px;height:30px;border-radius:16px;background:var(--ink);border:1px solid var(--line);cursor:pointer;padding:0;flex-shrink:0;position:relative;}
+  .gw-schakel span{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--muted);transition:left .2s,background .2s;}
+  .gw-schakel.aan{background:rgba(190,150,255,.25);border-color:#BE96FF;}
+  .gw-schakel.aan span{left:25px;background:#BE96FF;}
+  .gw-item{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:6px;font-size:14px;}
+  .gw-item .gw-d{color:var(--muted);}
+  .gw-item .gw-kg{font-family:'JetBrains Mono',monospace;font-weight:700;}
+  .gw-item .gw-del{background:none;border:none;color:var(--muted);font-size:15px;cursor:pointer;padding:2px 4px;}
+  .kal-kaart{background:var(--ink);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:12px;}
+  .kal-week{font-size:12px;color:var(--muted);margin-bottom:10px;}
+  .kal-rij{display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:5px 0;}
+  .kal-rij span{color:var(--muted);}
+  .kal-rij b{font-family:'JetBrains Mono',monospace;}
+  .kal-note{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);line-height:1.5;}
+  .kal-note b{color:#BE96FF;}
+  .kal-note.ok{color:var(--eiwit);}
   .acc-edit{margin-left:auto;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;color:var(--text);font-size:15px;padding:8px 11px;cursor:pointer;flex-shrink:0;}
   .uname-annuleer{width:100%;margin-top:8px;background:none;border:none;color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:14px;padding:10px;cursor:pointer;}
 
@@ -473,6 +506,12 @@
   .prof-doel{color:var(--muted);font-size:13px;margin-top:2px;}
   .prof-macros{color:var(--muted);font-size:13px;margin-top:6px;font-family:'JetBrains Mono',monospace;}
   .prof-item{display:flex;justify-content:space-between;gap:10px;background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin-bottom:6px;font-size:14px;}
+  .prof-tip{color:var(--muted);font-size:12px;margin:2px 2px 8px;}
+  .prof-item.import{cursor:pointer;border-color:rgba(94,230,168,.45);}
+  .prof-item.import:active{background:var(--surface-2);}
+  .prof-item.import .imp-actie{color:var(--eiwit);font-size:12px;font-weight:700;white-space:nowrap;}
+  .prof-item.import.heb{border-color:var(--line);cursor:default;opacity:.65;}
+  .prof-item.import.heb .imp-actie{color:var(--muted);}
   .prof-item em{color:var(--muted);font-style:normal;font-size:12px;}
   .prof-ikc{font-family:'JetBrains Mono',monospace;color:var(--muted);flex-shrink:0;}
   .prof-wo{color:var(--muted);font-size:12px;font-family:'JetBrains Mono',monospace;text-align:right;}
@@ -560,12 +599,60 @@
       <div class="hk-tekst"><div class="hk-naam">Workout</div><div class="hk-sub" id="homeWorkoutSub">Training loggen</div></div>
       <div class="hk-pijl">›</div>
     </button>
+    <button class="home-kaart k-gewicht" id="gaGewicht">
+      <div class="hk-icoon gewicht">⚖️</div>
+      <div class="hk-tekst"><div class="hk-naam">Gewicht</div><div class="hk-sub" id="homeGewichtSub">Dagelijks gewicht &amp; progressie</div></div>
+      <div class="hk-pijl">›</div>
+    </button>
     <button class="home-kaart k-leaderboard" id="gaLeaderboard">
       <div class="hk-icoon leaderboard">🏆</div>
       <div class="hk-tekst"><div class="hk-naam">Leaderboards</div><div class="hk-sub" id="homeLbSub">Ranglijsten met je vrienden</div></div>
       <div class="hk-pijl">›</div>
     </button>
   </div>
+</div>
+
+<!-- ===== GEWICHT ===== -->
+<div id="viewGewicht" class="view hidden">
+  <button class="terug" id="terugGewicht">‹ Home</button>
+  <header><div class="titel">Gewicht</div><span class="datum" id="gwDatum"></span></header>
+
+  <div class="gw-invoer">
+    <div class="gw-lab" id="gwLab">Gewicht vandaag</div>
+    <div class="gw-rij">
+      <input id="gwInput" type="number" inputmode="decimal" step="0.1" placeholder="kg">
+      <button id="gwBewaar">Bewaren</button>
+    </div>
+    <div class="gw-hint" id="gwHint"></div>
+  </div>
+
+  <div class="gw-stats" id="gwStats"></div>
+
+  <div class="lb-knoppen gw-knoppen">
+    <button class="lb-kies actief" data-gw="dag">Per dag</button>
+    <button class="lb-kies" data-gw="week">Per week</button>
+  </div>
+  <div class="wo-grafiek" id="gwGrafiek"></div>
+
+  <div class="gw-auto">
+    <div class="gw-auto-tekst">
+      <div class="gw-auto-titel">Gebruik voor caloriedoel</div>
+      <div class="gw-auto-sub" id="gwAutoSub">Neemt het gemiddelde van je laatste volledige week.</div>
+    </div>
+    <button class="gw-schakel" id="gwAuto" role="switch" aria-checked="false"><span></span></button>
+  </div>
+
+  <div class="gw-auto">
+    <div class="gw-auto-tekst">
+      <div class="gw-auto-titel">Doel automatisch bijsturen</div>
+      <div class="gw-auto-sub" id="gwKalSub">Vergelijkt je echte gewichtsverloop met wat verwacht was.</div>
+    </div>
+    <button class="gw-schakel" id="gwKal" role="switch" aria-checked="false"><span></span></button>
+  </div>
+  <div id="gwAnalyse"></div>
+
+  <div class="vr-kopje" style="margin-top:20px;">Alle metingen</div>
+  <div id="gwLijst"></div>
 </div>
 
 <!-- ===== LEADERBOARDS ===== -->
@@ -1708,7 +1795,49 @@ const DB = [
   {n:"Glasnoedels (gekookt)",kc:90,e:0.1,k:22,v:0},
   {n:"Bami (bereid)",kc:160,e:6,k:20,v:6},
   {n:"Nasi/bami kruidenmix noedels",kc:150,e:5,k:24,v:3},
-  {n:"Bloemsuiker (poedersuiker)",kc:400,e:0,k:100,v:0,stuk:8,se:"eetlepel"}
+  {n:"Bloemsuiker (poedersuiker)",kc:400,e:0,k:100,v:0,stuk:8,se:"eetlepel"},
+  // === Kaas ===
+  {n:"Jonge kaas (48+)",kc:356,e:25,k:0,v:28,stuk:20,se:"sneetje"},
+  {n:"Belegen kaas",kc:390,e:26,k:0,v:32,stuk:20,se:"sneetje"},
+  {n:"Oude kaas",kc:400,e:29,k:0,v:32,stuk:20,se:"sneetje"},
+  {n:"Magere kaas (20+)",kc:250,e:32,k:0,v:13,stuk:20,se:"sneetje"},
+  {n:"Edammer (40+)",kc:300,e:26,k:0,v:22,stuk:20,se:"sneetje"},
+  {n:"Maasdammer",kc:360,e:27,k:0,v:28,stuk:20,se:"sneetje"},
+  {n:"Passendale",kc:360,e:24,k:0,v:29,stuk:20,se:"sneetje"},
+  {n:"Chimay kaas",kc:360,e:24,k:0,v:29,stuk:20,se:"sneetje"},
+  {n:"Herve kaas",kc:330,e:21,k:1,v:27,stuk:30,se:"stuk"},
+  {n:"Comté",kc:410,e:28,k:0,v:33,stuk:30,se:"stuk"},
+  {n:"Beaufort",kc:400,e:26,k:0,v:33,stuk:30,se:"stuk"},
+  {n:"Cantal",kc:390,e:24,k:0,v:32,stuk:30,se:"stuk"},
+  {n:"Tomme de Savoie",kc:320,e:24,k:0,v:25,stuk:30,se:"stuk"},
+  {n:"Saint-Nectaire",kc:340,e:22,k:1,v:27,stuk:30,se:"stuk"},
+  {n:"Morbier",kc:350,e:23,k:0,v:28,stuk:30,se:"stuk"},
+  {n:"Munster",kc:330,e:20,k:1,v:27,stuk:30,se:"stuk"},
+  {n:"Reblochon",kc:330,e:20,k:1,v:27,stuk:30,se:"stuk"},
+  {n:"Raclette",kc:355,e:23,k:1,v:28,stuk:30,se:"sneetje"},
+  {n:"Roquefort",kc:369,e:22,k:2,v:31,stuk:25,se:"stuk"},
+  {n:"Gorgonzola",kc:350,e:19,k:1,v:30,stuk:25,se:"stuk"},
+  {n:"Bleu d'Auvergne",kc:350,e:20,k:1,v:29,stuk:25,se:"stuk"},
+  {n:"Manchego",kc:390,e:25,k:1,v:32,stuk:25,se:"stuk"},
+  {n:"Pecorino",kc:390,e:26,k:1,v:31,stuk:10,se:"eetlepel"},
+  {n:"Grana Padano",kc:384,e:33,k:0,v:28,stuk:10,se:"eetlepel"},
+  {n:"Provolone",kc:350,e:26,k:2,v:27,stuk:25,se:"sneetje"},
+  {n:"Buffelmozzarella",kc:280,e:17,k:1,v:23,stuk:125,se:"bol"},
+  {n:"Mozzarella light",kc:190,e:20,k:1,v:11,stuk:125,se:"bol"},
+  {n:"Burrata",kc:330,e:14,k:2,v:30,stuk:125,se:"bol"},
+  {n:"Kruidenkaas (Boursin-type)",kc:400,e:7,k:3,v:40,stuk:20,se:"eetlepel"},
+  // === Tomaten ===
+  {n:"Kerstomaat",kc:18,e:0.9,k:3.9,v:0.2,stuk:17,se:"stuk"},
+  {n:"Snoeptomaat",kc:22,e:0.9,k:4.6,v:0.2,stuk:15,se:"stuk"},
+  {n:"Trostomaat",kc:18,e:0.9,k:3.9,v:0.2,stuk:100,se:"stuk"},
+  {n:"Pruimtomaat (roma)",kc:18,e:0.9,k:3.9,v:0.2,stuk:60,se:"stuk"},
+  {n:"Vleestomaat",kc:18,e:0.9,k:3.9,v:0.2,stuk:200,se:"stuk"},
+  {n:"Groene tomaat",kc:23,e:1.2,k:5,v:0.2,stuk:120,se:"stuk"},
+  {n:"Gepelde tomaten (blik)",kc:20,e:1,k:3.5,v:0.2},
+  {n:"Tomatenblokjes (blik)",kc:20,e:1,k:3.5,v:0.2},
+  {n:"Tomatenpassata",kc:30,e:1.5,k:5.5,v:0.2},
+  {n:"Tomatenpuree",kc:82,e:4.3,k:19,v:0.5,stuk:15,se:"eetlepel"},
+  {n:"Zongedroogde tomaat in olie",kc:210,e:3,k:12,v:16,stuk:8,se:"stuk"}
 ];
 
 // Doelwaarden voor de balkjes. Standaard tot je eigen doel is berekend.
@@ -1816,6 +1945,254 @@ function updateWater(){
 }
 function voegWaterGlas(ml){ waterLijst.push(ml); bewaarWater(); updateWater(); }
 function verwijderLaatsteWater(){ if(waterLijst.length){ waterLijst.pop(); bewaarWater(); updateWater(); } }
+
+// ---------- Gewicht ----------
+let gewichtLog = {};        // {datum: kg}
+let gewichtAuto = false;    // gebruik gewicht voor caloriedoel
+let gwModus = 'dag';
+
+async function laadGewicht(){
+  const raw = await ladenRaw('gewicht-log');
+  if(raw){ try{ gewichtLog = JSON.parse(raw) || {}; }catch(e){ gewichtLog = {}; } }
+  const a = await ladenRaw('gewicht-auto');
+  gewichtAuto = (a === '1');
+}
+async function bewaarGewicht(){
+  await opslaanRaw('gewicht-log', JSON.stringify(gewichtLog));
+  await opslaanRaw('gewicht-auto', gewichtAuto ? '1' : '0');
+  syncStraks();
+}
+function gewichtDagen(){ return Object.keys(gewichtLog).sort(); }
+function maandagVan(key){
+  const [j,m,d] = key.split('-').map(Number);
+  const dt = new Date(j, m-1, d);
+  const dag = (dt.getDay()+6)%7;           // maandag = 0
+  dt.setDate(dt.getDate()-dag);
+  return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0');
+}
+function weekGemiddelden(){
+  const groep = {};
+  for(const k of gewichtDagen()){ const w = maandagVan(k); (groep[w] = groep[w] || []).push(gewichtLog[k]); }
+  return Object.keys(groep).sort().map(w=>({
+    week: w,
+    gem: groep[w].reduce((a,b)=>a+b,0)/groep[w].length,
+    n: groep[w].length
+  }));
+}
+// Gemiddelde van de laatste VOLLEDIGE (afgelopen) week; anders deze week; anders laatste meting
+function autoGewichtWaarde(){
+  const weken = weekGemiddelden();
+  if(weken.length){
+    const huidig = weekStartKey();
+    const vorige = weken.filter(w=> w.week !== huidig);
+    if(vorige.length) return Math.round(vorige[vorige.length-1].gem*10)/10;
+    return Math.round(weken[weken.length-1].gem*10)/10;
+  }
+  const ks = gewichtDagen();
+  if(ks.length) return gewichtLog[ks[ks.length-1]];
+  return null;
+}
+// Zet het automatische gewicht in de caloriecalculator (en herbereken het doel)
+function pasAutoGewichtToe(){
+  if(!gewichtAuto) return false;
+  const g = autoGewichtWaarde();
+  if(g==null) return false;
+  $('cGewicht').value = g;
+  if(geladenInvoer) geladenInvoer.gewicht = String(g);
+  if(doelGezet){
+    const r = berekenCalc();
+    if(r){ DOEL = r; bewaarDoel(); bewaarGeschiedenis(); updateDashboard(); }
+  }
+  updateWater();
+  return true;
+}
+
+function renderGewicht(){
+  const vandaag = vandaagSleutel();
+  const dagen = gewichtDagen();
+  $('gwInput').value = (gewichtLog[vandaag]!=null) ? gewichtLog[vandaag] : '';
+  $('gwHint').textContent = (gewichtLog[vandaag]!=null)
+    ? 'Al ingevuld voor vandaag — je kan het aanpassen.'
+    : 'Weeg je bij voorkeur elke dag op hetzelfde moment (bv. \'s ochtends).';
+
+  // Stats
+  const laatste = dagen.length ? gewichtLog[dagen[dagen.length-1]] : null;
+  const eerste  = dagen.length ? gewichtLog[dagen[0]] : null;
+  const vorige  = dagen.length>1 ? gewichtLog[dagen[dagen.length-2]] : null;
+  const weken = weekGemiddelden();
+  const dezeWeek = weken.length ? weken[weken.length-1] : null;
+  function deltaTxt(nu, ref){
+    if(nu==null || ref==null) return '–';
+    const d = Math.round((nu-ref)*10)/10;
+    const kl = d>0 ? 'rood' : (d<0 ? 'blauw' : '');
+    return '<span class="lb-diff '+kl+'">'+(d>0?'+':(d<0?'−':''))+Math.abs(d).toFixed(1)+'</span>';
+  }
+  $('gwStats').innerHTML = dagen.length ? (
+    '<div class="stat-vak"><div class="stat-getal">'+laatste.toFixed(1)+'</div><div class="stat-lab">laatste (kg)</div></div>'+
+    '<div class="stat-vak"><div class="stat-getal">'+deltaTxt(laatste, vorige)+'</div><div class="stat-lab">t.o.v. vorige</div></div>'+
+    '<div class="stat-vak"><div class="stat-getal">'+(dezeWeek?dezeWeek.gem.toFixed(1):'–')+'</div><div class="stat-lab">gem. deze week</div></div>'+
+    '<div class="stat-vak"><div class="stat-getal">'+deltaTxt(laatste, eerste)+'</div><div class="stat-lab">sinds start</div></div>'
+  ) : '';
+
+  // Grafiek
+  const box = $('gwGrafiek');
+  if(gwModus==='dag'){
+    const laatsteDagen = dagen.slice(-14);
+    if(laatsteDagen.length<2){
+      box.innerHTML = '<div class="vr-leeg">Vul minstens 2 dagen in om een grafiek te zien.</div>';
+    } else {
+      box.innerHTML = svgLijnGrafiek(laatsteDagen.map(k=>({ x: datumKort(k), y: Math.round(gewichtLog[k]*10)/10 })), 'kg', {kleur:'#BE96FF', decimalen:1});
+    }
+  } else {
+    const w = weken.slice(-10);
+    if(w.length<2){
+      box.innerHTML = '<div class="vr-leeg">Er is nog maar '+w.length+' week met metingen. Vul meer dagen in.</div>';
+    } else {
+      box.innerHTML = svgLijnGrafiek(w.map(x=>({ x: datumKort(x.week), y: Math.round(x.gem*10)/10 })), 'kg', {kleur:'#BE96FF', decimalen:1});
+    }
+  }
+
+  // Auto-schakelaar
+  const sch = $('gwAuto');
+  sch.classList.toggle('aan', gewichtAuto);
+  sch.setAttribute('aria-checked', gewichtAuto ? 'true' : 'false');
+  const auto = autoGewichtWaarde();
+  $('gwAutoSub').textContent = gewichtAuto
+    ? (auto!=null ? ('Actief — je doel rekent nu met '+auto.toFixed(1)+' kg.') : 'Actief, maar er is nog geen gewicht ingevuld.')
+    : 'Neemt het gemiddelde van je laatste volledige week.';
+
+  // Lijst
+  $('gwLijst').innerHTML = dagen.length
+    ? dagen.slice().reverse().map(k=>'<div class="gw-item"><span class="gw-d">'+datumLang(k)+'</span><span class="gw-kg">'+gewichtLog[k].toFixed(1)+' kg</span><button class="gw-del" data-gwd="'+k+'">✕</button></div>').join('')
+    : '<div class="vr-leeg">Nog geen metingen ingevuld.</div>';
+  $('gwLijst').querySelectorAll('[data-gwd]').forEach(b=>{
+    b.onclick = ()=>{ delete gewichtLog[b.dataset.gwd]; bewaarGewicht(); pasAutoGewichtToe(); renderGewicht(); updateHomeTeasers(); };
+  });
+  renderKalibratie();
+}
+function datumLang(sleutel){
+  const [j,m,d] = sleutel.split('-').map(Number);
+  const dagen = ['zo','ma','di','wo','do','vr','za'];
+  const dt = new Date(j, m-1, d);
+  return dagen[dt.getDay()]+' '+d+'/'+m;
+}
+
+// ---------- Doel bijsturen op basis van gewicht ----------
+const KCAL_PER_KG = 7700;        // energie-inhoud van 1 kg lichaamsvet (benadering)
+const MAX_STAP = 100;            // max aanpassing per week (kcal/dag)
+const MAX_CORRECTIE = 600;       // max totale afwijking t.o.v. de formule
+let doelCorrectie = 0;           // kcal/dag bovenop de berekende waarde
+let kalibreerAuto = false;
+let laatsteKalibratie = null;    // week waarvoor al bijgestuurd is
+
+async function laadKalibratie(){
+  const raw = await ladenRaw('kalibratie');
+  if(raw){ try{
+    const k = JSON.parse(raw)||{};
+    doelCorrectie = k.correctie||0;
+    kalibreerAuto = !!k.auto;
+    laatsteKalibratie = k.laatste||null;
+  }catch(e){} }
+}
+async function bewaarKalibratie(){
+  await opslaanRaw('kalibratie', JSON.stringify({ correctie: doelCorrectie, auto: kalibreerAuto, laatste: laatsteKalibratie }));
+  syncStraks();
+}
+function weekVerschuif(weekKey, n){
+  const [j,m,d] = weekKey.split('-').map(Number);
+  const dt = new Date(j, m-1, d);
+  dt.setDate(dt.getDate() + n*7);
+  return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0');
+}
+function weekInname(weekKey){
+  let som=0, n=0;
+  for(const k in geschiedenis){
+    if(maandagVan(k)===weekKey && geschiedenis[k].kcal>0){ som += geschiedenis[k].kcal; n++; }
+  }
+  return n ? { gem: som/n, dagen: n } : null;
+}
+function weekGewichtGem(weekKey){
+  let som=0, n=0;
+  for(const k in gewichtLog){ if(maandagVan(k)===weekKey){ som += gewichtLog[k]; n++; } }
+  return n ? { gem: som/n, dagen: n } : null;
+}
+function huidigeTdee(){
+  const leeftijd = parseFloat($('cLeeftijd').value);
+  const lengte   = parseFloat($('cLengte').value);
+  const gewicht  = parseFloat($('cGewicht').value);
+  if(!leeftijd || !lengte || !gewicht) return null;
+  const bmr = 10*gewicht + 6.25*lengte - 5*leeftijd + (calcState.geslacht==='man' ? 5 : -161);
+  return bmr * calcState.factor;
+}
+// Analyse van de laatste afgesloten week
+function kalibratieAnalyse(){
+  if(!doelGezet) return null;
+  const huidig = weekStartKey();
+  const vorige = weekVerschuif(huidig, -1);
+  const daarvoor = weekVerschuif(huidig, -2);
+  const inname = weekInname(vorige);
+  const g1 = weekGewichtGem(vorige);
+  const g0 = weekGewichtGem(daarvoor);
+  const tdee = huidigeTdee();
+  if(!inname || !g1 || !g0 || !tdee) return null;
+  // Wat had de weegschaal moeten doen bij DEZE inname?
+  const verwacht  = (inname.gem - tdee) * 7 / KCAL_PER_KG;   // kg
+  const werkelijk = g1.gem - g0.gem;                          // kg
+  // Wat verbrand je dan écht per dag?
+  const tdeeEcht = inname.gem - (werkelijk * KCAL_PER_KG / 7);
+  const fout = tdeeEcht - tdee;         // + = je verbrandt meer dan de formule denkt
+  let stap = Math.round(fout * 0.5 / 10) * 10;   // half corrigeren, per 10 kcal
+  stap = Math.max(-MAX_STAP, Math.min(MAX_STAP, stap));
+  const genoegData = inname.dagen >= 4 && g1.dagen >= 3 && g0.dagen >= 3;
+  return { week: vorige, inname, verwacht, werkelijk, tdee, tdeeEcht, fout, stap, genoegData };
+}
+function pasKalibratieToe(stil){
+  if(!kalibreerAuto) return null;
+  const a = kalibratieAnalyse();
+  if(!a || !a.genoegData) return null;
+  if(laatsteKalibratie === a.week) return null;     // deze week al bijgestuurd
+  if(a.stap === 0){ laatsteKalibratie = a.week; bewaarKalibratie(); return null; }
+  doelCorrectie = Math.max(-MAX_CORRECTIE, Math.min(MAX_CORRECTIE, doelCorrectie + a.stap));
+  laatsteKalibratie = a.week;
+  bewaarKalibratie();
+  const r = berekenCalc();
+  if(r){ DOEL = r; bewaarDoel(); bewaarGeschiedenis(); updateDashboard(); }
+  if(!stil) toonToast('Doel bijgestuurd met '+(a.stap>0?'+':'−')+Math.abs(a.stap)+' kcal/dag');
+  return a;
+}
+function renderKalibratie(){
+  const sch = $('gwKal');
+  sch.classList.toggle('aan', kalibreerAuto);
+  sch.setAttribute('aria-checked', kalibreerAuto ? 'true' : 'false');
+  const corrTxt = doelCorrectie===0 ? 'nog geen aanpassing' : ((doelCorrectie>0?'+':'−')+Math.abs(doelCorrectie)+' kcal/dag t.o.v. de formule');
+  $('gwKalSub').textContent = kalibreerAuto
+    ? ('Actief — '+corrTxt+'.')
+    : 'Vergelijkt je echte gewichtsverloop met wat verwacht was, en stuurt je doel stap voor stap bij.';
+
+  const box = $('gwAnalyse');
+  const a = kalibratieAnalyse();
+  if(!a){ box.innerHTML = '<div class="vr-leeg">Nog te weinig gegevens. Log minstens twee weken je eten én je gewicht.</div>'; return; }
+  const fmt = (v)=> (v>0?'+':(v<0?'−':''))+Math.abs(v).toFixed(2)+' kg';
+  let html = '<div class="kal-kaart">';
+  html += '<div class="kal-week">Week van '+datumKort(a.week)+' · '+a.inname.dagen+' dag'+(a.inname.dagen===1?'':'en')+' gelogd</div>';
+  html += '<div class="kal-rij"><span>Gemiddeld gegeten</span><b>'+Math.round(a.inname.gem).toLocaleString('nl-BE')+' kcal/dag</b></div>';
+  html += '<div class="kal-rij"><span>Verwacht op de weegschaal</span><b>'+fmt(a.verwacht)+'</b></div>';
+  html += '<div class="kal-rij"><span>Werkelijk</span><b>'+fmt(a.werkelijk)+'</b></div>';
+  html += '<div class="kal-rij"><span>Geschat verbruik</span><b>'+Math.round(a.tdeeEcht).toLocaleString('nl-BE')+' kcal/dag</b></div>';
+  if(!a.genoegData){
+    html += '<div class="kal-note">Te weinig metingen voor een betrouwbare bijsturing (min. 4 dagen eten en 3 weegmomenten per week).</div>';
+  } else if(a.stap===0){
+    html += '<div class="kal-note ok">Je zit goed — geen aanpassing nodig.</div>';
+  } else {
+    const richting = a.fout>0 ? 'méér' : 'minder';
+    html += '<div class="kal-note">Je verbrandt ongeveer <b>'+Math.abs(Math.round(a.fout))+' kcal/dag '+richting+'</b> dan de formule denkt. '+
+            (kalibreerAuto && laatsteKalibratie===a.week ? 'Toegepast: ' : 'Voorstel: ')+
+            '<b>'+(a.stap>0?'+':'−')+Math.abs(a.stap)+' kcal/dag</b>'+
+            (kalibreerAuto ? '' : ' — zet de schakelaar aan om dit automatisch te laten gebeuren.')+'</div>';
+  }
+  html += '</div>';
+  box.innerHTML = html;
+}
 
 async function bewaarEigen(){
   await opslaanRaw('eigen-eten', JSON.stringify(eigen));
@@ -2108,7 +2485,7 @@ function openBewerk(naam){
   $('nBewaar').textContent = 'Wijzigingen bewaren';
   $('nVerwijder').style.display = 'block';
   $('nVerwijder').textContent = (bewerk.type==='eigen') ? 'Verwijderen' : 'Herstel standaardwaarden';
-  $('nNaam').readOnly = true;   // naam is de sleutel — niet wijzigen
+  $('nNaam').readOnly = (bewerk.type === 'db');   // eigen product: naam wel aanpasbaar
   $('nNaam').value = f.n;
   $('nKcal').value = f.kc;
   $('nE').value = f.e;
@@ -2138,6 +2515,11 @@ $('nBewaar').onclick = ()=>{
 
   if(bewerk && bewerk.type==='eigen'){
     const f = eigen[bewerk.index];
+    if(naam !== f.n){
+      const botst = alleEten().some((x,i)=> x.n===naam && !(x===f));
+      if(botst){ toonToast('Er bestaat al iets met die naam — kies een andere.'); $('nNaam').focus(); return; }
+      f.n = naam;
+    }
     f.kc=waarden.kc; f.e=waarden.e; f.k=waarden.k; f.v=waarden.v;
     if(nDrank){ f.drank=1; } else { delete f.drank; }
     if(!isNaN(st) && st>0){ f.stuk=st; f.se = f.se || seStandaard; } else { delete f.stuk; delete f.se; }
@@ -2506,7 +2888,7 @@ function berekenCalc(){
   if(calcState.doel!=='onderhoud'){
     doelKcal = tdee * AANPASSING[calcState.doel][calcState.tempo];
   }
-  doelKcal = rond(doelKcal);
+  doelKcal = rond(doelKcal + doelCorrectie);
   // Macro's: eiwit 2 g/kg lichaamsgewicht, vet 25% van kcal, rest koolhydraten
   const eiwitG = rond(2.0 * gewicht);
   const vetG = rond((doelKcal * 0.25) / 9);
@@ -2694,15 +3076,19 @@ function toonView(naam){
   $('viewMacros').classList.toggle('hidden', naam!=='macros');
   $('viewWorkout').classList.toggle('hidden', naam!=='workout');
   $('viewLeaderboard').classList.toggle('hidden', naam!=='leaderboard');
+  $('viewGewicht').classList.toggle('hidden', naam!=='gewicht');
   window.scrollTo(0,0);
   if(naam==='workout'){ woGekozenDag = new Date().getDay(); renderWorkout(); }
   if(naam==='leaderboard'){ renderLeaderboard(); }
+  if(naam==='gewicht'){ renderGewicht(); }
   if(naam==='home') updateHomeTeasers();
   if(naam==='macros') updateWater();
 }
 $('gaMacros').onclick = ()=> toonView('macros');
 $('gaWorkout').onclick = ()=> toonView('workout');
 $('gaLeaderboard').onclick = ()=> toonView('leaderboard');
+$('gaGewicht').onclick = ()=> toonView('gewicht');
+$('terugGewicht').onclick = ()=> toonView('home');
 $('terugMacros').onclick = ()=> toonView('home');
 $('terugWorkout').onclick = ()=> toonView('home');
 $('terugLeaderboard').onclick = ()=> toonView('home');
@@ -2714,6 +3100,9 @@ function updateHomeTeasers(){
   const wd = new Date().getDay();
   const aantal = (sjablonen[wd]||[]).length;
   $('homeWorkoutSub').textContent = aantal>0 ? (aantal+' oefening'+(aantal>1?'en':'')+' vandaag') : 'Training loggen';
+  const gd = gewichtDagen();
+  const gsub = $('homeGewichtSub');
+  if(gsub) gsub.textContent = gd.length ? (gewichtLog[gd[gd.length-1]].toFixed(1)+' kg · laatste meting') : "Dagelijks gewicht & progressie";
 }
 
 // ================= WORKOUT =================
@@ -3060,7 +3449,9 @@ function tekenGrafiek(){
   }
   $('woGrafiek').innerHTML = svgLijnGrafiek(data, eenheid);
 }
-function svgLijnGrafiek(data, eenheid){
+function svgLijnGrafiek(data, eenheid, opts){
+  opts = opts || {};
+  const dec = (opts.decimalen!=null) ? opts.decimalen : 0;
   const W=420, H=240, pl=44, pr=14, pt=18, pb=42;
   const ys = data.map(d=>d.y);
   let ymin = Math.min(...ys), ymax = Math.max(...ys);
@@ -3069,14 +3460,14 @@ function svgLijnGrafiek(data, eenheid){
   if(ymin<0 && Math.min(...ys)>=0) ymin=0;
   const px = (i)=> pl + (data.length===1?0:i*(W-pl-pr)/(data.length-1));
   const py = (v)=> pt + (H-pt-pb) * (1-(v-ymin)/(ymax-ymin));
-  const kleur = '#7DA3FF';
+  const kleur = opts.kleur || '#7DA3FF';
   let g = '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">';
   // horizontale hulplijnen + y-labels (3)
   for(let t=0;t<=2;t++){
     const val = ymin + (ymax-ymin)*t/2;
     const y = py(val);
     g += '<line x1="'+pl+'" y1="'+y.toFixed(1)+'" x2="'+(W-pr)+'" y2="'+y.toFixed(1)+'" stroke="#2A2F39" stroke-width="1"/>';
-    g += '<text x="'+(pl-6)+'" y="'+(y+4).toFixed(1)+'" fill="#868D9B" font-size="11" text-anchor="end" font-family="monospace">'+Math.round(val)+'</text>';
+    g += '<text x="'+(pl-6)+'" y="'+(y+4).toFixed(1)+'" fill="#868D9B" font-size="11" text-anchor="end" font-family="monospace">'+val.toFixed(dec)+'</text>';
   }
   // lijn
   let punten = data.map((d,i)=> px(i).toFixed(1)+','+py(d.y).toFixed(1)).join(' ');
@@ -3267,6 +3658,8 @@ async function syncNu(){
       water: waterTotaal()
     }, { merge: true });
     await u.collection('data').doc('workout').set({ log: woLog, types: oefTypes });
+    await u.collection('data').doc('eigen').set({ lijst: eigen });
+    await u.collection('data').doc('gewicht').set({ log: gewichtLog, auto: gewichtAuto, correctie: doelCorrectie, kalAuto: kalibreerAuto, laatsteKal: laatsteKalibratie });
   }catch(e){}
 }
 
@@ -3471,11 +3864,13 @@ async function bekijkVriend(uid, naam){
   $('profOverlay').classList.add('open');
   try{
     const key = vandaagSleutel();
-    const [dagSnap, woSnap, st] = await Promise.all([
+    const [dagSnap, woSnap, eigenSnap, st] = await Promise.all([
       fbDb.collection('users').doc(uid).collection('dagen').doc(key).get(),
       fbDb.collection('users').doc(uid).collection('data').doc('workout').get(),
+      fbDb.collection('users').doc(uid).collection('data').doc('eigen').get(),
       haalStats(uid)
     ]);
+    const vriendEigen = (eigenSnap.exists && Array.isArray(eigenSnap.data().lijst)) ? eigenSnap.data().lijst : [];
     let html = '';
     html += statsBlok(st);
     // Voeding vandaag
@@ -3493,6 +3888,17 @@ async function bekijkVriend(uid, naam){
       }
     } else {
       html += '<div class="vr-leeg">Nog niets gelogd vandaag.</div>';
+    }
+    // Eigen producten van deze vriend → aantikbaar om over te nemen
+    if(vriendEigen.length){
+      html += '<div class="vr-kopje" style="margin-top:18px;">Producten van '+escapeHtml(naam)+'</div>';
+      html += '<div class="prof-tip">Tik op een product om het aan jouw lijst toe te voegen.</div>';
+      html += vriendEigen.map((f,i)=>{
+        const heb = eigen.some(x=> (f.code && x.code===f.code) || x.n===f.n);
+        return '<div class="prof-item import'+(heb?' heb':'')+'" data-imp="'+i+'">'+
+                 '<span>'+escapeHtml(f.n||'?')+(f.drank?' <em>(drank)</em>':'')+'</span>'+
+                 '<span class="imp-actie">'+(heb?'✓ heb je':'+ toevoegen')+'</span></div>';
+      }).join('');
     }
     // Training vandaag
     html += '<div class="vr-kopje" style="margin-top:18px;">Training vandaag</div>';
@@ -3518,9 +3924,26 @@ async function bekijkVriend(uid, naam){
     }
     html += woHtml || '<div class="vr-leeg">Geen training vandaag.</div>';
     $('profInhoud').innerHTML = html;
+    // Import-knoppen koppelen
+    $('profInhoud').querySelectorAll('[data-imp]').forEach(el=>{
+      el.onclick = ()=> importeerProduct(vriendEigen[parseInt(el.dataset.imp)], el);
+    });
   }catch(e){
     $('profInhoud').innerHTML = '<div class="vr-leeg">Kon dit profiel niet laden.</div>';
   }
+}
+function importeerProduct(f, el){
+  if(!f) return;
+  const heb = eigen.some(x=> (f.code && x.code===f.code) || x.n===f.n);
+  if(heb){ toonToast('Dit product staat al bij jou.'); return; }
+  const nieuw = { n:f.n, kc:f.kc, e:f.e, k:f.k, v:f.v };
+  if(f.drank) nieuw.drank = 1;
+  if(f.stuk){ nieuw.stuk = f.stuk; nieuw.se = f.se || (f.drank?'glas':'stuk'); }
+  if(f.code) nieuw.code = f.code;
+  eigen.unshift(nieuw);
+  bewaarEigen();
+  toonToast('“'+f.n+'” toegevoegd aan jouw producten ✓');
+  if(el){ el.classList.add('heb'); el.querySelector('.imp-actie').textContent = '✓ toegevoegd'; el.onclick=null; }
 }
 $('profSluit').onclick = ()=> $('profOverlay').classList.remove('open');
 $('profOverlay').onclick = (e)=>{ if(e.target===$('profOverlay')) $('profOverlay').classList.remove('open'); };
@@ -3650,6 +4073,44 @@ document.querySelectorAll('.lb-kies').forEach(b=>{
     renderLeaderboard();
   };
 });
+$('gwBewaar').onclick = ()=>{
+  const g = parseFloat(($('gwInput').value||'').replace(',','.'));
+  if(isNaN(g) || g<=0 || g>400){ $('gwHint').textContent = 'Vul een geldig gewicht in (kg).'; return; }
+  gewichtLog[vandaagSleutel()] = Math.round(g*10)/10;
+  bewaarGewicht();
+  pasAutoGewichtToe();
+  renderGewicht();
+  updateHomeTeasers();
+  toonToast('Gewicht bewaard ✓');
+};
+$('gwInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') $('gwBewaar').click(); });
+document.querySelectorAll('[data-gw]').forEach(b=>{
+  b.onclick = ()=>{
+    gwModus = b.dataset.gw;
+    document.querySelectorAll('[data-gw]').forEach(x=>x.classList.remove('actief'));
+    b.classList.add('actief');
+    renderGewicht();
+  };
+});
+$('gwAuto').onclick = ()=>{
+  if(!gewichtAuto){
+    if(autoGewichtWaarde()==null){ toonToast('Vul eerst je gewicht in.'); return; }
+    gewichtAuto = true;
+    bewaarGewicht();
+    pasAutoGewichtToe();
+    toonToast('Je caloriedoel rekent nu met je gewicht ✓');
+  } else {
+    gewichtAuto = false;
+    bewaarGewicht();
+  }
+  renderGewicht();
+};
+$('gwKal').onclick = ()=>{
+  kalibreerAuto = !kalibreerAuto;
+  bewaarKalibratie();
+  if(kalibreerAuto) pasKalibratieToe();
+  renderGewicht();
+};
 $('accEdit').onclick = openNaamAanpassen;
 $('unameAnnuleer').onclick = ()=>{ $('unameOverlay').classList.remove('open'); };
 $('emailKnop').onclick = doeEmailActie;
@@ -3678,6 +4139,10 @@ $('accountChip').onclick = openVrienden;
   markeerDoelKnop();
   updateDashboard();
   renderLog();
+  await laadGewicht();
+  await laadKalibratie();
+  pasAutoGewichtToe();
+  pasKalibratieToe(true);
   await laadWater();
   $('waterMin').onclick = verwijderLaatsteWater;
   document.querySelectorAll('.water-add').forEach(b=> b.onclick=()=> voegWaterGlas(parseInt(b.dataset.add)) );
