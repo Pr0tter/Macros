@@ -507,6 +507,52 @@
   .prof-macros{color:var(--muted);font-size:13px;margin-top:6px;font-family:'JetBrains Mono',monospace;}
   .prof-item{display:flex;justify-content:space-between;gap:10px;background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin-bottom:6px;font-size:14px;}
   .prof-tip{color:var(--muted);font-size:12px;margin:2px 2px 8px;}
+  /* Favorieten */
+  .snel-rij{display:flex;gap:7px;overflow-x:auto;padding:2px 0 4px;margin-bottom:10px;-webkit-overflow-scrolling:touch;}
+  .snel-rij::-webkit-scrollbar{display:none;}
+  .snel-chip{flex:0 0 auto;background:var(--surface);border:1px solid var(--line);border-radius:20px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;padding:8px 14px;cursor:pointer;white-space:nowrap;}
+  .snel-chip.maaltijd{border-color:rgba(94,230,168,.5);color:var(--eiwit);}
+  .snel-chip:active{background:var(--surface-2);}
+  .fav-leeg{color:var(--muted);font-size:12px;padding:4px 2px 8px;}
+  .res-ster{background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:2px 5px;}
+  .res-ster.aan{color:#F0BE5A;}
+  /* Weekoverzicht (beginscherm) */
+  .week-kaart{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:22px;}
+  .wk-kop{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);margin-bottom:10px;}
+  .wk-streak{color:#F0BE5A;font-weight:700;font-size:13px;}
+  .wk-rij{display:flex;gap:6px;}
+  .wk-vak{flex:1;text-align:center;}
+  .wk-vak b{display:block;font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:800;}
+  .wk-vak span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);margin-top:2px;}
+  /* Maaltijden */
+  .log-acties{display:flex;gap:8px;margin-bottom:12px;}
+  .log-acties button{flex:1;background:var(--ink);border:1px solid var(--line);border-radius:12px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;padding:10px 6px;cursor:pointer;}
+  .log-acties button:active{background:var(--surface-2);}
+  .mt-bewaar{width:100%;background:var(--eiwit);border:none;border-radius:12px;color:#06120C;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;padding:12px;cursor:pointer;margin-bottom:8px;}
+  .mt-tweede{width:100%;background:var(--ink);border:1px solid var(--line);border-radius:12px;color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;padding:11px;cursor:pointer;margin-bottom:16px;}
+  .mt-uitleg{color:var(--muted);font-size:13px;line-height:1.55;padding:4px 2px;}
+  .mt-item{display:flex;align-items:center;gap:8px;background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:11px 12px;margin-bottom:7px;}
+  .mt-info{flex:1;min-width:0;cursor:pointer;}
+  .mt-naam{font-size:15px;font-weight:600;}
+  .mt-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+  .mt-ster{background:none;border:none;color:var(--muted);font-size:17px;cursor:pointer;padding:2px 3px;flex-shrink:0;}
+  .mt-ster.aan{color:#F0BE5A;}
+  .mt-bew,.mt-del{background:none;border:none;color:var(--muted);font-size:15px;cursor:pointer;padding:2px 4px;flex-shrink:0;}
+  .mb-zoek{margin-top:12px;}
+  .mb-portie{background:var(--surface);border:1px solid var(--eiwit);border-radius:14px;padding:13px;margin:10px 0 14px;}
+  .mb-p-naam{font-size:15px;font-weight:700;margin-bottom:10px;}
+  .mb-p-rij{display:flex;align-items:center;gap:8px;}
+  .mb-p-rij input{flex:1;min-width:0;}
+  .mb-p-eh{color:var(--muted);font-size:14px;}
+  .mb-p-rij button{background:var(--eiwit);border:none;border-radius:12px;color:#06120C;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;padding:11px 16px;cursor:pointer;flex-shrink:0;}
+  .mb-p-kc{color:var(--muted);font-size:12px;font-family:'JetBrains Mono',monospace;margin-top:9px;}
+  .mb-item{display:flex;align-items:center;gap:10px;background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin-bottom:6px;font-size:14px;}
+  .mb-item span:first-child{flex:1;min-width:0;}
+  .mb-item em{color:var(--muted);font-style:normal;font-size:12px;}
+  .mb-kc{font-family:'JetBrains Mono',monospace;color:var(--muted);}
+  .mb-totaal{text-align:right;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;margin-top:8px;}
+  .sk-rij{display:flex;gap:8px;margin-top:10px;}
+  .sk-rij input{flex:1;min-width:0;}
   .prof-item.import{cursor:pointer;border-color:rgba(94,230,168,.45);}
   .prof-item.import:active{background:var(--surface-2);}
   .prof-item.import .imp-actie{color:var(--eiwit);font-size:12px;font-weight:700;white-space:nowrap;}
@@ -589,6 +635,7 @@
       <button class="account-btn" id="accountChip" aria-label="Account"><span class="ab-av" id="abAv">👤</span></button>
     </div>
     <div class="home-datum" id="homeDatum"></div>
+    <div class="week-kaart" id="weekKaart"></div>
     <button class="home-kaart k-voeding" id="gaMacros">
       <div class="hk-icoon voeding"><span></span><span></span><span></span></div>
       <div class="hk-tekst"><div class="hk-naam">Voeding</div><div class="hk-sub" id="homeMacroSub">Calorieën &amp; macro's bijhouden</div></div>
@@ -665,6 +712,7 @@
     <button class="lb-kies" data-lb="totaalKcal">Totaal kcal</button>
     <button class="lb-kies" data-lb="totaalTraining">Totaal training</button>
     <button class="lb-kies" data-lb="besteDag">Hoogste dag</button>
+    <button class="lb-kies" data-lb="streak">Streak 🔥</button>
     <button class="lb-kies" data-lb="waterDag">Water vandaag</button>
     <button class="lb-kies" data-lb="waterTotaal">Water totaal</button>
   </div>
@@ -769,6 +817,8 @@
 </div>
 <button class="scan-knop" id="scanKnop">📷&nbsp;&nbsp;Scan barcode</button>
 
+<div class="snel-rij" id="snelRij" style="display:none;"></div>
+
 <div class="resultaten" id="resultaten"></div>
 
 <!-- Portie-invoer -->
@@ -840,6 +890,10 @@
   <h2>Gegeten</h2>
   <button class="wis" id="wisDag">Dag wissen</button>
 </div>
+<div class="log-acties">
+  <button id="mtKnop">🍽 Maaltijden</button>
+  <button id="snelKcalKnop">⚡ Snel kcal</button>
+</div>
 <div id="logLijst"></div>
 
 <div class="voetnoot">
@@ -864,6 +918,63 @@
       <div class="rij"><span class="vk rood"></span> Meer dan 100 kcal boven je doel</div>
     </div>
     <div class="kal-leeg-tekst" id="kalLeegTekst" style="display:none;">Stel eerst een caloriedoel in om de kleuren te zien.</div>
+  </div>
+</div>
+
+<!-- Maaltijden (overlay) -->
+<div class="vr-overlay" id="mtOverlay">
+  <div class="vr-paneel">
+    <div class="vr-kop">
+      <div class="vr-titel">Maaltijden</div>
+      <button class="wo-sluit" id="mtSluit">✕</button>
+    </div>
+    <button class="mt-bewaar" id="mtNieuw">+ Nieuwe maaltijd samenstellen</button>
+    <button class="mt-tweede" id="mtBewaar">Bewaar de dag van vandaag als maaltijd</button>
+    <div id="mtLijst"></div>
+  </div>
+</div>
+
+<!-- Maaltijd samenstellen (overlay) -->
+<div class="vr-overlay" id="mbOverlay">
+  <div class="vr-paneel">
+    <div class="vr-kop">
+      <div class="vr-titel">Maaltijd samenstellen</div>
+      <button class="wo-sluit" id="mbSluit">✕</button>
+    </div>
+    <input id="mbNaam" type="text" maxlength="40" placeholder="Naam (bv. Mijn ontbijt)" autocomplete="off">
+    <div class="zoek-wrap mb-zoek">
+      <span class="zoek-icoon">⌕</span>
+      <input class="zoek" id="mbZoek" type="text" placeholder="Zoek eten om toe te voegen…" autocomplete="off">
+    </div>
+    <div class="resultaten" id="mbRes"></div>
+    <div class="mb-portie" id="mbPortie" style="display:none;">
+      <div class="mb-p-naam" id="mbPNaam">—</div>
+      <div class="mb-p-rij">
+        <input id="mbPGram" type="number" inputmode="decimal" placeholder="100">
+        <span class="mb-p-eh" id="mbPEh">g</span>
+        <button id="mbPVoeg">Toevoegen</button>
+      </div>
+      <div class="mb-p-kc" id="mbPKc"></div>
+    </div>
+    <div id="mbItems"></div>
+    <button class="mt-bewaar" id="mbBewaar" style="margin-top:14px;">Maaltijd bewaren</button>
+  </div>
+</div>
+
+<!-- Snel kcal (overlay) -->
+<div class="uname-overlay" id="skOverlay">
+  <div class="uname-paneel">
+    <div class="uname-titel">Snel calorieën loggen</div>
+    <div class="uname-uitleg">Handig als je buitenshuis eet en enkel een schatting hebt. Macro's zijn optioneel.</div>
+    <input id="skNaam" type="text" maxlength="40" placeholder="Wat was het? (optioneel)" autocomplete="off">
+    <input id="skKcal" type="number" inputmode="numeric" placeholder="Calorieën" style="margin-top:10px;">
+    <div class="sk-rij">
+      <input id="skE" type="number" inputmode="decimal" placeholder="eiwit">
+      <input id="skK" type="number" inputmode="decimal" placeholder="koolh">
+      <input id="skV" type="number" inputmode="decimal" placeholder="vet">
+    </div>
+    <button class="uname-kies" id="skBewaar">Toevoegen</button>
+    <button class="uname-annuleer" id="skAnnuleer">Annuleren</button>
   </div>
 </div>
 
@@ -1125,7 +1236,7 @@ const DB = [
   {n:"Sinaasappel",kc:47,e:0.9,k:12,v:0.1,stuk:130,se:"stuk"},
   {n:"Peer",kc:57,e:0.4,k:15,v:0.1,stuk:170,se:"stuk"},
   {n:"Aardbei",kc:32,e:0.7,k:7.7,v:0.3,stuk:12,se:"stuk"},
-  {n:"Blauwe bessen",kc:57,e:0.7,k:14,v:0.3},
+  {n:"Blauwe bessen (bosbessen)",kc:57,e:0.7,k:14,v:0.3},
   {n:"Druiven",kc:69,e:0.7,k:18,v:0.2},
   {n:"Mango",kc:60,e:0.8,k:15,v:0.4,stuk:200,se:"stuk"},
   {n:"Ananas",kc:50,e:0.5,k:13,v:0.1},
@@ -1484,7 +1595,7 @@ const DB = [
   {n:"Cantaloupe meloen",kc:34,e:0.8,k:8,v:0.2},
   {n:"Rode bes",kc:56,e:1.4,k:14,v:0.2},
   {n:"Kruisbes",kc:44,e:0.9,k:10,v:0.6},
-  {n:"Cranberry",kc:46,e:0.4,k:12,v:0.1},
+  {n:"Cranberry (veenbes)",kc:46,e:0.4,k:12,v:0.1},
   {n:"Gedroogde abrikozen",kc:241,e:3.4,k:63,v:0.5},
   {n:"Gedroogde vijgen",kc:249,e:3.3,k:64,v:0.9},
   {n:"Pruimedanten",kc:240,e:2.2,k:64,v:0.4},
@@ -1555,7 +1666,7 @@ const DB = [
   {n:"Vlierbes",kc:73,e:0.7,k:18,v:0.5},
   {n:"Zwarte bes",kc:63,e:1.4,k:15,v:0.4},
   {n:"Gedroogde mango",kc:314,e:1.5,k:78,v:0.5},
-  {n:"Gedroogde cranberry",kc:308,e:0.1,k:82,v:1.4},
+  {n:"Gedroogde cranberry (veenbes)",kc:308,e:0.1,k:82,v:1.4},
   {n:"Moerbei (gedroogd)",kc:337,e:9,k:70,v:2},
   {n:"Fruitsalade (vers)",kc:50,e:0.6,k:12,v:0.2},
   // === Extra snoep ===
@@ -1837,7 +1948,16 @@ const DB = [
   {n:"Tomatenblokjes (blik)",kc:20,e:1,k:3.5,v:0.2},
   {n:"Tomatenpassata",kc:30,e:1.5,k:5.5,v:0.2},
   {n:"Tomatenpuree",kc:82,e:4.3,k:19,v:0.5,stuk:15,se:"eetlepel"},
-  {n:"Zongedroogde tomaat in olie",kc:210,e:3,k:12,v:16,stuk:8,se:"stuk"}
+  {n:"Zongedroogde tomaat in olie",kc:210,e:3,k:12,v:16,stuk:8,se:"stuk"},
+  // === Bessen ===
+  {n:"Witte bes",kc:56,e:1.4,k:13,v:0.2},
+  {n:"Moerbei",kc:43,e:1.4,k:9.8,v:0.4},
+  {n:"Aroniabes (appelbes)",kc:47,e:0.7,k:9.6,v:0.5},
+  {n:"Acaibes (puree, ongezoet)",kc:70,e:1,k:4,v:5},
+  {n:"Rozenbottel",kc:162,e:1.6,k:38,v:0.3},
+  {n:"Gedroogde bosbessen",kc:320,e:1,k:80,v:1},
+  {n:"Rode vruchtenmix (diepvries)",kc:45,e:1,k:8,v:0.4},
+  {n:"Bosvruchtenmix (diepvries)",kc:48,e:1,k:9,v:0.4}
 ];
 
 // Doelwaarden voor de balkjes. Standaard tot je eigen doel is berekend.
@@ -2194,6 +2314,226 @@ function renderKalibratie(){
   box.innerHTML = html;
 }
 
+// ---------- Favorieten ----------
+let gebruik = {};      // {naam: {g:gram, eh:eenheid, lb:label}} — onthoudt laatste portie
+let maaltijden = [];   // [{naam, items:[...], fav:bool}]
+let favorieten = [];   // namen van favoriete producten
+
+async function laadSnel(){
+  const a = await ladenRaw('gebruik');
+  if(a){ try{ gebruik = JSON.parse(a)||{}; }catch(e){ gebruik={}; } }
+  const b = await ladenRaw('maaltijden');
+  if(b){ try{ maaltijden = JSON.parse(b)||[]; }catch(e){ maaltijden=[]; } }
+  const c = await ladenRaw('favorieten');
+  if(c){ try{ favorieten = JSON.parse(c)||[]; }catch(e){ favorieten=[]; } }
+}
+async function bewaarSnel(){
+  await opslaanRaw('gebruik', JSON.stringify(gebruik));
+  await opslaanRaw('maaltijden', JSON.stringify(maaltijden));
+  await opslaanRaw('favorieten', JSON.stringify(favorieten));
+}
+function noteerGebruik(it){
+  gebruik[it.n] = { g: it.gram, eh: it.eenheid, lb: it.label||'' };
+  bewaarSnel();
+}
+function isFavoriet(naam){ return favorieten.indexOf(naam) !== -1; }
+function wisselFavoriet(naam){
+  const i = favorieten.indexOf(naam);
+  if(i===-1){ favorieten.unshift(naam); toonToast('"'+naam+'" bij favorieten ✓'); }
+  else { favorieten.splice(i,1); toonToast('"'+naam+'" uit favorieten'); }
+  bewaarSnel(); renderSnel();
+}
+function renderSnel(){
+  const box = $('snelRij'); if(!box) return;
+  const favMaaltijden = maaltijden.map((m,i)=>({m,i})).filter(x=>x.m.fav);
+  const favEten = favorieten.filter(n=> alleEten().some(x=>x.n===n));
+  if(favMaaltijden.length===0 && favEten.length===0){
+    box.style.display='block';
+    box.innerHTML = '<div class="fav-leeg">Tik op ☆ bij een product of maaltijd om het hier als favoriet te zetten.</div>';
+    return;
+  }
+  box.style.display='flex';
+  let html = favMaaltijden.map(x=>'<button class="snel-chip maaltijd" data-favmt="'+x.i+'">🍽 '+escapeHtml(x.m.naam)+'</button>').join('');
+  html += favEten.map(n=>'<button class="snel-chip" data-snel="'+encodeURIComponent(n)+'">'+escapeHtml(n)+'</button>').join('');
+  box.innerHTML = html;
+  box.querySelectorAll('[data-snel]').forEach(b=>{
+    b.onclick = ()=>{
+      const f = alleEten().find(x=>x.n===decodeURIComponent(b.dataset.snel));
+      if(f) openPortie(f);
+    };
+  });
+  box.querySelectorAll('[data-favmt]').forEach(b=>{
+    b.onclick = ()=> voegMaaltijdToe(parseInt(b.dataset.favmt));
+  });
+}
+
+// ---------- Maaltijden ----------
+let mtBouw = null;   // {naam, items:[], bewerkIndex}
+function openMaaltijden(){
+  renderMaaltijden();
+  $('mtOverlay').classList.add('open');
+}
+function renderMaaltijden(){
+  const box = $('mtLijst');
+  if(maaltijden.length===0){
+    box.innerHTML = '<div class="mt-uitleg">Nog geen maaltijden. Maak er een van dingen die je vaak samen eet — bijvoorbeeld je ontbijt of je vaste lunch. Daarna log je die met één tik.</div>';
+    return;
+  }
+  box.innerHTML = maaltijden.map((m,i)=>{
+    let kc=0; for(const it of m.items) kc+=it.kc;
+    return '<div class="mt-item">'+
+      '<button class="mt-ster'+(m.fav?' aan':'')+'" data-mtf="'+i+'" title="Favoriet">'+(m.fav?'★':'☆')+'</button>'+
+      '<div class="mt-info" data-mt="'+i+'"><div class="mt-naam">'+escapeHtml(m.naam)+'</div>'+
+      '<div class="mt-sub">'+m.items.length+' item'+(m.items.length===1?'':'s')+' · '+rond(kc)+' kcal</div></div>'+
+      '<button class="mt-bew" data-mtb="'+i+'" title="Aanpassen">✎</button>'+
+      '<button class="mt-del" data-mtd="'+i+'">✕</button></div>';
+  }).join('');
+  box.querySelectorAll('[data-mt]').forEach(b=> b.onclick = ()=> voegMaaltijdToe(parseInt(b.dataset.mt)) );
+  box.querySelectorAll('[data-mtf]').forEach(b=>{
+    b.onclick = ()=>{ const i=parseInt(b.dataset.mtf); maaltijden[i].fav = !maaltijden[i].fav; bewaarSnel(); renderMaaltijden(); renderSnel(); };
+  });
+  box.querySelectorAll('[data-mtb]').forEach(b=> b.onclick = ()=> openMaaltijdBouw(parseInt(b.dataset.mtb)) );
+  box.querySelectorAll('[data-mtd]').forEach(b=>{
+    b.onclick = ()=>{ maaltijden.splice(parseInt(b.dataset.mtd),1); bewaarSnel(); renderMaaltijden(); renderSnel(); };
+  });
+}
+function voegMaaltijdToe(i){
+  const m = maaltijden[i]; if(!m) return;
+  for(const it of m.items){ log.push(Object.assign({}, it)); }
+  bewaarLog(); updateDashboard(); renderLog();
+  $('mtOverlay').classList.remove('open');
+  toonToast('"'+m.naam+'" toegevoegd ✓');
+}
+// --- Maaltijd samenstellen ---
+function openMaaltijdBouw(index){
+  if(index!=null && maaltijden[index]){
+    mtBouw = { naam: maaltijden[index].naam, items: maaltijden[index].items.map(x=>Object.assign({},x)), bewerkIndex: index };
+  } else {
+    mtBouw = { naam:'', items:[], bewerkIndex:null };
+  }
+  $('mbNaam').value = mtBouw.naam;
+  $('mbZoek').value = ''; $('mbRes').innerHTML=''; $('mbRes').classList.remove('open');
+  mbGekozen = null; $('mbPortie').style.display='none';
+  $('mtOverlay').classList.remove('open');
+  $('mbOverlay').classList.add('open');
+  renderMaaltijdBouw();
+}
+function renderMaaltijdBouw(){
+  const box = $('mbItems');
+  if(!mtBouw.items.length){
+    box.innerHTML = '<div class="mt-uitleg">Zoek hierboven en tik iets aan om het aan deze maaltijd toe te voegen.</div>';
+  } else {
+    let kc=0; for(const it of mtBouw.items) kc+=it.kc;
+    box.innerHTML = mtBouw.items.map((it,i)=>
+      '<div class="mb-item"><span>'+escapeHtml(it.n)+' <em>'+rond(it.gram)+(it.eenheid==='ml'?' ml':' g')+'</em></span>'+
+      '<span class="mb-kc">'+rond(it.kc)+'</span><button class="mt-del" data-mbd="'+i+'">✕</button></div>').join('')+
+      '<div class="mb-totaal">Totaal: '+rond(kc)+' kcal</div>';
+    box.querySelectorAll('[data-mbd]').forEach(b=>{
+      b.onclick = ()=>{ mtBouw.items.splice(parseInt(b.dataset.mbd),1); renderMaaltijdBouw(); };
+    });
+  }
+}
+function bewaarMaaltijdBouw(){
+  const naam = $('mbNaam').value.trim();
+  if(!naam){ toonToast('Geef je maaltijd een naam.'); $('mbNaam').focus(); return; }
+  if(!mtBouw.items.length){ toonToast('Voeg eerst iets van eten toe.'); return; }
+  if(mtBouw.bewerkIndex!=null){
+    maaltijden[mtBouw.bewerkIndex].naam = naam;
+    maaltijden[mtBouw.bewerkIndex].items = mtBouw.items;
+  } else {
+    maaltijden.unshift({ naam: naam, items: mtBouw.items, fav: false });
+  }
+  bewaarSnel();
+  mtBouw = null;
+  $('mbOverlay').classList.remove('open');
+  renderSnel();
+  openMaaltijden();
+  toonToast('Maaltijd bewaard ✓');
+}
+function bewaarDagAlsMaaltijd(){
+  if(log.length===0){ toonToast('Je hebt vandaag nog niets gelogd.'); return; }
+  mtBouw = { naam:'', items: log.map(it=>Object.assign({}, it)), bewerkIndex:null };
+  $('mbNaam').value = ''; $('mbZoek').value=''; $('mbRes').innerHTML=''; $('mbRes').classList.remove('open');
+  mbGekozen = null; $('mbPortie').style.display='none';
+  $('mtOverlay').classList.remove('open');
+  $('mbOverlay').classList.add('open');
+  renderMaaltijdBouw();
+}
+
+// ---------- Snel kcal ----------
+function openSnelKcal(){
+  $('skNaam').value=''; $('skKcal').value=''; $('skE').value=''; $('skK').value=''; $('skV').value='';
+  $('skOverlay').classList.add('open');
+  setTimeout(()=>{ try{ $('skKcal').focus(); }catch(e){} },100);
+}
+function bewaarSnelKcal(){
+  const kc = parseFloat($('skKcal').value);
+  if(isNaN(kc) || kc<=0){ toonToast('Vul een aantal calorieën in.'); $('skKcal').focus(); return; }
+  const naam = $('skNaam').value.trim() || 'Snelle invoer';
+  log.push({
+    n: naam, gram: 0, eenheid:'g', label:'geschat',
+    kc: kc,
+    e: parseFloat($('skE').value)||0,
+    k: parseFloat($('skK').value)||0,
+    v: parseFloat($('skV').value)||0
+  });
+  bewaarLog(); updateDashboard(); renderLog();
+  $('skOverlay').classList.remove('open');
+  toonToast(rond(kc)+' kcal toegevoegd ✓');
+}
+
+// ---------- Streak & weekoverzicht ----------
+function berekenStreak(){
+  let kcVandaag = 0; for(const it of log) kcVandaag += it.kc;
+  const heeftVandaag = kcVandaag > 0;
+  let streak = 0;
+  const d = new Date();
+  if(!heeftVandaag) d.setDate(d.getDate()-1);   // vandaag mag nog leeg zijn
+  for(let i=0;i<400;i++){
+    const key = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    const isVandaag = key === vandaagSleutel();
+    const heeft = isVandaag ? heeftVandaag : !!(geschiedenis[key] && geschiedenis[key].kcal>0);
+    if(!heeft) break;
+    streak++;
+    d.setDate(d.getDate()-1);
+  }
+  return streak;
+}
+function weekOverzicht(){
+  const start = weekStartKey();
+  let som=0, dagen=0, binnen=0;
+  for(const k in geschiedenis){
+    if(k>=start && geschiedenis[k].kcal>0){
+      som += geschiedenis[k].kcal; dagen++;
+      const doel = geschiedenis[k].doel;
+      if(doel && Math.abs(geschiedenis[k].kcal-doel)<=100) binnen++;
+    }
+  }
+  let kcVandaag=0; for(const it of log) kcVandaag+=it.kc;
+  if(kcVandaag>0 && !geschiedenis[vandaagSleutel()]){
+    som += kcVandaag; dagen++;
+    if(doelGezet && Math.abs(kcVandaag-DOEL.kcal)<=100) binnen++;
+  }
+  let water=0; for(const k in waterGesch){ if(k>=start) water += waterGesch[k]; }
+  if(!waterGesch[vandaagSleutel()]) water += waterTotaal();
+  return { gem: dagen? Math.round(som/dagen):0, dagen, binnen, training: trainingenDezeWeek(), water };
+}
+function renderWeekKaart(){
+  const box = $('weekKaart'); if(!box) return;
+  const w = weekOverzicht();
+  const streak = berekenStreak();
+  if(w.dagen===0 && streak===0 && w.training===0){ box.style.display='none'; return; }
+  box.style.display='block';
+  box.innerHTML =
+    '<div class="wk-kop"><span>Deze week</span>'+(streak>0?'<span class="wk-streak">🔥 '+streak+'</span>':'')+'</div>'+
+    '<div class="wk-rij">'+
+      '<div class="wk-vak"><b>'+(w.gem? w.gem.toLocaleString('nl-BE'):'–')+'</b><span>kcal/dag</span></div>'+
+      '<div class="wk-vak"><b>'+w.binnen+'/'+w.dagen+'</b><span>op doel</span></div>'+
+      '<div class="wk-vak"><b>'+w.training+'</b><span>training</span></div>'+
+      '<div class="wk-vak"><b>'+(w.water/1000).toFixed(1)+'L</b><span>water</span></div>'+
+    '</div>';
+}
+
 async function bewaarEigen(){
   await opslaanRaw('eigen-eten', JSON.stringify(eigen));
 }
@@ -2294,6 +2634,7 @@ zoekInput.addEventListener('input', ()=>{
       html += '<div class="res-item" data-naam="'+encodeURIComponent(f.n)+'">'+
                 '<span class="n">'+escapeHtml(f.n)+'</span>'+
                 '<span class="kc">'+f.kc+' kcal /100'+(f.drank?'ml':'g')+'</span>'+
+                '<button class="res-ster'+(isFavoriet(f.n)?' aan':'')+'" data-fav="'+encodeURIComponent(f.n)+'" title="Favoriet">'+(isFavoriet(f.n)?'★':'☆')+'</button>'+
                 '<button class="res-bewerk" data-naam="'+encodeURIComponent(f.n)+'" title="Aanpassen">✎</button>'+
               '</div>';
     });
@@ -2313,13 +2654,72 @@ zoekInput.addEventListener('input', ()=>{
       openBewerk(decodeURIComponent(b.dataset.naam));
     };
   });
+  resBox.querySelectorAll('.res-ster').forEach(b=>{
+    b.onclick = (e)=>{
+      e.stopPropagation();
+      wisselFavoriet(decodeURIComponent(b.dataset.fav));
+      zoekInput.dispatchEvent(new Event('input'));
+    };
+  });
   $('resNieuw').onclick = ()=> openNieuw(zoekInput.value.trim());
 });
+
+// Zoeken binnen de maaltijd-bouwer
+$('mbZoek').addEventListener('input', ()=>{
+  const q = zonderAccent($('mbZoek').value.trim());
+  const box = $('mbRes');
+  if(q.length===0){ box.classList.remove('open'); box.innerHTML=''; return; }
+  const treffers = alleEten().filter(f=>zonderAccent(f.n).includes(q)).slice(0,6);
+  box.classList.add('open');
+  box.innerHTML = treffers.length
+    ? treffers.map(f=>'<div class="res-item" data-mbnaam="'+encodeURIComponent(f.n)+'"><span class="n">'+escapeHtml(f.n)+'</span><span class="kc">'+f.kc+' kcal /100'+(f.drank?'ml':'g')+'</span></div>').join('')
+    : '<div class="res-leeg">Niet gevonden</div>';
+  box.querySelectorAll('[data-mbnaam]').forEach(el=>{
+    el.onclick = ()=>{
+      const f = alleEten().find(x=>x.n===decodeURIComponent(el.dataset.mbnaam));
+      if(f) kiesVoorMaaltijd(f);
+    };
+  });
+});
+
+let mbGekozen = null;
+function kiesVoorMaaltijd(f){
+  mbGekozen = f;
+  $('mbPNaam').textContent = f.n;
+  $('mbPEh').textContent = f.drank ? 'ml' : 'g';
+  const onthouden = gebruik[f.n] && gebruik[f.n].g;
+  $('mbPGram').value = onthouden || f.stuk || 100;
+  $('mbPortie').style.display = 'block';
+  $('mbRes').classList.remove('open'); $('mbRes').innerHTML = '';
+  $('mbZoek').value = '';
+  werkMbKcalBij();
+  setTimeout(()=>{ try{ $('mbPGram').focus(); $('mbPGram').select(); }catch(e){} }, 60);
+}
+function werkMbKcalBij(){
+  if(!mbGekozen){ $('mbPKc').textContent=''; return; }
+  const g = parseFloat($('mbPGram').value);
+  if(isNaN(g) || g<=0){ $('mbPKc').textContent=''; return; }
+  $('mbPKc').textContent = rond(mbGekozen.kc*g/100)+' kcal · E '+rond1(mbGekozen.e*g/100)+' K '+rond1(mbGekozen.k*g/100)+' V '+rond1(mbGekozen.v*g/100);
+}
+function voegAanMaaltijd(){
+  if(!mbGekozen || !mtBouw) return;
+  const g = parseFloat($('mbPGram').value);
+  if(isNaN(g) || g<=0){ toonToast('Vul een hoeveelheid in.'); $('mbPGram').focus(); return; }
+  const f = mbGekozen, factor = g/100;
+  mtBouw.items.push({
+    n:f.n, gram:g, eenheid:(f.drank?'ml':'g'), label:'',
+    kc:f.kc*factor, e:f.e*factor, k:f.k*factor, v:f.v*factor
+  });
+  mbGekozen = null;
+  $('mbPortie').style.display='none';
+  renderMaaltijdBouw();
+}
 
 // ---------- Portie ----------
 let modus = 'gram';   // 'gram' of 'stuk'
 
 let bewerkLogIndex = null;
+let porDoel = 'log';   // 'log' of 'maaltijd'
 function openPortie(f, bewerkIndex, voorafGram){
   gekozen = f;
   bewerkLogIndex = (bewerkIndex!=null) ? bewerkIndex : null;
@@ -2333,11 +2733,12 @@ function openPortie(f, bewerkIndex, voorafGram){
   else { $('unitToggle').style.display = 'none'; }
   zetModus('gram');
   if(voorafGram!=null){ $('pGram').value = rond(voorafGram); berekenPortie(); }
+  else if(gebruik[f.n] && gebruik[f.n].g){ $('pGram').value = rond(gebruik[f.n].g); berekenPortie(); }
   $('portie').classList.add('open');
   $('pGram').focus();
   $('pGram').select();
 }
-function sluitPortie(){ $('portie').classList.remove('open'); bewerkLogIndex = null; $('pToevoeg').textContent = 'Toevoegen'; }
+function sluitPortie(){ $('portie').classList.remove('open'); bewerkLogIndex = null; porDoel = 'log'; $('pToevoeg').textContent = 'Toevoegen'; }
 
 function bewerkLogItem(i){
   const it = log[i]; if(!it) return;
@@ -2419,8 +2820,16 @@ $('pToevoeg').onclick = ()=>{
     n: gekozen.n, gram: g, eenheid: eenheid, label: label,
     kc: gekozen.kc*f, e: gekozen.e*f, k: gekozen.k*f, v: gekozen.v*f
   };
+  if(porDoel === 'maaltijd'){
+    if(mtBouw){ mtBouw.items.push(nieuw); renderMaaltijdBouw(); }
+    porDoel = 'log';
+    gekozen=null; sluitPortie();
+    $('mbZoek').value=''; $('mbRes').classList.remove('open'); $('mbRes').innerHTML='';
+    return;
+  }
   if(bewerkLogIndex!=null && log[bewerkLogIndex]){ log[bewerkLogIndex] = nieuw; }
   else { log.push(nieuw); }
+  noteerGebruik(nieuw);
   bewerkLogIndex = null;
   $('pToevoeg').textContent = 'Toevoegen';
   bewaarLog();
@@ -2428,7 +2837,7 @@ $('pToevoeg').onclick = ()=>{
   sluitPortie();
   zoekInput.value='';
   resBox.classList.remove('open'); resBox.innerHTML='';
-  updateDashboard(); renderLog();
+  updateDashboard(); renderLog(); renderSnel(); renderWeekKaart();
 };
 
 // ---------- Nieuw eten / aanpassen ----------
@@ -3081,8 +3490,8 @@ function toonView(naam){
   if(naam==='workout'){ woGekozenDag = new Date().getDay(); renderWorkout(); }
   if(naam==='leaderboard'){ renderLeaderboard(); }
   if(naam==='gewicht'){ renderGewicht(); }
-  if(naam==='home') updateHomeTeasers();
-  if(naam==='macros') updateWater();
+  if(naam==='home'){ updateHomeTeasers(); renderWeekKaart(); }
+  if(naam==='macros'){ updateWater(); renderSnel(); }
 }
 $('gaMacros').onclick = ()=> toonView('macros');
 $('gaWorkout').onclick = ()=> toonView('workout');
@@ -3645,10 +4054,19 @@ async function syncNu(){
     const key = vandaagSleutel();
     const doel = doelGezet ? DOEL.kcal : null;
     const u = fbDb.collection('users').doc(fbUid);
+    const st = lokaleStats();
     await u.set({
       username: fbNaam, doel: doel,
       vandaagDatum: key, vandaagKcal: Math.round(kc),
       trainingWeek: trainingenDezeWeek(),
+      // Samenvatting: hiermee hoeven leaderboards niet alle dagen te lezen
+      stats: {
+        totaalKcal: st.totaalKcal, hoogsteDag: st.hoogsteDag, dagenGeteld: st.dagenGeteld,
+        trainingTotaal: st.trainingTotaal, trainingWeek: st.trainingWeek,
+        totaalWater: st.totaalWater, todayWater: st.todayWater,
+        todayKcal: st.todayKcal, todayDoel: st.todayDoel,
+        streak: berekenStreak(), datum: key
+      },
       laatste: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
     await u.collection('dagen').doc(key).set({
@@ -3856,6 +4274,7 @@ function statsBlok(st){
     '<div class="stat-vak"><div class="stat-getal">'+(st.trainingTotaal||0)+'</div><div class="stat-lab">trainingen</div></div>'+
     '<div class="stat-vak"><div class="stat-getal">'+(st.hoogsteDag||0).toLocaleString('nl-BE')+'</div><div class="stat-lab">hoogste dag</div></div>'+
     '<div class="stat-vak"><div class="stat-getal">'+glazen.toLocaleString('nl-BE')+'</div><div class="stat-lab">glazen water</div></div>'+
+    '<div class="stat-vak"><div class="stat-getal">🔥 '+(st.streak||0)+'</div><div class="stat-lab">dagen op rij</div></div>'+
   '</div>';
 }
 async function bekijkVriend(uid, naam){
@@ -3969,34 +4388,44 @@ function lokaleStats(){
   let totaalWater=0; for(const k in waterGesch){ totaalWater += (waterGesch[k]||0); }
   const todayWater = waterTotaal();
   if(!waterGesch[today]) totaalWater += todayWater;   // vandaag meetellen als nog niet in geschiedenis
-  return { totaalKcal:totaal, hoogsteDag:hoogste, dagenGeteld:dagen, todayKcal, todayDoel, trainingTotaal:Object.keys(alle).length, trainingWeek:Object.keys(week).length, totaalWater, todayWater };
+  return { totaalKcal:totaal, hoogsteDag:hoogste, dagenGeteld:dagen, todayKcal, todayDoel, trainingTotaal:Object.keys(alle).length, trainingWeek:Object.keys(week).length, totaalWater, todayWater, streak: berekenStreak() };
 }
 async function haalStats(uid){
   if(uid === fbUid){ const st = lokaleStats(); statsCache[uid] = st; return st; }
   if(statsCache[uid]) return statsCache[uid];
   const today = vandaagSleutel();
-  let totaalKcal=0, hoogsteDag=0, dagenGeteld=0, todayKcal=null, todayDoel=null, totaalWater=0, todayWater=0;
+  // 1 read per vriend: de samenvatting in het profiel-document
   try{
-    const qs = await fbDb.collection('users').doc(uid).collection('dagen').get();
-    qs.forEach(doc=>{
-      const d = doc.data(); const kc = d.kcal||0;
-      totaalKcal += kc; if(kc>hoogsteDag) hoogsteDag = kc; if(kc>0) dagenGeteld++;
-      totaalWater += (d.water||0);
-      if(doc.id===today){ todayKcal = (d.kcal!=null?d.kcal:null); todayDoel = (d.doel!=null?d.doel:null); todayWater = d.water||0; }
-    });
-  }catch(e){}
-  let trainingTotaal=0, trainingWeek=0;
-  try{
-    const w = await fbDb.collection('users').doc(uid).collection('data').doc('workout').get();
-    if(w.exists){
-      const log = w.data().log||{}; const start = weekStartKey();
-      const alle={}, week={};
-      for(const oef in log){ for(const s of (log[oef]||[])){ if(s.datum){ alle[s.datum]=1; if(s.datum>=start) week[s.datum]=1; } } }
-      trainingTotaal = Object.keys(alle).length; trainingWeek = Object.keys(week).length;
+    const snap = await fbDb.collection('users').doc(uid).get();
+    if(snap.exists){
+      const d = snap.data();
+      const s = d.stats;
+      if(s){
+        const versDatum = (s.datum === today);
+        const st = {
+          totaalKcal: s.totaalKcal||0, hoogsteDag: s.hoogsteDag||0, dagenGeteld: s.dagenGeteld||0,
+          trainingTotaal: s.trainingTotaal||0, trainingWeek: s.trainingWeek||0,
+          totaalWater: s.totaalWater||0,
+          todayWater: versDatum ? (s.todayWater||0) : 0,
+          todayKcal: versDatum ? (s.todayKcal!=null?s.todayKcal:null) : null,
+          todayDoel: versDatum ? (s.todayDoel!=null?s.todayDoel:null) : (d.doel!=null?d.doel:null),
+          streak: versDatum ? (s.streak||0) : 0
+        };
+        statsCache[uid] = st; return st;
+      }
+      // Oudere versie zonder samenvatting: val terug op de losse velden
+      const st = {
+        totaalKcal:0, hoogsteDag:0, dagenGeteld:0,
+        trainingTotaal:0, trainingWeek: d.trainingWeek||0,
+        totaalWater:0, todayWater:0, streak:0,
+        todayKcal: (d.vandaagDatum===today ? (d.vandaagKcal||0) : null),
+        todayDoel: (d.doel!=null?d.doel:null)
+      };
+      statsCache[uid] = st; return st;
     }
   }catch(e){}
-  const st = { totaalKcal, hoogsteDag, dagenGeteld, todayKcal, todayDoel, trainingTotaal, trainingWeek, totaalWater, todayWater };
-  statsCache[uid] = st; return st;
+  const leeg = { totaalKcal:0, hoogsteDag:0, dagenGeteld:0, trainingTotaal:0, trainingWeek:0, totaalWater:0, todayWater:0, todayKcal:null, todayDoel:null, streak:0 };
+  statsCache[uid] = leeg; return leeg;
 }
 
 function doelKleurDiff(kcal, doel){
@@ -4042,6 +4471,8 @@ async function renderLeaderboard(){
       tekenLeaderboard(box, rijen.map(r=>({...r, sort:r.st.trainingTotaal, extra:r.st.trainingTotaal+' dag'+(r.st.trainingTotaal===1?'':'en')})).sort((a,b)=>b.sort-a.sort));
     } else if(lbKeuze==='besteDag'){
       tekenLeaderboard(box, rijen.map(r=>({...r, sort:r.st.hoogsteDag, extra:r.st.hoogsteDag.toLocaleString('nl-BE')+' kcal'})).sort((a,b)=>b.sort-a.sort));
+    } else if(lbKeuze==='streak'){
+      tekenLeaderboard(box, rijen.map(r=>({...r, sort:r.st.streak||0, extra:(r.st.streak||0)+' dag'+((r.st.streak||0)===1?'':'en')+' 🔥'})).sort((a,b)=>b.sort-a.sort));
     } else if(lbKeuze==='waterDag'){
       tekenLeaderboard(box, rijen.map(r=>({...r, sort:r.st.todayWater||0, extra:(r.st.todayWater||0).toLocaleString('nl-BE')+' ml'})).sort((a,b)=>b.sort-a.sort));
     } else { // waterTotaal
@@ -4066,6 +4497,7 @@ document.querySelectorAll('.lb-kies').forEach(b=>{
       totaalKcal: 'Totaal aantal calorieën ooit gelogd (alle dagen samen).',
       totaalTraining: 'Totaal aantal dagen getraind (aller tijden).',
       besteDag: 'Hoogste aantal calorieën op één dag.',
+      streak: 'Wie logt het langst zonder onderbreking? 🔥',
       waterDag: 'Wie dronk vandaag het meeste water?',
       waterTotaal: 'Wie dronk in totaal de meeste glazen water? (1 glas = 250 ml)'
     };
@@ -4105,6 +4537,19 @@ $('gwAuto').onclick = ()=>{
   }
   renderGewicht();
 };
+$('mtKnop').onclick = openMaaltijden;
+$('mtSluit').onclick = ()=> $('mtOverlay').classList.remove('open');
+$('mtOverlay').onclick = (e)=>{ if(e.target===$('mtOverlay')) $('mtOverlay').classList.remove('open'); };
+$('mtNieuw').onclick = ()=> openMaaltijdBouw(null);
+$('mtBewaar').onclick = bewaarDagAlsMaaltijd;
+$('mbSluit').onclick = ()=>{ $('mbOverlay').classList.remove('open'); mtBouw=null; openMaaltijden(); };
+$('mbBewaar').onclick = bewaarMaaltijdBouw;
+$('mbPVoeg').onclick = voegAanMaaltijd;
+$('mbPGram').addEventListener('input', werkMbKcalBij);
+$('mbPGram').addEventListener('keydown', (e)=>{ if(e.key==='Enter') voegAanMaaltijd(); });
+$('snelKcalKnop').onclick = openSnelKcal;
+$('skBewaar').onclick = bewaarSnelKcal;
+$('skAnnuleer').onclick = ()=> $('skOverlay').classList.remove('open');
 $('gwKal').onclick = ()=>{
   kalibreerAuto = !kalibreerAuto;
   bewaarKalibratie();
@@ -4140,6 +4585,7 @@ $('accountChip').onclick = openVrienden;
   updateDashboard();
   renderLog();
   await laadGewicht();
+  await laadSnel();
   await laadKalibratie();
   pasAutoGewichtToe();
   pasKalibratieToe(true);
@@ -4147,6 +4593,8 @@ $('accountChip').onclick = openVrienden;
   $('waterMin').onclick = verwijderLaatsteWater;
   document.querySelectorAll('.water-add').forEach(b=> b.onclick=()=> voegWaterGlas(parseInt(b.dataset.add)) );
   updateWater();
+  renderSnel();
+  renderWeekKaart();
   updateHomeTeasers();
   // Fallback-scanner alvast laden op toestellen zonder ingebouwde lezer (bv. iPhone)
   setTimeout(()=>{ if(!heeftNativeScanner()) laadScannerLib().catch(()=>{}); }, 1200);
