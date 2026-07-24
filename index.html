@@ -371,6 +371,24 @@
   .kal-note{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);line-height:1.5;}
   .kal-note b{color:#BE96FF;}
   .kal-note.ok{color:var(--eiwit);}
+  /* BMI */
+  .bmi-kaart{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:16px;}
+  .bmi-kop{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+  .bmi-titel{font-size:15px;font-weight:700;}
+  .bmi-lengte{display:flex;align-items:center;gap:6px;}
+  .bmi-lengte label{font-size:12px;color:var(--muted);}
+  .bmi-lengte input{width:64px;text-align:right;padding:7px 8px;}
+  .bmi-lengte span{font-size:12px;color:var(--muted);}
+  .bmi-getal{display:flex;align-items:baseline;gap:10px;margin-bottom:14px;}
+  .bmi-getal #bmiWaarde{font-size:34px;font-weight:800;font-family:'JetBrains Mono',monospace;line-height:1;}
+  .bmi-cat{font-size:14px;font-weight:700;}
+  .bmi-meter{position:relative;height:12px;border-radius:6px;overflow:visible;}
+  .bmi-balk{height:100%;border-radius:6px;background:linear-gradient(90deg,#5B8DEF 0 17.5%,#34C98A 17.5% 50%,#F0BE5A 50% 75%,#F2685F 75% 100%);}
+  .bmi-naald{position:absolute;top:-4px;width:4px;height:20px;background:var(--text);border-radius:2px;box-shadow:0 0 0 2px var(--surface);transform:translateX(-50%);transition:left .35s ease;}
+  .bmi-schaal{position:relative;height:14px;margin-top:6px;font-size:10px;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+  .bmi-schaal span{position:absolute;transform:translateX(-50%);}
+  .bmi-schaal span:nth-child(1){left:17.5%;} .bmi-schaal span:nth-child(2){left:50%;} .bmi-schaal span:nth-child(3){left:75%;}
+  .bmi-hint{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5;}
   .acc-edit{margin-left:auto;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;color:var(--text);font-size:15px;padding:8px 11px;cursor:pointer;flex-shrink:0;}
   .uname-annuleer{width:100%;margin-top:8px;background:none;border:none;color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:14px;padding:10px;cursor:pointer;}
 
@@ -674,6 +692,25 @@
       <button id="gwBewaar">Bewaren</button>
     </div>
     <div class="gw-hint" id="gwHint"></div>
+  </div>
+
+  <!-- BMI -->
+  <div class="bmi-kaart">
+    <div class="bmi-kop">
+      <div class="bmi-titel">BMI</div>
+      <div class="bmi-lengte">
+        <label>Lengte</label>
+        <input id="bmiLengte" type="number" inputmode="numeric" placeholder="cm">
+        <span>cm</span>
+      </div>
+    </div>
+    <div class="bmi-getal"><span id="bmiWaarde">–</span><span class="bmi-cat" id="bmiCat"></span></div>
+    <div class="bmi-meter">
+      <div class="bmi-balk"></div>
+      <div class="bmi-naald" id="bmiNaald" style="display:none;"></div>
+    </div>
+    <div class="bmi-schaal"><span>18,5</span><span>25</span><span>30</span></div>
+    <div class="bmi-hint" id="bmiHint">Vul je lengte in voor je BMI.</div>
   </div>
 
   <div class="gw-stats" id="gwStats"></div>
@@ -2252,6 +2289,7 @@ function renderGewicht(){
     b.onclick = ()=>{ delete gewichtLog[b.dataset.gwd]; bewaarGewicht(); pasAutoGewichtToe(); renderGewicht(); updateHomeTeasers(); };
   });
   renderKalibratie();
+  renderBMI();
 }
 function datumLang(sleutel){
   const [j,m,d] = sleutel.split('-').map(Number);
@@ -2595,6 +2633,56 @@ function renderWeekKaart(){
       '<div class="wk-vak"><b>'+w.training+'</b><span>training</span></div>'+
       '<div class="wk-vak"><b>'+(w.water/1000).toFixed(1)+'L</b><span>water</span></div>'+
     '</div>';
+}
+
+function huidigLengte(){
+  let l = parseFloat($('cLengte').value);
+  if((isNaN(l)||l<=0) && geladenInvoer && geladenInvoer.lengte) l = parseFloat(geladenInvoer.lengte);
+  return (isNaN(l)||l<=0) ? null : l;
+}
+function bmiCategorie(bmi){
+  if(bmi < 18.5) return { txt:'Ondergewicht', kleur:'#5B8DEF' };
+  if(bmi < 25)   return { txt:'Gezond gewicht', kleur:'#34C98A' };
+  if(bmi < 30)   return { txt:'Overgewicht', kleur:'#F0BE5A' };
+  return { txt:'Obesitas', kleur:'#F2685F' };
+}
+function renderBMI(){
+  const lengte = huidigLengte();
+  const dagen = gewichtDagen();
+  let gewicht = dagen.length ? gewichtLog[dagen[dagen.length-1]] : parseFloat(($('gwInput').value||'').replace(',','.'));
+  $('bmiLengte').value = lengte || '';
+  if(!lengte || !gewicht || isNaN(gewicht)){
+    $('bmiWaarde').textContent = '–';
+    $('bmiCat').textContent = '';
+    $('bmiNaald').style.display = 'none';
+    $('bmiHint').textContent = !lengte ? 'Vul je lengte in voor je BMI.' : 'Vul je gewicht in voor je BMI.';
+    return;
+  }
+  const m = lengte/100;
+  const bmi = gewicht/(m*m);
+  const cat = bmiCategorie(bmi);
+  $('bmiWaarde').textContent = bmi.toFixed(1).replace('.',',');
+  $('bmiCat').textContent = cat.txt;
+  $('bmiCat').style.color = cat.kleur;
+  const pos = Math.max(1, Math.min(99, (bmi-15)/(35-15)*100));
+  const n = $('bmiNaald');
+  n.style.display = 'block'; n.style.left = pos+'%';
+  // gezond gewichtsbereik voor deze lengte
+  const laag = (18.5*m*m), hoog = (24.9*m*m);
+  $('bmiHint').textContent = 'Gezond gewicht voor '+lengte+' cm: '+laag.toFixed(0)+'–'+hoog.toFixed(0)+' kg.';
+}
+function zetLengte(cm){
+  if(isNaN(cm) || cm<=0) return;
+  $('cLengte').value = cm;
+  if(geladenInvoer) geladenInvoer.lengte = String(cm);
+  // Meteen doorrekenen in het caloriedoel (ook zonder de auto-schakelaar)
+  if(doelGezet){
+    const r = berekenCalc();
+    if(r){ DOEL = r; bewaarDoel(); bewaarGeschiedenis(); updateDashboard(); }
+  } else {
+    bewaarDoel();   // lengte bewaren in het profiel
+  }
+  updateWater();
 }
 
 async function bewaarEigen(){
@@ -4644,6 +4732,11 @@ document.querySelectorAll('.lb-kies').forEach(b=>{
     if(u) u.textContent = txt[lbKeuze] || '';
     renderLeaderboard();
   };
+});
+$('bmiLengte').addEventListener('input', ()=>{
+  const cm = parseFloat($('bmiLengte').value);
+  if(!isNaN(cm) && cm>0){ zetLengte(cm); }
+  renderBMI();
 });
 $('gwBewaar').onclick = ()=>{
   const g = parseFloat(($('gwInput').value||'').replace(',','.'));
