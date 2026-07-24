@@ -577,6 +577,10 @@
   .prof-item.import.heb{border-color:var(--line);cursor:default;opacity:.65;}
   .prof-item.import.heb .imp-actie{color:var(--muted);}
   .prof-tabs{margin:10px 0 12px;}
+  .vp-open{width:100%;text-align:left;background:var(--ink);border:1px solid var(--line);border-radius:14px;color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;padding:14px 16px;margin-top:20px;cursor:pointer;display:flex;align-items:center;gap:8px;}
+  .vp-open:active{background:var(--surface-2);}
+  .vp-badge{background:var(--eiwit);color:#06120C;font-size:11px;font-weight:700;border-radius:20px;padding:2px 8px;margin-left:auto;}
+  .vp-open::after{content:'';}
   .prof-item.heb-vast{opacity:.6;}
   .prof-item.heb-vast .imp-actie{color:var(--muted);font-size:12px;white-space:nowrap;}
   .prof-item em{color:var(--muted);font-style:normal;font-size:12px;}
@@ -1173,6 +1177,19 @@
       <button class="wo-sluit" id="profSluit">✕</button>
     </div>
     <div id="profInhoud"><div class="vr-leeg">Laden…</div></div>
+  </div>
+</div>
+
+<!-- Producten van een vriend (overlay) -->
+<div class="vr-overlay" id="vpOverlay">
+  <div class="vr-paneel">
+    <div class="vr-kop">
+      <div class="vr-titel" id="vpTitel">Producten</div>
+      <button class="wo-sluit" id="vpSluit">✕</button>
+    </div>
+    <div class="zoek-wrap"><span class="zoek-icoon">⌕</span><input class="zoek" id="vpZoek" type="text" placeholder="Zoeken…" autocomplete="off"></div>
+    <div class="lb-knoppen prof-tabs" id="vpTabs"></div>
+    <div id="vpTab"></div>
   </div>
 </div>
 
@@ -4471,15 +4488,9 @@ async function bekijkVriend(uid, naam){
     } else {
       html += '<div class="vr-leeg">Nog niets gelogd vandaag.</div>';
     }
-    // Producten & maaltijden overnemen
+    // Producten & maaltijden achter een knop
     const nieuwAantal = vriendData.eigen.filter(f=>!heeftProduct(f)).length;
-    const hebAantal = vriendData.eigen.length - nieuwAantal;
-    html += '<div class="vr-kopje" style="margin-top:20px;">'+bezit+' producten &amp; maaltijden</div>';
-    html += '<div class="lb-knoppen prof-tabs">'+
-      '<button class="lb-kies actief" data-ptab="nieuw">Nieuw ('+nieuwAantal+')</button>'+
-      '<button class="lb-kies" data-ptab="heb">Heb je al ('+hebAantal+')</button>'+
-      '<button class="lb-kies" data-ptab="maaltijd">Maaltijden ('+vriendData.maaltijden.length+')</button>'+
-      '</div><div id="profTab"></div>';
+    html += '<button class="vp-open" id="vpOpen">🍽 '+bezit+' producten &amp; maaltijden'+(nieuwAantal?' <span class="vp-badge">'+nieuwAantal+' nieuw</span>':'')+' ›</button>';
     // Training vandaag
     html += '<div class="vr-kopje" style="margin-top:20px;">Training vandaag</div>';
     let woHtml = '';
@@ -4504,14 +4515,7 @@ async function bekijkVriend(uid, naam){
     }
     html += woHtml || '<div class="vr-leeg">Geen training vandaag.</div>';
     $('profInhoud').innerHTML = html;
-    $('profInhoud').querySelectorAll('[data-ptab]').forEach(b=>{
-      b.onclick = ()=>{
-        $('profInhoud').querySelectorAll('[data-ptab]').forEach(x=>x.classList.remove('actief'));
-        b.classList.add('actief');
-        renderVriendTab(b.dataset.ptab);
-      };
-    });
-    renderVriendTab('nieuw');
+    $('vpOpen').onclick = openVriendProducten;
   }catch(e){
     $('profInhoud').innerHTML = '<div class="vr-leeg">Kon dit profiel niet laden.</div>';
   }
@@ -4523,16 +4527,43 @@ function heeftProduct(f){
 function heeftMaaltijd(m){
   return maaltijden.some(x=> x.naam.toLowerCase() === (m.naam||'').toLowerCase());
 }
-function renderVriendTab(tab){
-  const box = $('profTab'); if(!box || !vriendData) return;
+let vpTab = 'nieuw';
+function openVriendProducten(){
+  if(!vriendData) return;
+  vpTab = 'nieuw';
+  $('vpTitel').textContent = vriendData.bezit + ' producten';
+  $('vpZoek').value = '';
+  const nieuwAantal = vriendData.eigen.filter(f=>!heeftProduct(f)).length;
+  const hebAantal = vriendData.eigen.length - nieuwAantal;
+  $('vpTabs').innerHTML =
+    '<button class="lb-kies actief" data-ptab="nieuw">Nieuw ('+nieuwAantal+')</button>'+
+    '<button class="lb-kies" data-ptab="heb">Heb je al ('+hebAantal+')</button>'+
+    '<button class="lb-kies" data-ptab="maaltijd">Maaltijden ('+vriendData.maaltijden.length+')</button>';
+  $('vpTabs').querySelectorAll('[data-ptab]').forEach(b=>{
+    b.onclick = ()=>{
+      vpTab = b.dataset.ptab;
+      $('vpTabs').querySelectorAll('[data-ptab]').forEach(x=>x.classList.remove('actief'));
+      b.classList.add('actief');
+      renderVriendTab();
+    };
+  });
+  $('vpOverlay').classList.add('open');
+  renderVriendTab();
+}
+function renderVriendTab(){
+  const tab = vpTab;
+  const box = $('vpTab'); if(!box || !vriendData) return;
   const v = vriendData;
+  const zoek = zonderAccent(($('vpZoek').value||'').trim());
   if(tab==='maaltijd'){
-    if(!v.maaltijden.length){ box.innerHTML = '<div class="vr-leeg">'+escapeHtml(v.naam)+' heeft nog geen maaltijden gemaakt.</div>'; return; }
+    let ms = v.maaltijden.map((m,i)=>({m,i}));
+    if(zoek) ms = ms.filter(x=> zonderAccent(x.m.naam||'').includes(zoek));
+    if(!ms.length){ box.innerHTML = '<div class="vr-leeg">'+(v.maaltijden.length? 'Niets gevonden.' : escapeHtml(v.naam)+' heeft nog geen maaltijden gemaakt.')+'</div>'; return; }
     box.innerHTML = '<div class="prof-tip">Tik op een maaltijd om ze bij jouw maaltijden te zetten.</div>' +
-      v.maaltijden.map((m,i)=>{
-        const heb = heeftMaaltijd(m);
+      ms.map(x=>{
+        const m=x.m, heb=heeftMaaltijd(m);
         let kc=0; for(const it of (m.items||[])) kc+=it.kc||0;
-        return '<div class="prof-item import'+(heb?' heb':'')+'" data-impmt="'+i+'">'+
+        return '<div class="prof-item import'+(heb?' heb':'')+'" data-impmt="'+x.i+'">'+
           '<span>'+escapeHtml(m.naam||'?')+' <em>('+(m.items||[]).length+' items · '+rond(kc)+' kcal)</em></span>'+
           '<span class="imp-actie">'+(heb?'✓ heb je':'+ toevoegen')+'</span></div>';
       }).join('');
@@ -4542,11 +4573,12 @@ function renderVriendTab(tab){
     return;
   }
   const nieuw = (tab==='nieuw');
-  const lijst = v.eigen.map((f,i)=>({f,i})).filter(x=> nieuw ? !heeftProduct(x.f) : heeftProduct(x.f));
+  let lijst = v.eigen.map((f,i)=>({f,i})).filter(x=> nieuw ? !heeftProduct(x.f) : heeftProduct(x.f));
+  if(zoek) lijst = lijst.filter(x=> zonderAccent(x.f.n||'').includes(zoek));
   if(!lijst.length){
-    box.innerHTML = '<div class="vr-leeg">'+(nieuw
+    box.innerHTML = '<div class="vr-leeg">'+(zoek ? 'Niets gevonden.' : (nieuw
       ? (v.eigen.length ? 'Je hebt al alles van '+escapeHtml(v.naam)+'.' : escapeHtml(v.naam)+' heeft nog geen eigen producten.')
-      : 'Nog niets gemeenschappelijk.')+'</div>';
+      : 'Nog niets gemeenschappelijk.'))+'</div>';
     return;
   }
   box.innerHTML = (nieuw ? '<div class="prof-tip">Tik op een product om het aan jouw lijst toe te voegen.</div>' : '') +
@@ -4577,8 +4609,10 @@ function importeerProduct(f, el){
   toonToast('“'+f.n+'” toegevoegd aan jouw producten ✓');
   if(el){ el.classList.add('heb'); el.querySelector('.imp-actie').textContent = '✓ toegevoegd'; el.onclick=null; }
 }
-$('profSluit').onclick = ()=> $('profOverlay').classList.remove('open');
-$('profOverlay').onclick = (e)=>{ if(e.target===$('profOverlay')) $('profOverlay').classList.remove('open'); };
+$('profSluit').onclick = ()=> $('profOverlay').classList.remove('open');$('profOverlay').onclick = (e)=>{ if(e.target===$('profOverlay')) $('profOverlay').classList.remove('open'); };
+$('vpSluit').onclick = ()=> $('vpOverlay').classList.remove('open');
+$('vpOverlay').onclick = (e)=>{ if(e.target===$('vpOverlay')) $('vpOverlay').classList.remove('open'); };
+$('vpZoek').addEventListener('input', ()=> renderVriendTab());
 
 // ----- Leaderboards + stats -----
 let lbKeuze = 'doel';
