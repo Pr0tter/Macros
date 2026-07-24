@@ -4585,10 +4585,23 @@ async function renderLeaderboard(){
     const stats = await Promise.all(deelnemers.map(p=> haalStats(p.uid)));
     let rijen = deelnemers.map((p,i)=>({ ...p, st: stats[i] }));
     if(lbKeuze==='doel'){
-      const met = rijen.filter(r=> r.st.todayDoel!=null && r.st.todayKcal!=null)
-        .map(r=>({...r, sort:Math.abs(r.st.todayKcal-r.st.todayDoel), extra:r.st.todayKcal.toLocaleString('nl-BE')+' / '+r.st.todayDoel.toLocaleString('nl-BE')+'  '+doelKleurDiff(r.st.todayKcal, r.st.todayDoel)}))
+      // Vandaag-waarden rechtstreeks uit de dag-gegevens (zelfde bron als het profiel)
+      const verse = await Promise.all(deelnemers.map(async p=>{
+        if(p.uid===fbUid){
+          let kc=0; for(const it of log) kc+=it.kc;
+          return { kcal: Math.round(kc), doel: doelGezet ? DOEL.kcal : null };
+        }
+        try{
+          const s = await fbDb.collection('users').doc(p.uid).collection('dagen').doc(vandaagSleutel()).get();
+          if(s.exists){ const d=s.data(); return { kcal:(d.kcal!=null?d.kcal:null), doel:(d.doel!=null?d.doel:null) }; }
+        }catch(e){}
+        return { kcal:null, doel:null };
+      }));
+      rijen = rijen.map((r,i)=>({ ...r, dag: verse[i] }));
+      const met = rijen.filter(r=> r.dag.doel!=null && r.dag.kcal!=null)
+        .map(r=>({...r, sort:Math.abs(r.dag.kcal-r.dag.doel), extra:r.dag.kcal.toLocaleString('nl-BE')+' / '+r.dag.doel.toLocaleString('nl-BE')+'  '+doelKleurDiff(r.dag.kcal, r.dag.doel)}))
         .sort((a,b)=>a.sort-b.sort);
-      const zonder = rijen.filter(r=> !(r.st.todayDoel!=null && r.st.todayKcal!=null)).map(r=>({...r, extra:'nog geen data'}));
+      const zonder = rijen.filter(r=> !(r.dag.doel!=null && r.dag.kcal!=null)).map(r=>({...r, extra:'nog geen data'}));
       tekenLeaderboard(box, [...met, ...zonder]);
     } else if(lbKeuze==='trainingWeek'){
       tekenLeaderboard(box, rijen.map(r=>({...r, sort:r.st.trainingWeek, extra:r.st.trainingWeek+' dag'+(r.st.trainingWeek===1?'':'en')})).sort((a,b)=>b.sort-a.sort));
