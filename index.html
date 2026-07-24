@@ -4118,17 +4118,18 @@ async function syncNu(){
     const doel = doelGezet ? DOEL.kcal : null;
     const u = fbDb.collection('users').doc(fbUid);
     const st = lokaleStats();
+    const kcNu = Math.round(kc);           // exact wat ook naar de dag-gegevens gaat
     await u.set({
       username: fbNaam, doel: doel,
       geslacht: calcState.geslacht,
-      vandaagDatum: key, vandaagKcal: Math.round(kc),
+      vandaagDatum: key, vandaagKcal: kcNu,
       trainingWeek: trainingenDezeWeek(),
       // Samenvatting: hiermee hoeven leaderboards niet alle dagen te lezen
       stats: {
         totaalKcal: st.totaalKcal, hoogsteDag: st.hoogsteDag, dagenGeteld: st.dagenGeteld,
         trainingTotaal: st.trainingTotaal, trainingWeek: st.trainingWeek,
         totaalWater: st.totaalWater, todayWater: st.todayWater,
-        todayKcal: st.todayKcal, todayDoel: st.todayDoel,
+        todayKcal: kcNu, todayDoel: doel,
         streak: berekenStreak(), datum: key
       },
       laatste: firebase.firestore.FieldValue.serverTimestamp()
@@ -4526,12 +4527,14 @@ async function haalStats(uid){
       const s = d.stats;
       if(s){
         const versDatum = (s.datum === today);
+        // Verse dagwaarde kan ook los bovenaan staan (bv. andere app-versie)
+        const losVers = (d.vandaagDatum === today);
         const st = {
           totaalKcal: s.totaalKcal||0, hoogsteDag: s.hoogsteDag||0, dagenGeteld: s.dagenGeteld||0,
           trainingTotaal: s.trainingTotaal||0, trainingWeek: s.trainingWeek||0,
           totaalWater: s.totaalWater||0,
           todayWater: versDatum ? (s.todayWater||0) : 0,
-          todayKcal: versDatum ? (s.todayKcal!=null?s.todayKcal:null) : null,
+          todayKcal: versDatum ? (s.todayKcal!=null?s.todayKcal:null) : (losVers ? (d.vandaagKcal||0) : null),
           todayDoel: versDatum ? (s.todayDoel!=null?s.todayDoel:null) : (d.doel!=null?d.doel:null),
           streak: versDatum ? (s.streak||0) : 0
         };
