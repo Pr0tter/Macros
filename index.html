@@ -371,6 +371,15 @@
   .kal-note{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);line-height:1.5;}
   .kal-note b{color:#BE96FF;}
   .kal-note.ok{color:var(--eiwit);}
+  .gw-correctie{border-radius:14px;padding:14px 16px;margin-top:12px;border:1px solid var(--line);}
+  .gw-correctie.meer{background:rgba(94,230,168,.10);border-color:rgba(94,230,168,.45);}
+  .gw-correctie.minder{background:rgba(242,104,95,.10);border-color:rgba(242,104,95,.45);}
+  .gc-groot{font-size:24px;font-weight:800;font-family:'JetBrains Mono',monospace;}
+  .gw-correctie.meer .gc-groot{color:var(--eiwit);}
+  .gw-correctie.minder .gc-groot{color:var(--danger);}
+  .gc-groot span{font-size:13px;font-weight:600;color:var(--muted);font-family:'Space Grotesk',sans-serif;}
+  .gc-uitleg{font-size:13px;color:var(--text);line-height:1.55;margin-top:8px;}
+  .gc-uitleg b{font-weight:700;}
   /* BMI */
   .bmi-kaart{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:16px;}
   .bmi-kop{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
@@ -740,6 +749,7 @@
     </div>
     <button class="gw-schakel" id="gwKal" role="switch" aria-checked="false"><span></span></button>
   </div>
+  <div class="gw-correctie" id="gwCorrectie" style="display:none;"></div>
   <div id="gwAnalyse"></div>
 
   <div class="vr-kopje" style="margin-top:20px;">Alle metingen</div>
@@ -2406,6 +2416,27 @@ function renderKalibratie(){
   $('gwKalSub').textContent = kalibreerAuto
     ? ('Actief — '+corrTxt+'.')
     : 'Vergelijkt je echte gewichtsverloop met wat verwacht was, en stuurt je doel stap voor stap bij.';
+
+  // Huidige aanpassing t.o.v. de formule (in %) met uitleg
+  const banner = $('gwCorrectie');
+  if(banner){
+    if(doelCorrectie === 0){
+      banner.style.display = 'none';
+    } else {
+      const basis = DOEL.kcal - doelCorrectie;   // formulewaarde zonder correctie
+      const pct = basis>0 ? Math.round(Math.abs(doelCorrectie)/basis*1000)/10 : 0;
+      const meer = doelCorrectie > 0;
+      banner.style.display = 'block';
+      banner.className = 'gw-correctie ' + (meer ? 'meer' : 'minder');
+      banner.innerHTML =
+        '<div class="gc-groot">'+(meer?'+':'−')+pct.toString().replace('.',',')+'% '+
+          '<span>('+(meer?'+':'−')+Math.abs(doelCorrectie)+' kcal/dag)</span></div>'+
+        '<div class="gc-uitleg">'+(meer
+          ? 'Je lichaam verbrandt méér of neemt minder calorieën op dan de standaardformule denkt. Daarom mag je ongeveer <b>'+pct.toString().replace('.',',')+'% meer eten</b> dan de formule voorspelt om je doel te halen.'
+          : 'Je lichaam verbrandt minder of neemt méér calorieën op dan de standaardformule denkt. Daarom ligt je doel ongeveer <b>'+pct.toString().replace('.',',')+'% lager</b> dan de formule voorspelt.')+
+        '</div>';
+    }
+  }
 
   const box = $('gwAnalyse');
   const a = kalibratieAnalyse();
