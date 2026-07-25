@@ -84,8 +84,6 @@
   .macro.v .waarde{color:var(--vet);}     .macro.v .bar i{background:var(--vet);}
   .macro-doel{font-size:10px;color:var(--muted);margin-top:7px;font-family:'JetBrains Mono',monospace;min-height:12px;}
 
-  .doel-regel{font-size:12px;color:var(--muted);margin-top:8px;font-family:'JetBrains Mono',monospace;min-height:14px;}
-
   .doel-knop{
     width:100%;margin-top:12px;background:var(--surface);border:1px dashed var(--line);
     border-radius:14px;color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;
@@ -657,6 +655,40 @@
   .scan-status.bezig{color:var(--vet);}
   .scan-status.fout{color:var(--danger);}
 
+  /* Doel-restant — prominente pil */
+  .doel-rest{display:none;align-items:baseline;gap:6px;margin:10px auto 0;padding:8px 18px;border-radius:99px;background:var(--surface);border:1px solid var(--line);width:fit-content;transition:border-color .2s,background .2s;}
+  .doel-rest .getal{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;font-size:22px;font-weight:800;transition:color .2s;}
+  .doel-rest .tekst{font-size:12px;color:var(--muted);font-weight:600;}
+  .doel-rest.groen{border-color:rgba(94,230,168,.4);} .doel-rest.groen .getal{color:var(--eiwit);}
+  .doel-rest.rood{border-color:rgba(242,104,95,.4);}  .doel-rest.rood .getal{color:var(--danger);}
+  .doel-rest.blauw{border-color:rgba(91,141,239,.4);} .doel-rest.blauw .getal{color:#5B8DEF;}
+  .doel-sub{font-size:11px;color:var(--muted);margin-top:7px;font-family:'JetBrains Mono',monospace;min-height:13px;}
+
+  .eigen-reacties{display:none;align-items:center;justify-content:center;gap:5px;margin-top:8px;font-size:12px;color:var(--eiwit);font-weight:700;}
+
+  /* Week/maand-tabs op de home-kaart */
+  .wk-tabs{display:flex;gap:3px;}
+  .wk-tab{background:none;border:none;color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:3px 9px;border-radius:20px;cursor:pointer;transition:background .15s,color .15s;font-family:'Space Grotesk',sans-serif;}
+  .wk-tab.actief{background:var(--surface-2);color:var(--text);}
+  .wk-tab:active{opacity:.7;}
+
+  /* Portie: snel vermenigvuldigen */
+  .portie-multi{display:flex;gap:8px;margin-top:8px;}
+  .portie-multi button{flex:1;background:var(--ink);border:1px solid var(--line);border-radius:12px;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;padding:9px 0;cursor:pointer;transition:background .15s,color .15s,border-color .15s;}
+  .portie-multi button:active{background:var(--surface-2);color:var(--text);border-color:var(--eiwit);}
+
+  /* Sleep/veeg om te verwijderen */
+  .log-item{touch-action:pan-y;will-change:transform;}
+  .log-item.swipe-klaar{border-color:rgba(242,104,95,.5);}
+
+  /* Vriend-reactie */
+  .reactie-knop{margin-top:16px;background:var(--ink);border:1px solid var(--line);border-radius:20px;color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;padding:9px 18px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .15s,border-color .15s,color .15s;}
+  .reactie-knop.actief{background:rgba(94,230,168,.14);border-color:var(--eiwit);color:var(--eiwit);}
+  .reactie-knop:active{transform:scale(.96);}
+
+  /* Gewichtsgrafiek trendlijn-legende */
+  .gw-legenda{text-align:center;font-size:11px;color:var(--muted);margin-top:8px;letter-spacing:.02em;}
+
 </style>
 </head>
 <body>
@@ -762,6 +794,7 @@
   <header><div class="titel">Leaderboards</div></header>
   <div class="lb-knoppen">
     <button class="lb-kies actief" data-lb="doel">Doel vandaag</button>
+    <button class="lb-kies" data-lb="consistentie">Consistent</button>
     <button class="lb-kies" data-lb="trainingWeek">Training / week</button>
     <button class="lb-kies" data-lb="totaalKcal">Totaal kcal</button>
     <button class="lb-kies" data-lb="totaalTraining">Totaal training</button>
@@ -789,7 +822,9 @@
 <div class="kcal-readout">
   <div class="kcal-cijfer mono" id="totKcal">0</div>
   <div class="kcal-label">kcal</div>
-  <div class="doel-regel" id="doelRegel"></div>
+  <div class="eigen-reacties" id="eigenReacties"></div>
+  <div class="doel-rest" id="doelRest"><span class="getal">–</span><span class="tekst"></span></div>
+  <div class="doel-sub" id="doelSub"></div>
 </div>
 
 <div class="macros">
@@ -890,6 +925,10 @@
     <span class="gram-eenheid" id="pEenheid">gram</span>
   </div>
   <div class="snel" id="snelKnoppen"></div>
+  <div class="portie-multi" id="portieMulti">
+    <button id="pMaal2" type="button">× 2</button>
+    <button id="pMaal3" type="button">× 3</button>
+  </div>
   <div class="voorbeeld">
     <div class="vb-kcal"><div class="l">kcal</div><div class="g mono" id="pKcal">0</div></div>
     <div class="vb-e"><div class="l">eiwit</div><div class="g mono" id="pE">0</div></div>
@@ -2288,14 +2327,16 @@ function renderGewicht(){
     if(laatsteDagen.length<2){
       box.innerHTML = '<div class="vr-leeg">Vul minstens 2 dagen in om een grafiek te zien.</div>';
     } else {
-      box.innerHTML = svgLijnGrafiek(laatsteDagen.map(k=>({ x: datumKort(k), y: Math.round(gewichtLog[k]*10)/10 })), 'kg', {kleur:'#BE96FF', decimalen:1});
+      box.innerHTML = svgLijnGrafiek(laatsteDagen.map(k=>({ x: datumKort(k), y: Math.round(gewichtLog[k]*10)/10 })), 'kg', {kleur:'#BE96FF', decimalen:1, trend:true});
+      if(laatsteDagen.length>=3) box.innerHTML += '<div class="gw-legenda">── gemeten &nbsp;&nbsp; ┈┈ trend</div>';
     }
   } else {
     const w = weken.slice(-10);
     if(w.length<2){
       box.innerHTML = '<div class="vr-leeg">Er is nog maar '+w.length+' week met metingen. Vul meer dagen in.</div>';
     } else {
-      box.innerHTML = svgLijnGrafiek(w.map(x=>({ x: datumKort(x.week), y: Math.round(x.gem*10)/10 })), 'kg', {kleur:'#BE96FF', decimalen:1});
+      box.innerHTML = svgLijnGrafiek(w.map(x=>({ x: datumKort(x.week), y: Math.round(x.gem*10)/10 })), 'kg', {kleur:'#BE96FF', decimalen:1, trend:true});
+      if(w.length>=3) box.innerHTML += '<div class="gw-legenda">── gemeten &nbsp;&nbsp; ┈┈ trend</div>';
     }
   }
 
@@ -2667,20 +2708,56 @@ function weekOverzicht(){
   if(!waterGesch[vandaagSleutel()]) water += waterTotaal();
   return { gem: dagen? Math.round(som/dagen):0, dagen, binnen, training: trainingenDezeWeek(), water };
 }
+function maandStartKey(){
+  const d = new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-01';
+}
+function maandOverzicht(){
+  const start = maandStartKey();
+  let som=0, dagen=0, binnen=0;
+  for(const k in geschiedenis){
+    if(k>=start && geschiedenis[k].kcal>0){
+      som += geschiedenis[k].kcal; dagen++;
+      const doel = geschiedenis[k].doel;
+      if(doel && Math.abs(geschiedenis[k].kcal-doel)<=100) binnen++;
+    }
+  }
+  let kcVandaag=0; for(const it of log) kcVandaag+=it.kc;
+  if(kcVandaag>0 && !geschiedenis[vandaagSleutel()]){
+    som += kcVandaag; dagen++;
+    if(doelGezet && Math.abs(kcVandaag-DOEL.kcal)<=100) binnen++;
+  }
+  let water=0; for(const k in waterGesch){ if(k>=start) water += waterGesch[k]; }
+  if(!waterGesch[vandaagSleutel()]) water += waterTotaal();
+  const trainDagen = {};
+  for(const oef in woLog){ for(const s of (woLog[oef]||[])){ if(s.datum && s.datum>=start) trainDagen[s.datum]=1; } }
+  return { gem: dagen? Math.round(som/dagen):0, dagen, binnen, training: Object.keys(trainDagen).length, water };
+}
+let weekKaartModus = 'week';   // 'week' of 'maand'
 function renderWeekKaart(){
   const box = $('weekKaart'); if(!box) return;
-  const w = weekOverzicht();
+  const wBasis = weekOverzicht();
   const streak = berekenStreak();
-  if(w.dagen===0 && streak===0 && w.training===0){ box.style.display='none'; return; }
+  if(wBasis.dagen===0 && streak===0 && wBasis.training===0){ box.style.display='none'; return; }
+  const w = weekKaartModus==='maand' ? maandOverzicht() : wBasis;
   box.style.display='block';
   box.innerHTML =
-    '<div class="wk-kop"><span>Deze week</span>'+(streak>0?'<span class="wk-streak">🔥 '+streak+'</span>':'')+'</div>'+
+    '<div class="wk-kop">'+
+      '<div class="wk-tabs">'+
+        '<button class="wk-tab'+(weekKaartModus==='week'?' actief':'')+'" data-wk="week">Week</button>'+
+        '<button class="wk-tab'+(weekKaartModus==='maand'?' actief':'')+'" data-wk="maand">Maand</button>'+
+      '</div>'+
+      (streak>0?'<span class="wk-streak">🔥 '+streak+'</span>':'')+
+    '</div>'+
     '<div class="wk-rij">'+
       '<div class="wk-vak"><b>'+(w.gem? w.gem.toLocaleString('nl-BE'):'–')+'</b><span>kcal/dag</span></div>'+
       '<div class="wk-vak"><b>'+w.binnen+'/'+w.dagen+'</b><span>op doel</span></div>'+
       '<div class="wk-vak"><b>'+w.training+'</b><span>training</span></div>'+
       '<div class="wk-vak"><b>'+(w.water/1000).toFixed(1)+'L</b><span>water</span></div>'+
     '</div>';
+  box.querySelectorAll('.wk-tab').forEach(b=>{
+    b.onclick = (e)=>{ e.stopPropagation(); weekKaartModus = b.dataset.wk; renderWeekKaart(); };
+  });
 }
 
 function huidigLengte(){
@@ -2774,13 +2851,24 @@ function updateDashboard(){
   $('barK').style.width = Math.min(100, k/DOEL.k*100)+'%';
   $('barV').style.width = Math.min(100, v/DOEL.v*100)+'%';
   if(doelGezet){
-    const rest = rond(DOEL.kcal - kc);
-    $('doelRegel').textContent = 'doel ' + DOEL.kcal.toLocaleString('nl-BE') + '  ·  ' + (rest>=0 ? 'nog '+rest.toLocaleString('nl-BE') : (-rest).toLocaleString('nl-BE')+' over');
+    const diff = kc - DOEL.kcal;
+    const rest = Math.round(DOEL.kcal - kc);
+    const kleur = Math.abs(diff)<=100 ? 'groen' : (diff>100 ? 'rood' : 'blauw');
+    const pil = $('doelRest');
+    pil.className = 'doel-rest ' + kleur;
+    pil.style.display = 'inline-flex';
+    if(rest>=0){
+      pil.innerHTML = '<span class="getal">'+rest.toLocaleString('nl-BE')+'</span><span class="tekst">kcal over</span>';
+    } else {
+      pil.innerHTML = '<span class="getal">'+Math.abs(rest).toLocaleString('nl-BE')+'</span><span class="tekst">kcal boven doel</span>';
+    }
+    $('doelSub').textContent = 'doel ' + DOEL.kcal.toLocaleString('nl-BE') + ' kcal';
     $('doelE').textContent = 'doel ' + DOEL.e + 'g';
     $('doelK').textContent = 'doel ' + DOEL.k + 'g';
     $('doelV').textContent = 'doel ' + DOEL.v + 'g';
   } else {
-    $('doelRegel').textContent = '';
+    $('doelRest').style.display = 'none';
+    $('doelSub').textContent = '';
     $('doelE').textContent = ''; $('doelK').textContent = ''; $('doelV').textContent = '';
   }
 }
@@ -2806,10 +2894,54 @@ function renderLog(){
     wrap.appendChild(el);
   });
   wrap.querySelectorAll('.info[data-edit]').forEach(b=>{
-    b.onclick = ()=> bewerkLogItem(parseInt(b.dataset.edit));
+    b.onclick = ()=>{ if(b.closest('.log-item').dataset.swiped) return; bewerkLogItem(parseInt(b.dataset.edit)); };
   });
   wrap.querySelectorAll('.del').forEach(b=>{
     b.onclick = ()=>{ log.splice(parseInt(b.dataset.i),1); bewaarLog(); updateDashboard(); renderLog(); };
+  });
+  wrap.querySelectorAll('.log-item').forEach(el=>{
+    maakSwipebaar(el, ()=>{
+      const i = parseInt(el.querySelector('.del').dataset.i);
+      log.splice(i,1); bewaarLog(); updateDashboard(); renderLog();
+    });
+  });
+}
+
+// Veeg-om-te-verwijderen — de ✕-knop blijft gewoon staan en werken
+function maakSwipebaar(el, onVerwijder){
+  const DREMPEL = 90;
+  let startX=0, startY=0, dx=0, dragging=false, swiped=false;
+  el.addEventListener('touchstart', (e)=>{
+    startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+    dragging = true; swiped = false; dx = 0;
+    el.style.transition = 'none';
+  }, {passive:true});
+  el.addEventListener('touchmove', (e)=>{
+    if(!dragging) return;
+    const t = e.touches[0];
+    const ddx = t.clientX - startX, ddy = t.clientY - startY;
+    if(Math.abs(ddy) > Math.abs(ddx)) return;   // verticaal scrollen: niet vegen
+    dx = Math.min(0, ddx);
+    if(Math.abs(dx) > 6) swiped = true;
+    el.style.transform = 'translateX('+dx+'px)';
+    el.classList.toggle('swipe-klaar', dx < -DREMPEL);
+  }, {passive:true});
+  el.addEventListener('touchend', ()=>{
+    dragging = false;
+    el.style.transition = 'transform .2s ease, opacity .2s ease';
+    if(dx < -DREMPEL){
+      el.style.transform = 'translateX(-100%)';
+      el.style.opacity = '0';
+      setTimeout(onVerwijder, 180);
+    } else {
+      el.style.transform = 'translateX(0)';
+      el.classList.remove('swipe-klaar');
+    }
+    if(swiped){
+      el.dataset.swiped = '1';
+      setTimeout(()=>{ delete el.dataset.swiped; }, 300);
+    }
+    dx = 0;
   });
 }
 
@@ -2919,6 +3051,7 @@ let modus = 'gram';   // 'gram' of 'stuk'
 
 let bewerkLogIndex = null;
 let porDoel = 'log';   // 'log' of 'maaltijd'
+let portieBasis = 0;   // vorige/standaard portie — basis voor de ×2/×3-knoppen
 function openPortie(f, bewerkIndex, voorafGram){
   gekozen = f;
   bewerkLogIndex = (bewerkIndex!=null) ? bewerkIndex : null;
@@ -2933,6 +3066,7 @@ function openPortie(f, bewerkIndex, voorafGram){
   zetModus('gram');
   if(voorafGram!=null){ $('pGram').value = rond(voorafGram); berekenPortie(); }
   else if(gebruik[f.n] && gebruik[f.n].g){ $('pGram').value = rond(gebruik[f.n].g); berekenPortie(); }
+  portieBasis = parseFloat($('pGram').value) || 0;
   $('portie').classList.add('open');
   $('pGram').focus();
   $('pGram').select();
@@ -2973,6 +3107,7 @@ function zetModus(m){
     $('pEenheid').textContent = se + ' × ' + gekozen.stuk + (drank ? 'ml' : 'g');
     bouwSnel([['1','1'],['2','2'],['3','3'],['0.5','½']]);
   }
+  portieBasis = parseFloat($('pGram').value) || 0;
   berekenPortie();
 }
 function bouwSnel(paren){
@@ -2999,8 +3134,15 @@ function berekenPortie(){
 }
 
 $('pGram').addEventListener('input', berekenPortie);
+$('pGram').addEventListener('input', ()=>{
+  // handmatige invoer wordt de nieuwe basis voor ×2/×3
+  const v = parseFloat($('pGram').value);
+  if(!isNaN(v) && v>0) portieBasis = v;
+});
 $('uGram').onclick = ()=> zetModus('gram');
 $('uStuk').onclick = ()=> zetModus('stuk');
+$('pMaal2').onclick = ()=>{ if(portieBasis>0){ $('pGram').value = rond(portieBasis*2); berekenPortie(); } };
+$('pMaal3').onclick = ()=>{ if(portieBasis>0){ $('pGram').value = rond(portieBasis*3); berekenPortie(); } };
 $('pSluit').onclick = sluitPortie;
 $('pToevoeg').onclick = ()=>{
   if(!gekozen) return;
@@ -4077,6 +4219,13 @@ function svgLijnGrafiek(data, eenheid, opts){
     g += '<line x1="'+pl+'" y1="'+y.toFixed(1)+'" x2="'+(W-pr)+'" y2="'+y.toFixed(1)+'" stroke="#2A2F39" stroke-width="1"/>';
     g += '<text x="'+(pl-6)+'" y="'+(y+4).toFixed(1)+'" fill="#868D9B" font-size="11" text-anchor="end" font-family="monospace">'+val.toFixed(dec)+'</text>';
   }
+  // trendlijn (voortschrijdend gemiddelde) — dun en gestippeld, onder de echte lijn
+  if(opts.trend && data.length>=3){
+    const venster = Math.min(5, data.length);
+    const gem = voortschrijdendGemiddelde(ys, venster);
+    const tpunten = gem.map((v,i)=> px(i).toFixed(1)+','+py(v).toFixed(1)).join(' ');
+    g += '<polyline points="'+tpunten+'" fill="none" stroke="#868D9B" stroke-width="2" stroke-dasharray="1,6" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>';
+  }
   // lijn
   let punten = data.map((d,i)=> px(i).toFixed(1)+','+py(d.y).toFixed(1)).join(' ');
   g += '<polyline points="'+punten+'" fill="none" stroke="'+kleur+'" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
@@ -4094,6 +4243,17 @@ function svgLijnGrafiek(data, eenheid, opts){
   return g;
 }
 
+function voortschrijdendGemiddelde(ys, venster){
+  const out = [];
+  const halfL = Math.floor(venster/2);
+  for(let i=0;i<ys.length;i++){
+    const lo = Math.max(0, i-halfL), hi = Math.min(ys.length-1, i+halfL);
+    let som=0, n=0;
+    for(let j=lo;j<=hi;j++){ som+=ys[j]; n++; }
+    out.push(som/n);
+  }
+  return out;
+}
 function datumKort(sleutel){
   // 'YYYY-MM-DD' -> 'D/M'
   const p = sleutel.split('-');
@@ -4266,7 +4426,7 @@ async function syncNu(){
         trainingTotaal: st.trainingTotaal, trainingWeek: st.trainingWeek,
         totaalWater: st.totaalWater, todayWater: st.todayWater,
         todayKcal: kcNu, todayDoel: doel,
-        streak: berekenStreak(), datum: key
+        streak: berekenStreak(), consistentieWeek: st.consistentieWeek, datum: key
       },
       laatste: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
@@ -4309,6 +4469,20 @@ function startVriendenListeners(){
     qs.forEach(d=>{ const x=d.data(); if(x.status==='geaccepteerd') vr.push({ uid:x.naar, naam:x.naarNaam, id:d.id }); });
     _vrUit = vr; mergeVrienden();
   }, ()=>{}));
+  luisterEigenReacties();
+}
+function luisterEigenReacties(){
+  if(!fbDb || !fbUid) return;
+  const key = vandaagSleutel();
+  vrUnsub.push(fbDb.collection('users').doc(fbUid).collection('dagen').doc(key)
+    .onSnapshot((snap)=>{
+      const r = (snap.exists && snap.data().reacties) ? snap.data().reacties : {};
+      const aantal = Object.keys(r).length;
+      const el = $('eigenReacties');
+      if(!el) return;
+      if(aantal>0){ el.style.display='inline-flex'; el.textContent = '👍 ' + aantal; }
+      else { el.style.display='none'; el.textContent=''; }
+    }, ()=>{}));
 }
 let _vrUit=[], _vrIn=[];
 function mergeVrienden(){
@@ -4480,6 +4654,7 @@ function statsBlok(st){
   '</div>';
 }
 let vriendData = null;   // {naam, bezit, eigen, maaltijden}
+let huidigeVriendUid = null, huidigeVriendDagKey = null, huidigeDagReacties = {};
 async function bekijkVriend(uid, naam){
   $('profNaam').textContent = naam;
   $('profInhoud').innerHTML = '<div class="vr-leeg">Laden…</div>';
@@ -4501,6 +4676,9 @@ async function bekijkVriend(uid, naam){
       eigen: (eigenSnap.exists && Array.isArray(eigenSnap.data().lijst)) ? eigenSnap.data().lijst : [],
       maaltijden: (mtSnap.exists && Array.isArray(mtSnap.data().lijst)) ? mtSnap.data().lijst : []
     };
+    huidigeVriendUid = uid;
+    huidigeVriendDagKey = key;
+    huidigeDagReacties = (dagSnap.exists && dagSnap.data().reacties) ? dagSnap.data().reacties : {};
     let html = '';
     html += statsBlok(st);
     // Voeding vandaag
@@ -4510,6 +4688,7 @@ async function bekijkVriend(uid, naam){
       html += '<div class="prof-kcal">'+(d.kcal||0).toLocaleString('nl-BE')+' <span>kcal vandaag</span></div>';
       html += '<div class="prof-doel">'+doelTxt+'</div>';
       html += '<div class="prof-macros">E '+(d.e||0)+'g · K '+(d.k||0)+'g · V '+(d.v||0)+'g</div>';
+      html += reactieKnopHtml();
       if(d.items && d.items.length){
         html += '<div class="vr-kopje" style="margin-top:16px;">Gegeten vandaag</div>';
         html += d.items.map(it=>'<div class="prof-item"><span>'+escapeHtml(it.n||'?')+(it.label?' <em>('+escapeHtml(it.label)+')</em>':'')+'</span><span class="prof-ikc">'+(it.kc||0)+'</span></div>').join('');
@@ -4547,9 +4726,35 @@ async function bekijkVriend(uid, naam){
     html += woHtml || '<div class="vr-leeg">Geen training vandaag.</div>';
     $('profInhoud').innerHTML = html;
     $('vpOpen').onclick = openVriendProducten;
+    if($('reactieKnop')) $('reactieKnop').onclick = toggleReactie;
   }catch(e){
     $('profInhoud').innerHTML = '<div class="vr-leeg">Kon dit profiel niet laden.</div>';
   }
+}
+function reactieKnopHtml(){
+  const aantal = Object.keys(huidigeDagReacties).length;
+  const ikHeb = !!huidigeDagReacties[fbUid];
+  return '<button class="reactie-knop'+(ikHeb?' actief':'')+'" id="reactieKnop">👍 '+(aantal>0?aantal:'Reageren')+'</button>';
+}
+async function toggleReactie(){
+  if(!huidigeVriendUid || !fbUid || !fbDb) return;
+  const ikHeb = !!huidigeDagReacties[fbUid];
+  const ref = fbDb.collection('users').doc(huidigeVriendUid).collection('dagen').doc(huidigeVriendDagKey);
+  const knop = $('reactieKnop');
+  try{
+    if(ikHeb){
+      delete huidigeDagReacties[fbUid];
+      await ref.set({ reacties: { [fbUid]: firebase.firestore.FieldValue.delete() } }, { merge:true });
+    } else {
+      huidigeDagReacties[fbUid] = fbNaam;
+      await ref.set({ reacties: { [fbUid]: fbNaam } }, { merge:true });
+    }
+    if(knop){
+      const aantal = Object.keys(huidigeDagReacties).length;
+      knop.classList.toggle('actief', !ikHeb);
+      knop.innerHTML = '👍 ' + (aantal>0 ? aantal : 'Reageren');
+    }
+  }catch(e){ toonToast('Kon niet reageren.'); }
 }
 function heeftProduct(f){
   return eigen.some(x=> (f.code && x.code===f.code) || x.n===f.n) ||
@@ -4666,7 +4871,7 @@ function lokaleStats(){
   let totaalWater=0; for(const k in waterGesch){ totaalWater += (waterGesch[k]||0); }
   const todayWater = waterTotaal();
   if(!waterGesch[today]) totaalWater += todayWater;   // vandaag meetellen als nog niet in geschiedenis
-  return { totaalKcal:totaal, hoogsteDag:hoogste, dagenGeteld:dagen, todayKcal, todayDoel, trainingTotaal:Object.keys(alle).length, trainingWeek:Object.keys(week).length, totaalWater, todayWater, streak: berekenStreak() };
+  return { totaalKcal:totaal, hoogsteDag:hoogste, dagenGeteld:dagen, todayKcal, todayDoel, trainingTotaal:Object.keys(alle).length, trainingWeek:Object.keys(week).length, totaalWater, todayWater, streak: berekenStreak(), consistentieWeek: weekOverzicht().binnen };
 }
 async function haalStats(uid){
   if(uid === fbUid){ const st = lokaleStats(); statsCache[uid] = st; return st; }
@@ -4689,7 +4894,8 @@ async function haalStats(uid){
           todayWater: versDatum ? (s.todayWater||0) : 0,
           todayKcal: versDatum ? (s.todayKcal!=null?s.todayKcal:null) : (losVers ? (d.vandaagKcal||0) : null),
           todayDoel: versDatum ? (s.todayDoel!=null?s.todayDoel:null) : (d.doel!=null?d.doel:null),
-          streak: versDatum ? (s.streak||0) : 0
+          streak: versDatum ? (s.streak||0) : 0,
+          consistentieWeek: versDatum ? (s.consistentieWeek||0) : 0
         };
         statsCache[uid] = st; return st;
       }
@@ -4697,14 +4903,14 @@ async function haalStats(uid){
       const st = {
         totaalKcal:0, hoogsteDag:0, dagenGeteld:0,
         trainingTotaal:0, trainingWeek: d.trainingWeek||0,
-        totaalWater:0, todayWater:0, streak:0,
+        totaalWater:0, todayWater:0, streak:0, consistentieWeek:0,
         todayKcal: (d.vandaagDatum===today ? (d.vandaagKcal||0) : null),
         todayDoel: (d.doel!=null?d.doel:null)
       };
       statsCache[uid] = st; return st;
     }
   }catch(e){}
-  const leeg = { totaalKcal:0, hoogsteDag:0, dagenGeteld:0, trainingTotaal:0, trainingWeek:0, totaalWater:0, todayWater:0, todayKcal:null, todayDoel:null, streak:0 };
+  const leeg = { totaalKcal:0, hoogsteDag:0, dagenGeteld:0, trainingTotaal:0, trainingWeek:0, totaalWater:0, todayWater:0, todayKcal:null, todayDoel:null, streak:0, consistentieWeek:0 };
   statsCache[uid] = leeg; return leeg;
 }
 
@@ -4756,6 +4962,8 @@ async function renderLeaderboard(){
         .sort((a,b)=>a.sort-b.sort);
       const zonder = rijen.filter(r=> !(r.dag.doel!=null && r.dag.kcal!=null)).map(r=>({...r, extra:'nog geen data'}));
       tekenLeaderboard(box, [...met, ...zonder]);
+    } else if(lbKeuze==='consistentie'){
+      tekenLeaderboard(box, rijen.map(r=>({...r, sort:r.st.consistentieWeek||0, extra:(r.st.consistentieWeek||0)+' dag'+((r.st.consistentieWeek||0)===1?'':'en')+' op doel'})).sort((a,b)=>b.sort-a.sort));
     } else if(lbKeuze==='trainingWeek'){
       tekenLeaderboard(box, rijen.map(r=>({...r, sort:r.st.trainingWeek, extra:r.st.trainingWeek+' dag'+(r.st.trainingWeek===1?'':'en')})).sort((a,b)=>b.sort-a.sort));
     } else if(lbKeuze==='totaalKcal'){
@@ -4786,6 +4994,7 @@ document.querySelectorAll('.lb-kies').forEach(b=>{
     const u = $('lbUitleg');
     const txt = {
       doel: "Wie zit vandaag het dichtst bij z'n doel?",
+      consistentie: 'Wie zat deze week de meeste dagen op doel (binnen 100 kcal)?',
       trainingWeek: 'Wie trainde de meeste dagen deze week?',
       totaalKcal: 'Totaal aantal calorieën ooit gelogd (alle dagen samen).',
       totaalTraining: 'Totaal aantal dagen getraind (aller tijden).',
