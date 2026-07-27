@@ -696,9 +696,124 @@
   /* Gewichtsgrafiek trendlijn-legende */
   .gw-legenda{text-align:center;font-size:11px;color:var(--muted);margin-top:8px;letter-spacing:.02em;}
 
+  /* ============ Premium polish ============ */
+
+  /* Verfijnde scrollbar i.p.v. de kale browser-standaard */
+  ::-webkit-scrollbar{width:10px;height:10px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px;border:2px solid var(--ink);background-clip:padding-box;}
+  ::-webkit-scrollbar-thumb:hover{background:#3A404D;background-clip:padding-box;}
+  html{scrollbar-width:thin;scrollbar-color:var(--line) transparent;}
+
+  /* Duidelijke toetsenbord-focus, ook zonder muis */
+  a:focus-visible, button:focus-visible, input:focus-visible{outline:2px solid var(--eiwit);outline-offset:2px;border-radius:4px;}
+
+  /* Zachte kaart-elevatie i.p.v. platte randen */
+  .home-kaart, .week-kaart, .bmi-kaart, .lb-rij, .kal-paneel, .wo-paneel, .vr-paneel, .uname-paneel, .scan-paneel{
+    box-shadow:0 1px 2px rgba(0,0,0,.22), 0 10px 26px -14px rgba(0,0,0,.5);
+  }
+
+  /* Hover-feedback voor muis/trackpad-gebruikers, bovenop de bestaande touch-feedback */
+  @media (hover:hover){
+    .home-kaart{transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease;}
+    .home-kaart:hover{border-color:var(--muted);transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.35),0 16px 36px -16px rgba(0,0,0,.55);}
+    .res-item:hover{background:var(--surface-2);}
+    .log-item .info[data-edit]:hover .n{color:var(--eiwit);}
+    .lb-rij.klik:hover{border-color:var(--muted);}
+    .vr-klik:hover{color:var(--eiwit);}
+    .wk-tab:hover{color:var(--text);}
+    .lb-kies:hover{border-color:var(--muted);}
+    .doel-knop:hover{border-color:var(--eiwit);}
+    .snel button:hover{background:var(--line);}
+    .portie-multi button:hover{border-color:var(--eiwit);color:var(--text);}
+    .toevoeg:hover, .mt-bewaar:hover, .uname-kies:hover{opacity:.9;}
+    .zij-item:hover{background:var(--surface-2);color:var(--text);}
+    .zij-account:hover{border-color:var(--muted);}
+  }
+
+  /* ============ Zij-navigatie (desktop) ============ */
+  .zij-nav{display:none;}
+  .zij-account{display:none;}
+
+  @media (min-width:900px){
+    body{max-width:none;margin:0;padding:0 0 60px 272px;background:radial-gradient(ellipse 1200px 800px at 50% -12%, #171b22, var(--ink) 55%);}
+    .view{max-width:660px;margin:0 auto;padding:0 28px;}
+    .terug{display:none;}
+
+    .zij-nav{
+      display:flex;flex-direction:column;
+      position:fixed;left:0;top:0;bottom:0;width:272px;
+      padding:30px 18px;gap:2px;
+      background:var(--surface);border-right:1px solid var(--line);
+      overflow-y:auto;
+      z-index:10;
+    }
+    .zij-merk{font-size:22px;font-weight:700;letter-spacing:-.02em;color:var(--text);padding:4px 12px 22px;}
+    .zij-item{
+      display:flex;align-items:center;gap:12px;
+      background:none;border:none;border-radius:12px;
+      color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;
+      padding:11px 12px;cursor:pointer;text-align:left;width:100%;
+      transition:background .15s,color .15s;
+    }
+    .zij-icoon{font-size:18px;width:22px;text-align:center;flex-shrink:0;}
+    .zij-item.actief{background:var(--surface-2);color:var(--text);}
+    .zij-item.k-voeding.actief{color:var(--eiwit);}
+    .zij-item.k-workout.actief{color:var(--vet);}
+    .zij-item.k-gewicht.actief{color:#BE96FF;}
+    .zij-item.k-leaderboard.actief{color:#F0BE5A;}
+    .zij-spacer{flex:1;}
+    .zij-account.account-btn{
+      display:flex;align-items:center;justify-content:flex-start;gap:10px;
+      width:100%;height:auto;margin-top:0;border-radius:12px;
+      padding:9px 12px;
+      color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;
+      transition:border-color .15s;
+    }
+
+    .toast{left:calc(272px + (100% - 272px)/2);}
+
+    /* Beginscherm: geen dubbele navigatie naast de zijbalk — het merk/account-icoon
+       staat al in de zijbalk, dus de datum wordt de echte paginatitel en de
+       voorvertoning-tegels krijgen een rustige 2-koloms rooster. */
+    .home-topbar{display:none;}
+    .home-datum{font-size:26px;font-weight:700;color:var(--text);letter-spacing:-.01em;margin-bottom:24px;}
+    .home-wrap{padding-top:6px;display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+    .home-datum, .week-kaart{grid-column:1/-1;}
+    .home-kaart{margin-bottom:0;}
+  }
+
+  @media (min-width:1180px){
+    .view{max-width:720px;}
+  }
+
 </style>
 </head>
 <body>
+
+<!-- Zij-navigatie (enkel zichtbaar op brede/desktop-schermen) -->
+<nav class="zij-nav" id="zijNav">
+  <div class="zij-merk">FitLog</div>
+  <button class="zij-item actief" id="zijHome" data-ga="home">
+    <span class="zij-icoon">🏠</span> Overzicht
+  </button>
+  <button class="zij-item k-voeding" id="zijMacros" data-ga="macros">
+    <span class="zij-icoon">🍽️</span> Voeding
+  </button>
+  <button class="zij-item k-workout" id="zijWorkout" data-ga="workout">
+    <span class="zij-icoon">🏋️</span> Workout
+  </button>
+  <button class="zij-item k-gewicht" id="zijGewicht" data-ga="gewicht">
+    <span class="zij-icoon">⚖️</span> Gewicht
+  </button>
+  <button class="zij-item k-leaderboard" id="zijLeaderboard" data-ga="leaderboard">
+    <span class="zij-icoon">🏆</span> Leaderboards
+  </button>
+  <div class="zij-spacer"></div>
+  <button class="zij-account account-btn" id="zijAccount" aria-label="Account">
+    <span class="ab-av" id="zijAv">👤</span> Account
+  </button>
+</nav>
 
 <!-- ===== BEGINSCHERM ===== -->
 <div id="viewHome" class="view">
@@ -2608,7 +2723,7 @@ function openMaaltijdBouw(index){
     mtBouw = { naam:'', items:[], bewerkIndex:null };
   }
   $('mbNaam').value = mtBouw.naam;
-  $('mbZoek').value = ''; $('mbRes').innerHTML=''; $('mbRes').classList.remove('open');
+  $('mbZoek').value = ''; $('mbRes').innerHTML=''; paneelVerberg($('mbRes'));
   mbGekozen = null; $('mbPortie').style.display='none';
   $('mtOverlay').classList.remove('open');
   $('mbOverlay').classList.add('open');
@@ -2649,7 +2764,7 @@ function bewaarMaaltijdBouw(){
 function bewaarDagAlsMaaltijd(){
   if(log.length===0){ toonToast('Je hebt vandaag nog niets gelogd.'); return; }
   mtBouw = { naam:'', items: log.map(it=>Object.assign({}, it)), bewerkIndex:null };
-  $('mbNaam').value = ''; $('mbZoek').value=''; $('mbRes').innerHTML=''; $('mbRes').classList.remove('open');
+  $('mbNaam').value = ''; $('mbZoek').value=''; $('mbRes').innerHTML=''; paneelVerberg($('mbRes'));
   mbGekozen = null; $('mbPortie').style.display='none';
   $('mtOverlay').classList.remove('open');
   $('mbOverlay').classList.add('open');
@@ -2962,6 +3077,7 @@ function escapeHtml(s){ return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','
 // zichtbaar "uitgroeien" i.p.v. abrupt verschijnen/verdwijnen.
 function paneelToon(el){
   if(!el) return;
+  if(el.classList.contains('groeit')){ el.classList.add('open'); return; }   // al zichtbaar: niet opnieuw laten "knipperen"
   el.classList.add('open');
   el.classList.remove('groeit');
   void el.offsetHeight;   // reflow forceren zodat de starttoestand echt gerenderd wordt
@@ -3030,9 +3146,9 @@ zoekInput.addEventListener('input', ()=>{
 $('mbZoek').addEventListener('input', ()=>{
   const q = zonderAccent($('mbZoek').value.trim());
   const box = $('mbRes');
-  if(q.length===0){ box.classList.remove('open'); box.innerHTML=''; return; }
+  if(q.length===0){ paneelVerberg(box); box.innerHTML=''; return; }
   const treffers = alleEten().filter(f=>zonderAccent(f.n).includes(q)).slice(0,6);
-  box.classList.add('open');
+  paneelToon(box);
   box.innerHTML = treffers.length
     ? treffers.map(f=>'<div class="res-item" data-mbnaam="'+encodeURIComponent(f.n)+'"><span class="n">'+escapeHtml(f.n)+'</span><span class="kc">'+f.kc+' kcal /100'+(f.drank?'ml':'g')+'</span></div>').join('')
     : '<div class="res-leeg">Niet gevonden</div>';
@@ -3052,7 +3168,7 @@ function kiesVoorMaaltijd(f){
   const onthouden = gebruik[f.n] && gebruik[f.n].g;
   $('mbPGram').value = onthouden || f.stuk || 100;
   $('mbPortie').style.display = 'block';
-  $('mbRes').classList.remove('open'); $('mbRes').innerHTML = '';
+  paneelVerberg($('mbRes')); $('mbRes').innerHTML = '';
   $('mbZoek').value = '';
   werkMbKcalBij();
   setTimeout(()=>{ try{ $('mbPGram').focus(); $('mbPGram').select(); }catch(e){} }, 60);
@@ -3196,7 +3312,7 @@ $('pToevoeg').onclick = ()=>{
     if(mtBouw){ mtBouw.items.push(nieuw); renderMaaltijdBouw(); }
     porDoel = 'log';
     gekozen=null; sluitPortie();
-    $('mbZoek').value=''; $('mbRes').classList.remove('open'); $('mbRes').innerHTML='';
+    $('mbZoek').value=''; paneelVerberg($('mbRes')); $('mbRes').innerHTML='';
     return;
   }
   if(bewerkLogIndex!=null && log[bewerkLogIndex]){ log[bewerkLogIndex] = nieuw; }
@@ -3861,6 +3977,7 @@ function toonView(naam){
   $('viewWorkout').classList.toggle('hidden', naam!=='workout');
   $('viewLeaderboard').classList.toggle('hidden', naam!=='leaderboard');
   $('viewGewicht').classList.toggle('hidden', naam!=='gewicht');
+  document.querySelectorAll('.zij-item').forEach(b=> b.classList.toggle('actief', b.dataset.ga===naam));
   window.scrollTo(0,0);
   if(naam==='workout'){ woGekozenDag = new Date().getDay(); renderWorkout(); }
   if(naam==='leaderboard'){ renderLeaderboard(); }
@@ -3872,6 +3989,8 @@ $('gaMacros').onclick = ()=> toonView('macros');
 $('gaWorkout').onclick = ()=> toonView('workout');
 $('gaLeaderboard').onclick = ()=> toonView('leaderboard');
 $('gaGewicht').onclick = ()=> toonView('gewicht');
+document.querySelectorAll('.zij-item').forEach(b=> b.onclick = ()=> toonView(b.dataset.ga));
+$('zijAccount').onclick = openVrienden;
 $('terugGewicht').onclick = ()=> toonView('home');
 $('terugMacros').onclick = ()=> toonView('home');
 $('terugWorkout').onclick = ()=> toonView('home');
@@ -4619,8 +4738,11 @@ function renderVrienden(){
 }
 function werkChipBij(){
   const av = $('abAv'), el = $('accountChip');
+  const zav = $('zijAv'), zel = $('zijAccount');
   if(av) av.textContent = fbNaam ? fbNaam.charAt(0).toUpperCase() : '👤';
+  if(zav) zav.textContent = fbNaam ? fbNaam.charAt(0).toUpperCase() : '👤';
   if(el) el.classList.toggle('heeft-verzoek', inkomendLijst.length>0);
+  if(zel) zel.classList.toggle('heeft-verzoek', inkomendLijst.length>0);
 }
 
 async function zoekVriend(){
