@@ -2263,7 +2263,296 @@ const DB = [
   {n:"Forel",kc:148,e:21,k:0,v:7},
   {n:"Tilapia",kc:96,e:20,k:0,v:1.7},
   {n:"Zeebaars",kc:97,e:18,k:0,v:2.5},
+  // === BBQ & burgers ===
+  {n:"Balletjes in sateausaus",kc:225,e:12,k:8,v:15},
+  {n:"BBQ kip (gegrild)",kc:165,e:26,k:3,v:5},
+  {n:"Pulled pork",kc:175,e:19,k:6,v:8},
+  {n:"Hotdog",kc:250,e:10,k:22,v:14,stuk:120,se:"stuk"},
+  {n:"Coleslaw",kc:150,e:1,k:8,v:13},
+  {n:"BBQ ribs (spareribs)",kc:280,e:22,k:6,v:19},
+  {n:"Gegrilde maïskolf",kc:110,e:3,k:21,v:1.5,stuk:150,se:"kolf"},
+  {n:"BBQ worst",kc:290,e:15,k:3,v:25},
+  {n:"Gegrilde groenten (mix)",kc:60,e:2,k:7,v:2.5},
+  {n:"Baconburger (broodje)",kc:290,e:15,k:20,v:17,stuk:220,se:"stuk"},
+  {n:"Draadjesvlees",kc:200,e:24,k:2,v:10},
+  {n:"BBQ tofu (gegrild)",kc:150,e:14,k:5,v:9},
 ];
+
+// Engelse namen voor de ingebouwde database — enkel gebruikt voor weergave; alle
+// opslag/matching blijft op de Nederlandse naam (f.n) lopen, dus niets breekt.
+// Ontbrekende vertalingen vallen gewoon terug op de Nederlandse naam.
+const DB_EN = {
+  "Kipfilet (rauw)":"Chicken breast (raw)", "Kalkoenfilet":"Turkey breast", "Rundergehakt":"Ground beef",
+  "Biefstuk (mager)":"Steak (lean)", "Varkenshaas":"Pork tenderloin", "Spek":"Bacon",
+  "Gekookte ham":"Cooked ham", "Salami":"Salami", "Zalm (rauw)":"Salmon (raw)",
+  "Tonijn (in water)":"Tuna (in water)", "Kabeljauw":"Cod", "Garnalen":"Shrimp",
+  "Ei (heel)":"Egg (whole)", "Eiwit":"Egg white", "Volle melk":"Whole milk",
+  "Magere melk":"Skimmed milk", "Magere kwark":"Low-fat quark", "Griekse yoghurt (vol)":"Greek yogurt (full-fat)",
+  "Griekse yoghurt 0%":"Greek yogurt 0%", "Volle yoghurt":"Whole-milk yogurt", "Cottage cheese":"Cottage cheese",
+  "Goudse kaas":"Gouda cheese", "Feta":"Feta", "Mozzarella":"Mozzarella",
+  "Boter":"Butter", "Witte rijst (gekookt)":"White rice (cooked)", "Volkoren rijst (gekookt)":"Brown rice (cooked)",
+  "Pasta (gekookt)":"Pasta (cooked)", "Aardappel (gekookt)":"Potato (boiled)", "Zoete aardappel (gekookt)":"Sweet potato (boiled)",
+  "Wit brood":"White bread", "Volkoren brood":"Whole wheat bread", "Havermout":"Oatmeal",
+  "Muesli":"Muesli", "Cornflakes":"Cornflakes", "Quinoa (gekookt)":"Quinoa (cooked)",
+  "Couscous (gekookt)":"Couscous (cooked)", "Rijstwafel":"Rice cake", "Linzen (gekookt)":"Lentils (cooked)",
+  "Kikkererwten (gekookt)":"Chickpeas (cooked)", "Bruine bonen (gekookt)":"Kidney beans (cooked)", "Tofu":"Tofu",
+  "Broccoli":"Broccoli", "Wortel":"Carrot", "Spinazie":"Spinach",
+  "Tomaat":"Tomato", "Komkommer":"Cucumber", "Paprika":"Bell pepper",
+  "Sla":"Lettuce", "Ui":"Onion", "Champignons":"Mushrooms",
+  "Mais":"Corn", "Erwten":"Peas", "Avocado":"Avocado",
+  "Banaan":"Banana", "Appel":"Apple", "Sinaasappel":"Orange",
+  "Peer":"Pear", "Aardbei":"Strawberry", "Blauwe bessen (bosbessen)":"Blueberries",
+  "Druiven":"Grapes", "Mango":"Mango", "Ananas":"Pineapple",
+  "Rozijnen":"Raisins", "Dadels":"Dates", "Pindakaas":"Peanut butter",
+  "Amandelen":"Almonds", "Walnoten":"Walnuts", "Cashewnoten":"Cashews",
+  "Hazelnoten":"Hazelnuts", "Chiazaad":"Chia seeds", "Olijfolie":"Olive oil",
+  "Kokosolie":"Coconut oil", "Melkchocolade":"Milk chocolate", "Pure chocolade":"Dark chocolate",
+  "Honing":"Honey", "Suiker":"Sugar", "Water":"Water",
+  "Cola":"Coke", "Cola zero":"Coke zero", "Sinaasappelsap":"Orange juice",
+  "Appelsap":"Apple juice", "Ice tea":"Iced tea", "Energydrank":"Energy drink",
+  "Sportdrank":"Sports drink", "Koffie (zwart)":"Coffee (black)", "Thee (zonder suiker)":"Tea (no sugar)",
+  "Chocolademelk":"Chocolate milk", "Smoothie":"Smoothie", "Bier (pils)":"Beer (lager)",
+  "Wijn (rood)":"Wine (red)", "Wijn (wit)":"Wine (white)", "Skyr":"Skyr",
+  "Roomkaas":"Cream cheese", "Halloumi":"Halloumi", "Pizza margherita":"Pizza margherita",
+  "Frieten":"Fries", "Kipnuggets":"Chicken nuggets", "Noedels (gekookt)":"Noodles (cooked)",
+  "Sushi (maki)":"Sushi (maki)", "Wrap (tortilla)":"Wrap (tortilla)", "Pita":"Pita bread",
+  "Pannenkoek":"Pancake", "Croissant":"Croissant", "Hummus":"Hummus",
+  "Gerookte zalm":"Smoked salmon", "Edamame":"Edamame", "Kidneybonen (gekookt)":"Kidney beans (cooked)",
+  "Pinda's":"Peanuts", "Chips":"Crisps", "Popcorn":"Popcorn",
+  "IJs (vanille)":"Ice cream (vanilla)", "Nutella":"Nutella", "Mayonaise":"Mayonnaise",
+  "Ketchup":"Ketchup", "Courgette":"Zucchini", "Bloemkool":"Cauliflower",
+  "Watermeloen":"Watermelon", "Kiwi":"Kiwi", "Mandarijn":"Mandarin",
+  "Perzik":"Peach", "Fanta Orange":"Fanta Orange", "Fanta Orange Zero":"Fanta Orange Zero",
+  "Fanta Lemon":"Fanta Lemon", "Fanta Cassis":"Fanta Cassis", "Fanta Exotic":"Fanta Exotic",
+  "Pepsi":"Pepsi", "Pepsi Max":"Pepsi Max", "Cola cherry":"Cherry coke",
+  "Sprite":"Sprite", "Fuze Tea Peach":"Fuze Tea Peach", "Fuze Tea Green":"Fuze Tea Green",
+  "Fuze Tea Mango":"Fuze Tea Mango", "Aquarius Lemon":"Aquarius Lemon", "Aquarius Orange":"Aquarius Orange",
+  "Nalu":"Nalu", "Red Bull":"Red Bull", "Red Bull Sugarfree":"Red Bull Sugarfree",
+  "Druivensap":"Grape juice", "Limonade (siroop)":"Lemonade (squash)", "Tripel bier":"Tripel beer",
+  "Blond bier":"Blond beer", "Bruin/dubbel bier":"Brown/dubbel beer", "Witbier":"Wheat beer",
+  "Kriek":"Kriek (cherry beer)", "Duvel":"Duvel", "Alcoholvrij bier":"Non-alcoholic beer",
+  "Hagelslag puur":"Chocolate sprinkles (dark)", "Hagelslag melk":"Chocolate sprinkles (milk)", "Choco (chocopasta)":"Chocolate spread",
+  "Speculoospasta":"Speculoos spread", "Confituur / jam":"Jam", "Smeerkaas":"Spreadable cheese",
+  "Platte kaas":"Plain quark", "Boterhamworst":"Sandwich sausage (lunch meat)", "Paté":"Pâté",
+  "Filet américain":"Filet américain (steak tartare spread)", "Kipfilet (vleeswaren)":"Chicken breast (deli meat)", "Salami (beleg)":"Salami (sandwich topping)",
+  "Koolrabi":"Kohlrabi", "Witloof":"Chicory (endive)", "Rode kool":"Red cabbage",
+  "Spitskool":"Sweetheart cabbage", "Savooikool":"Savoy cabbage", "Boerenkool":"Kale",
+  "Spruitjes":"Brussels sprouts", "Prei":"Leek", "Aubergine":"Eggplant",
+  "Rode biet":"Beetroot", "Asperges":"Asparagus", "Groene bonen":"Green beans",
+  "Venkel":"Fennel", "Pompoen":"Pumpkin", "Knolselder":"Celeriac",
+  "Pastinaak":"Parsnip", "Radijs":"Radish", "Rucola":"Arugula",
+  "Veldsla":"Lamb's lettuce", "Selderij":"Celery", "Artisjok":"Artichoke",
+  "Kers":"Cherry", "Framboos":"Raspberry", "Braambes":"Blackberry",
+  "Abrikoos":"Apricot", "Nectarine":"Nectarine", "Pruim":"Plum",
+  "Granaatappel":"Pomegranate", "Meloen (galia)":"Melon (galia)", "Passievrucht":"Passion fruit",
+  "Vijg":"Fig", "Grapefruit":"Grapefruit", "Citroen":"Lemon",
+  "Limoen":"Lime", "Lychee":"Lychee", "Papaja":"Papaya",
+  "Kaki":"Persimmon", "Pistachenoten":"Pistachios", "Pecannoten":"Pecans",
+  "Macadamianoten":"Macadamia nuts", "Paranoten":"Brazil nuts", "Gemengde noten":"Mixed nuts",
+  "Zonnebloempitten":"Sunflower seeds", "Pompoenpitten":"Pumpkin seeds", "Lijnzaad":"Flaxseed",
+  "Frikandel":"Frikandel (Dutch minced-meat sausage)", "Kroket (aardappel)":"Croquette (potato)", "Bitterbal":"Bitterbal (Dutch meat croquette)",
+  "Kaaskroket":"Cheese croquette", "Garnaalkroket":"Shrimp croquette", "Mexicano":"Mexicano (spiced meat sausage)",
+  "Cervela":"Cervelas sausage", "Viandel":"Viandel (meat sausage)", "Boulet (gehaktbal)":"Boulet (meatball)",
+  "Loempia":"Spring roll", "Hamburger (broodje)":"Hamburger (bun)", "Curryworst":"Curry sausage",
+  "Sate (brochette)":"Satay skewer", "Vissticks":"Fish sticks", "Currysaus":"Curry sauce",
+  "Curryketchup":"Curry ketchup", "Andalouse":"Andalouse sauce", "Samoeraisaus":"Samurai sauce",
+  "Cocktailsaus":"Cocktail sauce", "Tartaarsaus":"Tartar sauce", "Looksaus":"Garlic sauce",
+  "BBQ-saus":"BBQ sauce", "Mosterd":"Mustard", "Joppiesaus":"Joppie sauce",
+  "Stella Artois":"Stella Artois", "Jupiler":"Jupiler", "Jupiler 0.0":"Jupiler 0.0",
+  "Cristal":"Cristal", "Maes":"Maes", "Maes Radler":"Maes Radler",
+  "Tourtel Twist":"Tourtel Twist", "Flying Fish":"Flying Fish", "Appelbier / cider":"Apple beer / cider",
+  "Hoegaarden":"Hoegaarden", "Leffe Blond":"Leffe Blond", "Karmeliet Tripel":"Karmeliet Tripel",
+  "Westmalle Tripel":"Westmalle Tripel", "La Chouffe":"La Chouffe", "Vedett":"Vedett",
+  "Desperados":"Desperados", "Heineken":"Heineken", "Corona":"Corona",
+  "Fristi":"Fristi", "Cécémel":"Cécémel", "Capri-Sun":"Capri-Sun",
+  "Oasis":"Oasis", "Milkshake":"Milkshake", "Haribo Goudberen":"Haribo Gold-Bears",
+  "Haribo Kersen":"Haribo Cherries", "Haribo Dragibus":"Haribo Dragibus", "Haribo Colaflesjes":"Haribo Cola Bottles",
+  "Haribo Smurfen":"Haribo Smurfs", "Haribo Aardbeien":"Haribo Strawberries", "Haribo Tropifrutti":"Haribo Tropifrutti",
+  "Haribo Roulette":"Haribo Roulette", "Haribo Wine gums":"Haribo Wine Gums", "Haribo Zure frietjes":"Haribo Sour Fries",
+  "Haribo Schtroumpfs zuur":"Haribo Sour Smurfs", "Winegums / snoep algemeen":"Wine gums / candy (general)", "Marshmallow":"Marshmallow",
+  "Zuurtjes / hard snoep":"Hard candy", "Lolly":"Lollipop", "Mars":"Mars bar",
+  "Snickers":"Snickers", "Twix":"Twix", "KitKat":"KitKat",
+  "Bounty":"Bounty", "Milka reep":"Milka bar", "M&M's":"M&M's",
+  "Kinder Bueno":"Kinder Bueno", "Kinder Chocolade":"Kinder Chocolate", "Maltesers":"Maltesers",
+  "Toblerone":"Toblerone", "Ferrero Rocher":"Ferrero Rocher", "Speculoos":"Speculoos biscuit",
+  "Oreo":"Oreo", "Petit beurre":"Petit beurre biscuit", "Donut":"Donut",
+  "Muffin":"Muffin", "Brownie":"Brownie", "Cake":"Cake",
+  "Luikse wafel":"Liège waffle", "Chocoladebroodje":"Chocolate roll (pain au chocolat style)", "Rijstpap":"Rice pudding",
+  "Chocolademousse":"Chocolate mousse", "Pudding (chocolade)":"Pudding (chocolate)", "Magnum ijs":"Magnum ice cream",
+  "Spaghetti bolognese":"Spaghetti bolognese", "Lasagne":"Lasagna", "Stoofvlees":"Beef stew (stoofvlees)",
+  "Vol-au-vent":"Vol-au-vent (chicken & mushroom pastry)", "Aardappelpuree":"Mashed potatoes", "Kroketten (aardappel)":"Croquettes (potato)",
+  "Croque monsieur":"Croque monsieur", "Kapsalon":"Kapsalon", "Kebab / durum":"Kebab / durum wrap",
+  "Nasi / bami":"Nasi / bami (Indonesian fried rice/noodles)", "Tomatensoep":"Tomato soup", "Groentesoep":"Vegetable soup",
+  "Quiche":"Quiche", "Omelet":"Omelette", "Spek en eieren":"Bacon and eggs",
+  "Cruesli":"Crunchy granola cereal", "Special K":"Special K", "Granola":"Granola",
+  "Choco pops":"Choco pops (cereal)", "Croissant (boter)":"Croissant (butter)", "Pistolet":"Pistolet roll",
+  "Actimel":"Actimel", "Danoontje":"Danoontje (kids' yogurt)", "Proteïnereep":"Protein bar",
+  "Eiwitpoeder (whey)":"Whey protein powder", "Rozijnen (handje)":"Raisins (handful)", "Kaasblokjes":"Cheese cubes",
+  "Olijven":"Olives", "Augurk":"Pickle (gherkin)", "Zongedroogde tomaat":"Sun-dried tomato",
+  "Bizzl Mix (Trolli)":"Bizzl Mix (Trolli)", "Haribo Happy Peaches":"Haribo Happy Peaches", "Haribo Dragibus Soft":"Haribo Dragibus Soft",
+  "Banaan & aardbei snoep":"Banana & strawberry candy", "Drop (zoet)":"Licorice (sweet)", "Zoute drop":"Salty licorice",
+  "Zure sleutels":"Sour keys (candy)", "Zure matten":"Sour mats (candy)", "Mentos":"Mentos",
+  "Tic Tac":"Tic Tac", "Skittles":"Skittles", "Starburst":"Starburst",
+  "Smarties":"Smarties", "Fruittella":"Fruittella", "Sugus":"Sugus",
+  "Werther's Original":"Werther's Original", "Toffee":"Toffee", "Nougat":"Nougat",
+  "Marsepein":"Marzipan", "Napoleon zuurtjes":"Napoleon mints", "Salmiak drop":"Salmiak licorice",
+  "Côte d'Or melkchocolade":"Côte d'Or milk chocolate", "Witte chocolade":"White chocolate", "After Eight":"After Eight",
+  "Lion":"Lion bar", "Balisto":"Balisto", "Milky Way":"Milky Way",
+  "Rolo":"Rolo", "Praline (bonbon)":"Praline (chocolate bonbon)", "Kinder Country":"Kinder Country",
+  "Kinder Maxi":"Kinder Maxi", "LU Petit Écolier":"LU Petit Écolier biscuit", "Prince koek":"Prince biscuit",
+  "Bastognekoek":"Bastogne biscuit", "Stroopwafel":"Stroopwafel", "Digestive koek":"Digestive biscuit",
+  "Peperkoek":"Gingerbread (peperkoek)", "Boterkoekje":"Butter cookie", "Madeleine":"Madeleine",
+  "Belvita":"Belvita", "Sultana":"Sultana biscuit", "Frangipane":"Frangipane pastry",
+  "Éclair":"Éclair", "Brusselse wafel":"Brussels waffle", "Tuc cracker":"Tuc cracker",
+  "Beschuit":"Rusk (beschuit)", "Andijvie":"Endive", "Paksoi":"Bok choy",
+  "Chinese kool":"Chinese cabbage", "Snijbiet":"Swiss chard", "Waterkers":"Watercress",
+  "Zuurkool":"Sauerkraut", "Tuinbonen":"Fava beans", "Peultjes":"Snow peas",
+  "Taugé":"Bean sprouts", "Lente-ui":"Spring onion", "Sjalot":"Shallot",
+  "Knoflook":"Garlic", "Gember":"Ginger", "Koolraap":"Rutabaga (swede)",
+  "Bleekselderij":"Celery stalk", "Groene paprika":"Green bell pepper", "Gele paprika":"Yellow bell pepper",
+  "Bloemkoolrijst":"Cauliflower rice", "Honingmeloen":"Honeydew melon", "Cantaloupe meloen":"Cantaloupe melon",
+  "Rode bes":"Redcurrant", "Kruisbes":"Gooseberry", "Cranberry (veenbes)":"Cranberry",
+  "Gedroogde abrikozen":"Dried apricots", "Gedroogde vijgen":"Dried figs", "Pruimedanten":"Prunes",
+  "Kokosnoot (vers)":"Coconut (fresh)", "Pomelo":"Pomelo", "Nashi peer":"Nashi pear",
+  "Guave":"Guava", "Sterfruit":"Star fruit", "Rabarber":"Rhubarb",
+  "Physalis":"Physalis (cape gooseberry)", "Kumquat":"Kumquat", "Bloedsinaasappel":"Blood orange",
+  "Sesamzaad":"Sesame seeds", "Hennepzaad":"Hemp seeds", "Kokosrasp":"Shredded coconut",
+  "Studentenhaver":"Trail mix (nuts & raisins)", "Brie":"Brie", "Camembert":"Camembert",
+  "Emmental":"Emmental", "Gruyère":"Gruyère", "Parmezaan":"Parmesan",
+  "Geitenkaas":"Goat cheese", "Ricotta":"Ricotta", "Mascarpone":"Mascarpone",
+  "Slagroom":"Whipped cream", "Crème fraîche":"Crème fraîche", "Zure room":"Sour cream",
+  "Chorizo":"Chorizo", "Gerookte kip (beleg)":"Smoked chicken (deli meat)", "Bloedworst":"Blood sausage",
+  "Bruiswater":"Sparkling water", "Tonic":"Tonic water", "Ginger ale":"Ginger ale",
+  "Bitter lemon":"Bitter lemon", "Lipton Ice Tea":"Lipton Ice Tea", "Multivitaminesap":"Multivitamin juice",
+  "Ananassap":"Pineapple juice", "Perziksap":"Peach juice", "Tomatensap":"Tomato juice",
+  "Cappuccino":"Cappuccino", "Latte":"Latte", "Warme chocolademelk":"Hot chocolate",
+  "Kappertjes":"Capers", "Zeewier (nori)":"Seaweed (nori)", "Broccolini":"Broccolini",
+  "Zilveruitjes":"Pickled pearl onions", "Aardpeer (topinamboer)":"Jerusalem artichoke", "Palmkool":"Cavolo nero (palm kale)",
+  "IJsbergsla":"Iceberg lettuce", "Butternutpompoen":"Butternut squash", "Maïskolf":"Corn on the cob",
+  "Postelein":"Purslane", "Rammenas":"Black radish", "Raapjes":"Turnips",
+  "Little gem sla":"Little gem lettuce", "Groene kool":"Green cabbage", "Gojibessen":"Goji berries",
+  "Appelmoes":"Applesauce", "Bananenchips":"Banana chips", "Clementine":"Clementine",
+  "Kweepeer":"Quince", "Vlierbes":"Elderberry", "Zwarte bes":"Blackcurrant",
+  "Gedroogde mango":"Dried mango", "Gedroogde cranberry (veenbes)":"Dried cranberries", "Moerbei (gedroogd)":"Mulberry (dried)",
+  "Fruitsalade (vers)":"Fruit salad (fresh)", "Napolitain (chocolaatje)":"Napolitain (small chocolate)", "Chocoladerozijnen":"Chocolate-covered raisins",
+  "Spekken (schuimsnoep)":"Marshmallow foam candy (spekken)", "Look-o-Look mix":"Look-o-Look candy mix", "Chupa Chups":"Chupa Chups",
+  "Kauwgom":"Chewing gum", "Fudge":"Fudge", "Karamel (snoep)":"Caramel candy",
+  "Zure beertjes":"Sour gummy bears", "Snoepveter":"Candy laces", "Gevulde koek":"Filled cookie (almond paste)",
+  "Kletskop":"Kletskop (almond crisp cookie)", "Eierkoek":"Egg cookie (eierkoek)", "Chocolate chip cookie":"Chocolate chip cookie",
+  "Suikerwafel":"Sugar waffle", "Merveilleux":"Merveilleux (meringue cake)", "Soesje (met room)":"Cream puff",
+  "Appeltaart":"Apple pie", "Cheesecake":"Cheesecake", "Koffiekoek":"Coffee bun (koffiekoek)",
+  "Kaneelwafeltje":"Cinnamon waffle cookie", "Amandelkoekje":"Almond cookie", "Roggebrood":"Rye bread",
+  "Stokbrood":"Baguette", "Meergranenbrood":"Multigrain bread", "Krentenbol":"Currant bun",
+  "Bagel":"Bagel", "Rozijnenbrood":"Raisin bread", "Knäckebröd":"Crispbread (knäckebröd)",
+  "Kruidenboter":"Herb butter", "Sandwichspread":"Sandwich spread", "Eiersalade":"Egg salad",
+  "Tonijnsla":"Tuna salad", "Cheddar":"Cheddar", "Vanillevla":"Vanilla custard",
+  "Chocoladevla":"Chocolate custard", "Tiramisu":"Tiramisu", "Panna cotta":"Panna cotta",
+  "Frozen yoghurt":"Frozen yogurt", "Kwark met fruit":"Quark with fruit", "Karnemelk":"Buttermilk",
+  "Yoghurtdrink":"Yogurt drink", "Braadworst":"Bratwurst", "Merguez":"Merguez sausage",
+  "Rookworst":"Smoked sausage (rookworst)", "Chipolata":"Chipolata sausage", "Surimi":"Surimi",
+  "Makreel":"Mackerel", "Haring":"Herring", "Sardines (in olie)":"Sardines (in oil)",
+  "Mosselen":"Mussels", "Kip met vel":"Chicken with skin", "Kalfsvlees":"Veal",
+  "Runderrookvlees":"Smoked beef (rookvlees)", "Spareribs":"Spare ribs", "Cordon bleu":"Cordon bleu",
+  "Bulgur (gekookt)":"Bulgur (cooked)", "Volkoren pasta (gekookt)":"Whole wheat pasta (cooked)", "Gnocchi":"Gnocchi",
+  "Polenta":"Polenta", "Naanbrood":"Naan bread", "Tortillachips":"Tortilla chips",
+  "Rösti":"Rösti", "7Up":"7Up", "Cava":"Cava",
+  "Wijn (rosé)":"Wine (rosé)", "Porto":"Port wine", "Jenever":"Jenever (Dutch gin)",
+  "Whisky":"Whisky", "Gin":"Gin", "Aperol":"Aperol",
+  "Baileys":"Baileys", "Havermelk":"Oat milk", "Sojamelk":"Soy milk",
+  "Amandelmelk":"Almond milk", "Kokoswater":"Coconut water", "IJskoffie":"Iced coffee",
+  "Lays Naturel":"Lay's Original", "Lays Paprika":"Lay's Paprika", "Lays Sour Cream & Onion":"Lay's Sour Cream & Onion",
+  "Lays Barbecue":"Lay's Barbecue", "Lays Bolognese":"Lay's Bolognese", "Lays Wokkels":"Lay's Wokkels (curls)",
+  "Doritos Nacho Cheese":"Doritos Nacho Cheese", "Doritos Cool American":"Doritos Cool American", "Doritos Sweet Chili Pepper":"Doritos Sweet Chili Pepper",
+  "Pringles Original":"Pringles Original", "Pringles Paprika":"Pringles Paprika", "Pringles Sour Cream & Onion":"Pringles Sour Cream & Onion",
+  "Cheetos":"Cheetos", "Bugles":"Bugles", "Croky Naturel":"Croky Original",
+  "Croky Paprika":"Croky Paprika", "Croky Bicky":"Croky Bicky", "Chipsfrietjes":"Chip-fries (chipsfrietjes)",
+  "Borrelnootjes":"Party nuts (coated peanuts)", "Sour Patch Kids":"Sour Patch Kids", "Fizzy cola bottles":"Fizzy cola bottles",
+  "Nerds":"Nerds", "Trolli Sour Worms":"Trolli Sour Worms", "Katja Mega Zuur":"Katja Mega Sour",
+  "Reese's":"Reese's", "Côte d'Or Bouchée":"Côte d'Or Bouchée", "Nutella B-ready":"Nutella B-ready",
+  "Monster Energy":"Monster Energy", "Rockstar":"Rockstar", "Prime Hydration":"Prime Hydration",
+  "Powerade":"Powerade", "Gatorade":"Gatorade", "Tropicana sinaasappelsap":"Tropicana orange juice",
+  "Looza appelsap":"Looza apple juice", "Innocent smoothie":"Innocent smoothie", "Minute Maid":"Minute Maid",
+  "Chocomel":"Chocomel", "Suikerbrood":"Sugar bread (suikerbrood)", "Sandwich (bakker)":"Sandwich (bakery)",
+  "Botersandwich":"Butter sandwich", "Pain au chocolat":"Pain au chocolat", "Amandelcroissant":"Almond croissant",
+  "Rozijnenkoek (bakker)":"Raisin bun (bakery)", "Worstenbroodje":"Sausage roll (worstenbroodje)", "Kaasbroodje":"Cheese roll",
+  "Saucijzenbroodje":"Sausage pastry roll", "Appelflap":"Apple turnover", "Kerststol":"Christmas stollen",
+  "Craquelin":"Craquelin bun", "Chouquette":"Chouquette", "Cannelé":"Cannelé",
+  "Palmier (koekje)":"Palmier cookie", "Macaron":"Macaron", "Financier":"Financier cake",
+  "Crème brûlée":"Crème brûlée", "Profiteroles":"Profiteroles", "Tompouce":"Tompouce",
+  "Opera-taart":"Opera cake", "Fruittaartje":"Fruit tart", "Slagroomtaart":"Whipped cream cake",
+  "Chocoladetaart":"Chocolate cake", "Bavarois":"Bavarois", "Dame blanche":"Dame blanche (vanilla ice + hot chocolate)",
+  "Religieuse":"Religieuse pastry", "Rijsttaart":"Rice tart (rijsttaart)", "Fruitvlaai":"Fruit flan",
+  "Sprite Zero":"Sprite Zero", "Cola Light":"Diet Coke", "7up Zero":"7Up Zero",
+  "Lipton Ice Tea Zero":"Lipton Ice Tea Zero", "Fuze Tea Zero":"Fuze Tea Zero", "Schweppes Zero":"Schweppes Zero",
+  "Monster Zero":"Monster Zero", "Aquarius":"Aquarius", "Spuitwater":"Soda water",
+  "Plat water":"Still water", "Kwark mager":"Low-fat quark", "Hüttenkäse (cottage cheese)":"Hüttenkäse (cottage cheese)",
+  "Kipfilet (gebakken)":"Chicken breast (pan-fried)", "Tonijn (blik, in water)":"Tuna (canned, in water)", "Zalm (gebakken)":"Salmon (pan-fried)",
+  "Ei (gekookt)":"Egg (boiled)", "Rijst (gekookt)":"Rice (cooked)", "Zoete aardappel":"Sweet potato",
+  "Poffertjes":"Poffertjes (mini pancakes)", "Sojasaus":"Soy sauce", "Ketjap manis (zoete sojasaus)":"Ketjap manis (sweet soy sauce)",
+  "Sweet chili saus":"Sweet chili sauce", "Sriracha":"Sriracha", "BBQ saus":"BBQ sauce",
+  "Curry ketchup":"Curry ketchup", "Samurai saus":"Samurai sauce", "Looksaus (knoflooksaus)":"Garlic sauce",
+  "Frietsaus":"Fry sauce", "Remouladesaus":"Remoulade sauce", "Mayonaise light":"Mayonnaise (light)",
+  "Pesto (groen)":"Pesto (green)", "Pesto rosso":"Pesto rosso (red)", "Satésaus (pindasaus)":"Satay sauce (peanut sauce)",
+  "Guacamole":"Guacamole", "Tzatziki":"Tzatziki", "Salsa":"Salsa",
+  "Tomatensaus (pastasaus)":"Tomato sauce (pasta sauce)", "Bolognesesaus":"Bolognese sauce", "Champignonsaus":"Mushroom sauce",
+  "Pepersaus":"Pepper sauce", "Béarnaisesaus":"Béarnaise sauce", "Hollandaisesaus":"Hollandaise sauce",
+  "Ranch dressing":"Ranch dressing", "Caesar dressing":"Caesar dressing", "Honing-mosterd dressing":"Honey mustard dressing",
+  "Vinaigrette":"Vinaigrette", "Balsamicodressing":"Balsamic dressing", "Yoghurtdressing":"Yogurt dressing",
+  "Balsamico azijn":"Balsamic vinegar", "Worcestersaus":"Worcestershire sauce", "Vissaus":"Fish sauce",
+  "Oestersaus":"Oyster sauce", "Hoisinsaus":"Hoisin sauce", "Teriyakisaus":"Teriyaki sauce",
+  "Chilisaus":"Chili sauce", "Harissa":"Harissa", "Ajvar":"Ajvar",
+  "Piccalilly":"Piccalilli", "Mango chutney":"Mango chutney", "Dijonmosterd":"Dijon mustard",
+  "Ketchup light":"Ketchup (light)", "Chocoladesaus":"Chocolate sauce", "Karamelsaus":"Caramel sauce",
+  "Ahornsiroop":"Maple syrup", "Agavesiroop":"Agave syrup", "Noodles (gekookt)":"Noodles (cooked)",
+  "Mie (gekookt)":"Mie noodles (cooked)", "Eiernoedels (gekookt)":"Egg noodles (cooked)", "Instant noodles (bereid)":"Instant noodles (prepared)",
+  "Instant noodles (droog, pakje)":"Instant noodles (dry, packet)", "Ramen noedels (gekookt)":"Ramen noodles (cooked)", "Udon (gekookt)":"Udon (cooked)",
+  "Soba (boekweitnoedels, gekookt)":"Soba (buckwheat noodles, cooked)", "Rijstnoedels (gekookt)":"Rice noodles (cooked)", "Glasnoedels (gekookt)":"Glass noodles (cooked)",
+  "Bami (bereid)":"Bami goreng (prepared)", "Nasi/bami kruidenmix noedels":"Nasi/bami spice-mix noodles", "Bloemsuiker (poedersuiker)":"Powdered sugar (icing sugar)",
+  "Jonge kaas (48+)":"Young Gouda cheese (48+)", "Belegen kaas":"Matured cheese", "Oude kaas":"Aged cheese",
+  "Magere kaas (20+)":"Low-fat cheese (20+)", "Edammer (40+)":"Edam cheese (40+)", "Maasdammer":"Maasdammer cheese",
+  "Passendale":"Passendale cheese", "Chimay kaas":"Chimay cheese", "Herve kaas":"Herve cheese",
+  "Comté":"Comté", "Beaufort":"Beaufort", "Cantal":"Cantal",
+  "Tomme de Savoie":"Tomme de Savoie", "Saint-Nectaire":"Saint-Nectaire", "Morbier":"Morbier",
+  "Munster":"Munster cheese", "Reblochon":"Reblochon", "Raclette":"Raclette cheese",
+  "Roquefort":"Roquefort", "Gorgonzola":"Gorgonzola", "Bleu d'Auvergne":"Bleu d'Auvergne",
+  "Manchego":"Manchego", "Pecorino":"Pecorino", "Grana Padano":"Grana Padano",
+  "Provolone":"Provolone", "Buffelmozzarella":"Buffalo mozzarella", "Mozzarella light":"Mozzarella (light)",
+  "Burrata":"Burrata", "Kruidenkaas (Boursin-type)":"Herb cheese (Boursin-style)", "Kerstomaat":"Cherry tomato",
+  "Snoeptomaat":"Cocktail tomato", "Trostomaat":"Vine tomato", "Pruimtomaat (roma)":"Roma tomato",
+  "Vleestomaat":"Beefsteak tomato", "Groene tomaat":"Green tomato", "Gepelde tomaten (blik)":"Peeled tomatoes (canned)",
+  "Tomatenblokjes (blik)":"Diced tomatoes (canned)", "Tomatenpassata":"Tomato passata", "Tomatenpuree":"Tomato paste",
+  "Zongedroogde tomaat in olie":"Sun-dried tomato in oil", "Witte bes":"White currant", "Moerbei":"Mulberry",
+  "Aroniabes (appelbes)":"Aronia berry (chokeberry)", "Acaibes (puree, ongezoet)":"Açaí (purée, unsweetened)", "Rozenbottel":"Rosehip",
+  "Gedroogde bosbessen":"Dried blueberries", "Rode vruchtenmix (diepvries)":"Red fruit mix (frozen)", "Bosvruchtenmix (diepvries)":"Mixed berries (frozen)",
+  "Bicky Burger":"Bicky Burger", "Bicky Crock":"Bicky Crock", "Bicky dressing":"Bicky dressing",
+  "Cheeseburger":"Cheeseburger", "Chicken wings (gebakken)":"Chicken wings (fried)", "Gehaktbal":"Meatball",
+  "Balletjes in tomatensaus":"Meatballs in tomato sauce", "Vegaburger":"Veggie burger", "Durum (kip)":"Durum wrap (chicken)",
+  "Shoarma (vlees)":"Shoarma (meat)", "Falafel":"Falafel", "Taco (met vlees)":"Taco (with meat)",
+  "Burrito":"Burrito", "Quesadilla":"Quesadilla", "Nacho's met kaas":"Nachos with cheese",
+  "Poké bowl (zalm)":"Poké bowl (salmon)", "Gyoza":"Gyoza", "Dim sum (gestoomd)":"Dim sum (steamed)",
+  "Risotto":"Risotto", "Paella":"Paella", "Wokgroenten met noedels":"Wok vegetables with noodles",
+  "Baguette":"Baguette", "Ciabatta":"Ciabatta", "Focaccia":"Focaccia",
+  "Pitabrood":"Pita bread", "Panini (kaas-ham)":"Panini (cheese & ham)", "Tosti kaas-ham":"Toasted sandwich (cheese & ham)",
+  "Rosbief":"Roast beef", "Eendenborst":"Duck breast", "Lamskotelet":"Lamb chop",
+  "Konijn":"Rabbit", "Hertenvlees":"Venison", "Parmaham":"Parma ham",
+  "Tempeh":"Tempeh", "Seitan":"Seitan", "Witte bonen in tomatensaus":"White beans in tomato sauce",
+  "Doperwten":"Green peas", "Spliterwten (gekookt)":"Split peas (cooked)", "Espresso":"Espresso",
+  "Kefir":"Kefir", "Ayran":"Ayran", "Kombucha":"Kombucha",
+  "Kokosmelk (blik)":"Coconut milk (canned)", "Crêpe":"Crêpe", "Churro":"Churro",
+  "Ansjovis (in olie)":"Anchovies (in oil)", "Krab":"Crab", "Inktvis":"Squid",
+  "Sint-jakobsvrucht":"Scallop", "Forel":"Trout", "Tilapia":"Tilapia",
+  "Zeebaars":"Sea bass", "Balletjes in sateausaus":"Meatballs in satay sauce", "BBQ kip (gegrild)":"BBQ chicken (grilled)",
+  "Pulled pork":"Pulled pork", "Hotdog":"Hot dog", "Coleslaw":"Coleslaw",
+  "BBQ ribs (spareribs)":"BBQ ribs (spare ribs)", "Gegrilde maïskolf":"Grilled corn on the cob", "BBQ worst":"BBQ sausage",
+  "Gegrilde groenten (mix)":"Grilled vegetables (mix)", "Baconburger (broodje)":"Bacon burger (bun)", "Draadjesvlees":"Shredded beef stew (draadjesvlees)",
+  "BBQ tofu (gegrild)":"BBQ tofu (grilled)",
+};
+function naamVoor(f){
+  const naam = (typeof f === 'string') ? f : (f && f.n);
+  if(!naam) return '';
+  if(TAAL==='en' && DB_EN[naam]) return DB_EN[naam];
+  return naam;
+}
 
 // Doelwaarden voor de balkjes. Standaard tot je eigen doel is berekend.
 let DOEL = {kcal:2500, e:150, k:280, v:80};
@@ -2277,8 +2566,19 @@ let kalMaand = null;     // eerste dag van de getoonde maand in de kalender
 // De volledige Nederlandse tekst blijft de bron van waarheid (VERT.nl). Bij een
 // ontbrekende Engelse sleutel valt t() automatisch terug op het Nederlands, zodat
 // er nooit een lege of kapotte tekst verschijnt.
-let TAAL = 'nl';
-try{ TAAL = localStorage.getItem('fitlog_taal') || 'nl'; }catch(e){}
+// Standaard: Engels voor nieuwe gebruikers. Als er al lokale gegevens staan (bestaand
+// toestel van vóór de taalkeuze) en er nog geen taal expliciet gekozen is, blijft het
+// Nederlands — zo verandert er niets voor wie de app al gebruikte.
+let TAAL = 'en';
+try{
+  const opgeslagenTaal = localStorage.getItem('fitlog_taal');
+  if(opgeslagenTaal){
+    TAAL = opgeslagenTaal;
+  } else {
+    const bestaandeGebruiker = localStorage.getItem('geschiedenis') || localStorage.getItem('doel-profiel') || localStorage.getItem('dag-log');
+    TAAL = bestaandeGebruiker ? 'nl' : 'en';
+  }
+}catch(e){}
 
 const VERT = {
   nl: {
@@ -2470,7 +2770,8 @@ const VERT = {
     vr_zoeken_bezig:"Zoeken…", vr_geen_gebruiker:"Geen gebruiker met die naam.", vr_al_vrienden:"Jullie zijn al vrienden.",
     vr_verzoek_sturen:"Verzoek sturen", vr_zoeken_mislukt:"Zoeken mislukt. Probeer opnieuw.",
     vr_verzoek_al:"Verzoek al verstuurd.", vr_verzoek_verstuurd_naar:"✓ Vriendschapsverzoek verstuurd naar {naam}",
-    vr_versturen_mislukt:"Versturen mislukt. Probeer opnieuw.",
+    vr_versturen_mislukt:"Versturen mislukt. Probeer opnieuw.", mb_totaal:"Totaal: {n} kcal", letter_e:"e", letter_k:"k", letter_v:"v",
+    res_niet_gevonden:"Niet gevonden",
     vr_accepteer_knop:"Accepteer",
     gw_vul_geldig:"Vul een geldig gewicht in (kg).",
     account_nog_laden:"Je account wordt nog geladen — probeer zo opnieuw.",
@@ -2664,7 +2965,8 @@ const VERT = {
     vr_zoeken_bezig:"Searching…", vr_geen_gebruiker:"No user with that name.", vr_al_vrienden:"You're already friends.",
     vr_verzoek_sturen:"Send request", vr_zoeken_mislukt:"Search failed. Try again.",
     vr_verzoek_al:"Request already sent.", vr_verzoek_verstuurd_naar:"✓ Friend request sent to {naam}",
-    vr_versturen_mislukt:"Failed to send. Try again.",
+    vr_versturen_mislukt:"Failed to send. Try again.", mb_totaal:"Total: {n} kcal", letter_e:"p", letter_k:"c", letter_v:"f",
+    res_niet_gevonden:"Not found",
     vr_accepteer_knop:"Accept",
     gw_vul_geldig:"Enter a valid weight (kg).",
     account_nog_laden:"Your account is still loading — try again in a moment.",
@@ -3095,8 +3397,8 @@ function noteerGebruik(it){
 function isFavoriet(naam){ return favorieten.indexOf(naam) !== -1; }
 function wisselFavoriet(naam){
   const i = favorieten.indexOf(naam);
-  if(i===-1){ favorieten.unshift(naam); toonToast(tf('toast_favoriet_toegevoegd', {naam:naam})); }
-  else { favorieten.splice(i,1); toonToast(tf('toast_favoriet_verwijderd', {naam:naam})); }
+  if(i===-1){ favorieten.unshift(naam); toonToast(tf('toast_favoriet_toegevoegd', {naam:naamVoor(naam)})); }
+  else { favorieten.splice(i,1); toonToast(tf('toast_favoriet_verwijderd', {naam:naamVoor(naam)})); }
   bewaarSnel(); renderSnel();
 }
 function renderSnel(){
@@ -3110,7 +3412,7 @@ function renderSnel(){
   }
   box.style.display='flex';
   let html = favMaaltijden.map(x=>'<button class="snel-chip maaltijd" data-favmt="'+x.i+'">🍽 '+escapeHtml(x.m.naam)+'</button>').join('');
-  html += favEten.map(n=>'<button class="snel-chip" data-snel="'+encodeURIComponent(n)+'">'+escapeHtml(n)+'</button>').join('');
+  html += favEten.map(n=>'<button class="snel-chip" data-snel="'+encodeURIComponent(n)+'">'+escapeHtml(naamVoor(n))+'</button>').join('');
   box.innerHTML = html;
   box.querySelectorAll('[data-snel]').forEach(b=>{
     b.onclick = ()=>{
@@ -3181,9 +3483,9 @@ function renderMaaltijdBouw(){
   } else {
     let kc=0; for(const it of mtBouw.items) kc+=it.kc;
     box.innerHTML = mtBouw.items.map((it,i)=>
-      '<div class="mb-item"><span>'+escapeHtml(it.n)+' <em>'+rond(it.gram)+(it.eenheid==='ml'?' ml':' g')+'</em></span>'+
+      '<div class="mb-item"><span>'+escapeHtml(naamVoor(it))+' <em>'+rond(it.gram)+(it.eenheid==='ml'?' ml':' g')+'</em></span>'+
       '<span class="mb-kc">'+rond(it.kc)+'</span><button class="mt-del" data-mbd="'+i+'">✕</button></div>').join('')+
-      '<div class="mb-totaal">Totaal: '+rond(kc)+' kcal</div>';
+      '<div class="mb-totaal">'+tf('mb_totaal', {n:rond(kc)})+'</div>';
     box.querySelectorAll('[data-mbd]').forEach(b=>{
       b.onclick = ()=>{ mtBouw.items.splice(parseInt(b.dataset.mbd),1); renderMaaltijdBouw(); };
     });
@@ -3452,8 +3754,8 @@ function renderLog(){
     el.className='log-item';
     el.innerHTML =
       '<div class="info" data-edit="'+i+'">'+
-        '<div class="n">'+escapeHtml(it.n)+'</div>'+
-        '<div class="sub">'+(function(){var eh=(it.eenheid==='ml')?' ml':'g'; var hoev=rond(it.gram)+eh; return it.label ? it.label+' · '+hoev : hoev;})()+' · <span class="e">'+rond1(it.e)+'e</span> · <span class="k">'+rond1(it.k)+'k</span> · <span class="v">'+rond1(it.v)+'v</span></div>'+
+        '<div class="n">'+escapeHtml(naamVoor(it))+'</div>'+
+        '<div class="sub">'+(function(){var eh=(it.eenheid==='ml')?' ml':'g'; var hoev=rond(it.gram)+eh; return it.label ? it.label+' · '+hoev : hoev;})()+' · <span class="e">'+rond1(it.e)+t('letter_e')+'</span> · <span class="k">'+rond1(it.k)+t('letter_k')+'</span> · <span class="v">'+rond1(it.v)+t('letter_v')+'</span></div>'+
       '</div>'+
       '<div class="kc mono">'+rond(it.kc)+'</div>'+
       '<button class="del" data-i="'+i+'">✕</button>';
@@ -3543,19 +3845,29 @@ function paneelVerberg(el){
 const zoekInput = $('zoek');
 const resBox = $('resultaten');
 function zonderAccent(s){ return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(); }
+// Zoekt op zowel de Nederlandse als (indien van toepassing) de Engelse naam, zodat
+// zoeken op "chicken" ook "Kipfilet" vindt wanneer de app in het Engels staat.
+function zoekTreft(f, q){
+  if(zonderAccent(f.n).includes(q)) return true;
+  if(TAAL==='en'){
+    const en = DB_EN[f.n];
+    if(en && zonderAccent(en).includes(q)) return true;
+  }
+  return false;
+}
 zoekInput.addEventListener('input', ()=>{
   const q = zonderAccent(zoekInput.value.trim());
   sluitPortie(); sluitNieuw();
   if(q.length===0){ paneelVerberg(resBox); resBox.innerHTML=''; return; }
-  const treffers = alleEten().filter(f=>zonderAccent(f.n).includes(q)).slice(0,8);
+  const treffers = alleEten().filter(f=>zoekTreft(f,q)).slice(0,8);
   paneelToon(resBox);
   let html='';
   if(treffers.length===0){
-    html += '<div class="res-leeg">Niet gevonden</div>';
+    html += '<div class="res-leeg">'+t('res_niet_gevonden')+'</div>';
   } else {
     treffers.forEach((f,idx)=>{
       html += '<div class="res-item" data-naam="'+encodeURIComponent(f.n)+'">'+
-                '<span class="n">'+escapeHtml(f.n)+'</span>'+
+                '<span class="n">'+escapeHtml(naamVoor(f))+'</span>'+
                 '<span class="kc">'+f.kc+' kcal /100'+(f.drank?'ml':'g')+'</span>'+
                 '<button class="res-ster'+(isFavoriet(f.n)?' aan':'')+'" data-fav="'+encodeURIComponent(f.n)+'" title="'+t('mt_favoriet_title')+'">'+(isFavoriet(f.n)?'★':'☆')+'</button>'+
                 '<button class="res-bewerk" data-naam="'+encodeURIComponent(f.n)+'" title="'+t('mt_aanpassen_title')+'">✎</button>'+
@@ -3592,11 +3904,11 @@ $('mbZoek').addEventListener('input', ()=>{
   const q = zonderAccent($('mbZoek').value.trim());
   const box = $('mbRes');
   if(q.length===0){ paneelVerberg(box); box.innerHTML=''; return; }
-  const treffers = alleEten().filter(f=>zonderAccent(f.n).includes(q)).slice(0,6);
+  const treffers = alleEten().filter(f=>zoekTreft(f,q)).slice(0,6);
   paneelToon(box);
   box.innerHTML = treffers.length
-    ? treffers.map(f=>'<div class="res-item" data-mbnaam="'+encodeURIComponent(f.n)+'"><span class="n">'+escapeHtml(f.n)+'</span><span class="kc">'+f.kc+' kcal /100'+(f.drank?'ml':'g')+'</span></div>').join('')
-    : '<div class="res-leeg">Niet gevonden</div>';
+    ? treffers.map(f=>'<div class="res-item" data-mbnaam="'+encodeURIComponent(f.n)+'"><span class="n">'+escapeHtml(naamVoor(f))+'</span><span class="kc">'+f.kc+' kcal /100'+(f.drank?'ml':'g')+'</span></div>').join('')
+    : '<div class="res-leeg">'+t('res_niet_gevonden')+'</div>';
   box.querySelectorAll('[data-mbnaam]').forEach(el=>{
     el.onclick = ()=>{
       const f = alleEten().find(x=>x.n===decodeURIComponent(el.dataset.mbnaam));
@@ -3608,7 +3920,7 @@ $('mbZoek').addEventListener('input', ()=>{
 let mbGekozen = null;
 function kiesVoorMaaltijd(f){
   mbGekozen = f;
-  $('mbPNaam').textContent = f.n;
+  $('mbPNaam').textContent = naamVoor(f);
   $('mbPEh').textContent = f.drank ? 'ml' : 'g';
   const onthouden = gebruik[f.n] && gebruik[f.n].g;
   $('mbPGram').value = onthouden || f.stuk || 100;
@@ -3648,7 +3960,7 @@ function openPortie(f, bewerkIndex, voorafGram){
   gekozen = f;
   bewerkLogIndex = (bewerkIndex!=null) ? bewerkIndex : null;
   paneelVerberg(resBox);
-  $('pNaam').textContent = f.n;
+  $('pNaam').textContent = naamVoor(f);
   $('pToevoeg').textContent = (bewerkLogIndex!=null) ? t('wo_bijwerken') : t('toevoegen');
   // Knoplabels aanpassen: drank = ml, vast = gram
   $('uGram').textContent = f.drank ? t('eenheid_ml_label') : t('portie_gram');
@@ -3828,7 +4140,7 @@ function openBewerk(naam){
   $('nVerwijder').style.display = 'block';
   $('nVerwijder').textContent = (bewerk.type==='eigen') ? t('verwijderen') : t('nieuw_herstel_standaard');
   $('nNaam').readOnly = (bewerk.type === 'db');   // eigen product: naam wel aanpasbaar
-  $('nNaam').value = f.n;
+  $('nNaam').value = naamVoor(f);
   $('nKcal').value = f.kc;
   $('nE').value = f.e;
   $('nK').value = f.k;
@@ -4393,7 +4705,7 @@ function toonDagDetail(key){
   let html = '<div class="kd-kcal">'+(kcal||0).toLocaleString('nl-BE')+' <span>kcal</span>'+
              (doel ? ' <span class="kd-doel">'+tf('kd_doel_suffix', {n:doel.toLocaleString('nl-BE')})+'</span>' : '')+'</div>';
   if(items && items.length){
-    html += items.map(it=>'<div class="prof-item"><span>'+escapeHtml(it.n||'?')+(it.label?' <em>('+escapeHtml(it.label)+')</em>':'')+'</span><span class="prof-ikc">'+(it.kc||0)+'</span></div>').join('');
+    html += items.map(it=>'<div class="prof-item"><span>'+escapeHtml(naamVoor(it)||'?')+(it.label?' <em>('+escapeHtml(it.label)+')</em>':'')+'</span><span class="prof-ikc">'+(it.kc||0)+'</span></div>').join('');
   } else {
     html += '<div class="vr-leeg">'+t('kd_alleen_totaal')+'</div>';
   }
@@ -5276,7 +5588,7 @@ async function bekijkVriend(uid, naam){
       html += '<div class="prof-macros">'+tf('prof_macros_line', {e:(d.e||0), k:(d.k||0), v:(d.v||0)})+'</div>';
       if(d.items && d.items.length){
         html += '<div class="vr-kopje" style="margin-top:16px;">'+t('prof_gegeten_vandaag')+'</div>';
-        html += d.items.map(it=>'<div class="prof-item"><span>'+escapeHtml(it.n||'?')+(it.label?' <em>('+escapeHtml(it.label)+')</em>':'')+'</span><span class="prof-ikc">'+(it.kc||0)+'</span></div>').join('');
+        html += d.items.map(it=>'<div class="prof-item"><span>'+escapeHtml(naamVoor(it)||'?')+(it.label?' <em>('+escapeHtml(it.label)+')</em>':'')+'</span><span class="prof-ikc">'+(it.kc||0)+'</span></div>').join('');
       } else {
         html += '<div class="vr-leeg" style="margin-top:12px;">'+t('prof_niets_gegeten')+'</div>';
       }
@@ -5378,7 +5690,7 @@ function renderVriendTab(){
   }
   box.innerHTML = (nieuw ? '<div class="prof-tip">'+t('vp_tip_product')+'</div>' : '') +
     lijst.map(x=>'<div class="prof-item'+(nieuw?' import':' heb-vast')+'"'+(nieuw?' data-imp="'+x.i+'"':'')+'>'+
-      '<span>'+escapeHtml(x.f.n||'?')+(x.f.drank?' <em>('+t('label_drank')+')</em>':'')+'</span>'+
+      '<span>'+escapeHtml(naamVoor(x.f)||'?')+(x.f.drank?' <em>('+t('label_drank')+')</em>':'')+'</span>'+
       '<span class="imp-actie">'+(nieuw?t('vp_toevoegen_actie'):t('vp_heb_je'))+'</span></div>').join('');
   box.querySelectorAll('[data-imp]').forEach(el=>{
     el.onclick = ()=> importeerProduct(v.eigen[parseInt(el.dataset.imp)], el);
@@ -5401,7 +5713,7 @@ function importeerProduct(f, el){
   if(f.code) nieuw.code = f.code;
   eigen.unshift(nieuw);
   bewaarEigen();
-  toonToast(tf('toast_product_bij_jou', {naam:f.n}));
+  toonToast(tf('toast_product_bij_jou', {naam:naamVoor(f)}));
   if(el){ el.classList.add('heb'); el.querySelector('.imp-actie').textContent = t('vp_toegevoegd'); el.onclick=null; }
 }
 $('profSluit').onclick = ()=> $('profOverlay').classList.remove('open');$('profOverlay').onclick = (e)=>{ if(e.target===$('profOverlay')) $('profOverlay').classList.remove('open'); };
