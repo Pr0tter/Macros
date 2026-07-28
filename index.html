@@ -787,6 +787,13 @@
     .view{max-width:720px;}
   }
 
+  /* Taalkeuze (Instellingen) */
+  .taal-rij{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:12px 14px;flex-wrap:wrap;}
+  .taal-label{font-size:14px;color:var(--text);font-weight:600;}
+  .taal-knoppen{display:flex;gap:6px;background:var(--surface-2);border-radius:10px;padding:3px;}
+  .taal-knop{background:none;border:none;border-radius:8px;padding:7px 13px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;font-family:'Space Grotesk',sans-serif;transition:background .15s,color .15s;}
+  .taal-knop.actief{background:var(--eiwit);color:#06120C;}
+
 </style>
 </head>
 <body>
@@ -795,23 +802,23 @@
 <nav class="zij-nav" id="zijNav">
   <div class="zij-merk">FitLog</div>
   <button class="zij-item actief" id="zijHome" data-ga="home">
-    <span class="zij-icoon">🏠</span> Overzicht
+    <span class="zij-icoon">🏠</span> <span data-i18n="nav_overzicht">Overzicht</span>
   </button>
   <button class="zij-item k-voeding" id="zijMacros" data-ga="macros">
-    <span class="zij-icoon">🍽️</span> Voeding
+    <span class="zij-icoon">🍽️</span> <span data-i18n="nav_voeding">Voeding</span>
   </button>
   <button class="zij-item k-workout" id="zijWorkout" data-ga="workout">
-    <span class="zij-icoon">🏋️</span> Workout
+    <span class="zij-icoon">🏋️</span> <span data-i18n="nav_workout">Workout</span>
   </button>
   <button class="zij-item k-gewicht" id="zijGewicht" data-ga="gewicht">
-    <span class="zij-icoon">⚖️</span> Gewicht
+    <span class="zij-icoon">⚖️</span> <span data-i18n="nav_gewicht">Gewicht</span>
   </button>
   <button class="zij-item k-leaderboard" id="zijLeaderboard" data-ga="leaderboard">
-    <span class="zij-icoon">🏆</span> Leaderboards
+    <span class="zij-icoon">🏆</span> <span data-i18n="nav_leaderboards">Leaderboards</span>
   </button>
   <div class="zij-spacer"></div>
   <button class="zij-account account-btn" id="zijAccount" aria-label="Account">
-    <span class="ab-av" id="zijAv">👤</span> Account
+    <span class="ab-av" id="zijAv">👤</span> <span data-i18n="nav_account">Account</span>
   </button>
 </nav>
 
@@ -826,22 +833,22 @@
     <div class="week-kaart" id="weekKaart"></div>
     <button class="home-kaart k-voeding" id="gaMacros">
       <div class="hk-icoon voeding"><span></span><span></span><span></span></div>
-      <div class="hk-tekst"><div class="hk-naam">Voeding</div><div class="hk-sub" id="homeMacroSub">Calorieën &amp; macro's bijhouden</div></div>
+      <div class="hk-tekst"><div class="hk-naam" data-i18n="nav_voeding">Voeding</div><div class="hk-sub" id="homeMacroSub" data-i18n="home_voeding_sub">Calorieën &amp; macro's bijhouden</div></div>
       <div class="hk-pijl">›</div>
     </button>
     <button class="home-kaart k-workout" id="gaWorkout">
       <div class="hk-icoon workout">🏋️</div>
-      <div class="hk-tekst"><div class="hk-naam">Workout</div><div class="hk-sub" id="homeWorkoutSub">Training loggen</div></div>
+      <div class="hk-tekst"><div class="hk-naam" data-i18n="nav_workout">Workout</div><div class="hk-sub" id="homeWorkoutSub" data-i18n="home_workout_sub">Training loggen</div></div>
       <div class="hk-pijl">›</div>
     </button>
     <button class="home-kaart k-gewicht" id="gaGewicht">
       <div class="hk-icoon gewicht">⚖️</div>
-      <div class="hk-tekst"><div class="hk-naam">Gewicht</div><div class="hk-sub" id="homeGewichtSub">Dagelijks gewicht &amp; progressie</div></div>
+      <div class="hk-tekst"><div class="hk-naam" data-i18n="nav_gewicht">Gewicht</div><div class="hk-sub" id="homeGewichtSub" data-i18n="home_gewicht_sub">Dagelijks gewicht &amp; progressie</div></div>
       <div class="hk-pijl">›</div>
     </button>
     <button class="home-kaart k-leaderboard" id="gaLeaderboard">
       <div class="hk-icoon leaderboard">🏆</div>
-      <div class="hk-tekst"><div class="hk-naam">Leaderboards</div><div class="hk-sub" id="homeLbSub">Ranglijsten met je vrienden</div></div>
+      <div class="hk-tekst"><div class="hk-naam" data-i18n="nav_leaderboards">Leaderboards</div><div class="hk-sub" id="homeLbSub" data-i18n="home_lb_sub">Ranglijsten met je vrienden</div></div>
       <div class="hk-pijl">›</div>
     </button>
   </div>
@@ -849,14 +856,14 @@
 
 <!-- ===== GEWICHT ===== -->
 <div id="viewGewicht" class="view hidden">
-  <button class="terug" id="terugGewicht">‹ Home</button>
-  <header><div class="titel">Gewicht</div><span class="datum" id="gwDatum"></span></header>
+  <button class="terug" id="terugGewicht" data-i18n="terug_home">‹ Home</button>
+  <header><div class="titel" data-i18n="nav_gewicht">Gewicht</div><span class="datum" id="gwDatum"></span></header>
 
   <div class="gw-invoer">
-    <div class="gw-lab" id="gwLab">Gewicht vandaag</div>
+    <div class="gw-lab" id="gwLab" data-i18n="gw_lab">Gewicht vandaag</div>
     <div class="gw-rij">
       <input id="gwInput" type="number" inputmode="decimal" step="0.1" placeholder="kg">
-      <button id="gwBewaar">Bewaren</button>
+      <button id="gwBewaar" data-i18n="gw_bewaar">Bewaren</button>
     </div>
     <div class="gw-hint" id="gwHint"></div>
   </div>
@@ -864,9 +871,9 @@
   <!-- BMI -->
   <div class="bmi-kaart">
     <div class="bmi-kop">
-      <div class="bmi-titel">BMI</div>
+      <div class="bmi-titel" data-i18n="bmi_titel">BMI</div>
       <div class="bmi-lengte">
-        <label>Lengte</label>
+        <label data-i18n="bmi_lengte">Lengte</label>
         <input id="bmiLengte" type="number" inputmode="numeric" placeholder="cm">
         <span>cm</span>
       </div>
@@ -877,155 +884,155 @@
       <div class="bmi-naald" id="bmiNaald" style="display:none;"></div>
     </div>
     <div class="bmi-schaal"><span>18,5</span><span>25</span><span>30</span></div>
-    <div class="bmi-hint" id="bmiHint">Vul je lengte in voor je BMI.</div>
+    <div class="bmi-hint" id="bmiHint" data-i18n="bmi_hint">Vul je lengte in voor je BMI.</div>
   </div>
 
   <div class="gw-stats" id="gwStats"></div>
 
   <div class="lb-knoppen gw-knoppen">
-    <button class="lb-kies actief" data-gw="dag">Per dag</button>
-    <button class="lb-kies" data-gw="week">Per week</button>
+    <button class="lb-kies actief" data-gw="dag" data-i18n="gw_perdag">Per dag</button>
+    <button class="lb-kies" data-gw="week" data-i18n="gw_perweek">Per week</button>
   </div>
   <div class="wo-grafiek" id="gwGrafiek"></div>
 
   <div class="gw-auto">
     <div class="gw-auto-tekst">
-      <div class="gw-auto-titel">Gebruik voor caloriedoel</div>
-      <div class="gw-auto-sub" id="gwAutoSub">Neemt het gemiddelde van je laatste volledige week.</div>
+      <div class="gw-auto-titel" data-i18n="gw_auto_titel1">Gebruik voor caloriedoel</div>
+      <div class="gw-auto-sub" id="gwAutoSub" data-i18n="gw_auto_sub1">Neemt het gemiddelde van je laatste volledige week.</div>
     </div>
     <button class="gw-schakel" id="gwAuto" role="switch" aria-checked="false"><span></span></button>
   </div>
 
   <div class="gw-auto">
     <div class="gw-auto-tekst">
-      <div class="gw-auto-titel">Doel automatisch bijsturen</div>
-      <div class="gw-auto-sub" id="gwKalSub">Vergelijkt je echte gewichtsverloop met wat verwacht was.</div>
+      <div class="gw-auto-titel" data-i18n="gw_auto_titel2">Doel automatisch bijsturen</div>
+      <div class="gw-auto-sub" id="gwKalSub" data-i18n="gw_auto_sub2">Vergelijkt je echte gewichtsverloop met wat verwacht was.</div>
     </div>
     <button class="gw-schakel" id="gwKal" role="switch" aria-checked="false"><span></span></button>
   </div>
   <div class="gw-correctie" id="gwCorrectie" style="display:none;"></div>
   <div id="gwAnalyse"></div>
 
-  <div class="vr-kopje" style="margin-top:20px;">Alle metingen</div>
+  <div class="vr-kopje" style="margin-top:20px;" data-i18n="gw_alle_metingen">Alle metingen</div>
   <div id="gwLijst"></div>
 </div>
 
 <!-- ===== LEADERBOARDS ===== -->
 <div id="viewLeaderboard" class="view hidden">
-  <button class="terug" id="terugLeaderboard">‹ Home</button>
-  <header><div class="titel">Leaderboards</div></header>
+  <button class="terug" id="terugLeaderboard" data-i18n="terug_home">‹ Home</button>
+  <header><div class="titel" data-i18n="titel_leaderboards">Leaderboards</div></header>
   <div class="lb-knoppen">
-    <button class="lb-kies actief" data-lb="doel">Doel vandaag</button>
-    <button class="lb-kies" data-lb="consistentie">Consistent</button>
-    <button class="lb-kies" data-lb="trainingWeek">Training / week</button>
-    <button class="lb-kies" data-lb="totaalKcal">Totaal kcal</button>
-    <button class="lb-kies" data-lb="totaalTraining">Totaal training</button>
-    <button class="lb-kies" data-lb="besteDag">Hoogste dag</button>
-    <button class="lb-kies" data-lb="streak">Streak 🔥</button>
-    <button class="lb-kies" data-lb="waterDag">Water vandaag</button>
-    <button class="lb-kies" data-lb="waterTotaal">Water totaal</button>
+    <button class="lb-kies actief" data-lb="doel" data-i18n="lb_doel">Doel vandaag</button>
+    <button class="lb-kies" data-lb="consistentie" data-i18n="lb_consistent">Consistent</button>
+    <button class="lb-kies" data-lb="trainingWeek" data-i18n="lb_trainingweek">Training / week</button>
+    <button class="lb-kies" data-lb="totaalKcal" data-i18n="lb_totaalkcal">Totaal kcal</button>
+    <button class="lb-kies" data-lb="totaalTraining" data-i18n="lb_totaaltraining">Totaal training</button>
+    <button class="lb-kies" data-lb="besteDag" data-i18n="lb_hoogstedag">Hoogste dag</button>
+    <button class="lb-kies" data-lb="streak" data-i18n="lb_streak">Streak 🔥</button>
+    <button class="lb-kies" data-lb="waterDag" data-i18n="lb_waterdag">Water vandaag</button>
+    <button class="lb-kies" data-lb="waterTotaal" data-i18n="lb_watertotaal">Water totaal</button>
   </div>
   <div class="lb-uitleg" id="lbUitleg">Wie zit vandaag het dichtst bij z'n doel?</div>
-  <div id="vrLeaderboards"><div class="vr-leeg">Voeg vrienden toe om een ranglijst te zien.</div></div>
+  <div id="vrLeaderboards"><div class="vr-leeg" data-i18n="vr_leeg_vrienden_lb">Voeg vrienden toe om een ranglijst te zien.</div></div>
 </div>
 
 <!-- ===== VOEDING ===== -->
 <div id="viewMacros" class="view hidden">
-<button class="terug" id="terugMacros">‹ Home</button>
+<button class="terug" id="terugMacros" data-i18n="terug_home">‹ Home</button>
 
 <header>
-  <div class="titel">Vandaag</div>
+  <div class="titel" data-i18n="titel_vandaag">Vandaag</div>
   <div class="rechts">
     <span class="datum" id="datum"></span>
-    <button class="kal-knop" id="kalKnop" title="Kalender">📅</button>
+    <button class="kal-knop" id="kalKnop" title="Kalender" data-i18n-title="kal_titel_knop">📅</button>
   </div>
 </header>
 
 <div class="kcal-readout">
   <div class="kcal-cijfer mono" id="totKcal">0</div>
-  <div class="kcal-label">kcal</div>
+  <div class="kcal-label" data-i18n="kcal_label">kcal</div>
   <div class="doel-rest" id="doelRest"><span class="getal">–</span><span class="tekst"></span></div>
   <div class="doel-sub" id="doelSub"></div>
 </div>
 
 <div class="macros">
   <div class="macro e">
-    <div class="naam">Eiwit</div>
+    <div class="naam" data-i18n="macro_eiwit">Eiwit</div>
     <div class="waarde"><span class="mono" id="totE">0</span><span>g</span></div>
     <div class="bar"><i id="barE"></i></div>
     <div class="macro-doel" id="doelE"></div>
   </div>
   <div class="macro k">
-    <div class="naam">Koolh.</div>
+    <div class="naam" data-i18n="macro_koolh">Koolh.</div>
     <div class="waarde"><span class="mono" id="totK">0</span><span>g</span></div>
     <div class="bar"><i id="barK"></i></div>
     <div class="macro-doel" id="doelK"></div>
   </div>
   <div class="macro v">
-    <div class="naam">Vet</div>
+    <div class="naam" data-i18n="macro_vet">Vet</div>
     <div class="waarde"><span class="mono" id="totV">0</span><span>g</span></div>
     <div class="bar"><i id="barV"></i></div>
     <div class="macro-doel" id="doelV"></div>
   </div>
 </div>
 
-<button class="doel-knop" id="doelKnop">⊕&nbsp;&nbsp;Stel je caloriedoel in</button>
+<button class="doel-knop" id="doelKnop">⊕&nbsp;&nbsp;<span data-i18n="doel_stel_in">Stel je caloriedoel in</span></button>
 
 <div class="calc" id="calc">
   <div class="kop">
-    <div class="t">Caloriedoel berekenen</div>
+    <div class="t" data-i18n="calc_titel">Caloriedoel berekenen</div>
     <div class="sluit" id="cSluit">✕</div>
   </div>
 
-  <div class="calc-label">Geslacht</div>
+  <div class="calc-label" data-i18n="calc_geslacht">Geslacht</div>
   <div class="geslacht">
-    <button id="gMan" class="actief">Man</button>
-    <button id="gVrouw">Vrouw</button>
+    <button id="gMan" class="actief" data-i18n="calc_man">Man</button>
+    <button id="gVrouw" data-i18n="calc_vrouw">Vrouw</button>
   </div>
 
-  <div class="calc-label">Jouw gegevens</div>
+  <div class="calc-label" data-i18n="calc_jouwgegevens">Jouw gegevens</div>
   <div class="drie">
-    <div class="veld"><label>Leeftijd</label><input id="cLeeftijd" type="number" inputmode="numeric" placeholder="jr"></div>
-    <div class="veld"><label>Lengte</label><input id="cLengte" type="number" inputmode="numeric" placeholder="cm"></div>
-    <div class="veld"><label>Gewicht</label><input id="cGewicht" type="number" inputmode="decimal" placeholder="kg"></div>
+    <div class="veld"><label data-i18n="calc_leeftijd">Leeftijd</label><input id="cLeeftijd" type="number" inputmode="numeric" placeholder="jr"></div>
+    <div class="veld"><label data-i18n="calc_lengte">Lengte</label><input id="cLengte" type="number" inputmode="numeric" placeholder="cm"></div>
+    <div class="veld"><label data-i18n="calc_gewicht">Gewicht</label><input id="cGewicht" type="number" inputmode="decimal" placeholder="kg"></div>
   </div>
 
-  <div class="calc-label">Hoe actief ben je?</div>
+  <div class="calc-label" data-i18n="calc_hoeactief">Hoe actief ben je?</div>
   <div class="keuze" id="activiteit">
-    <button class="optie" data-f="1.2"><div class="ot">Zittend</div><div class="od">Kantoor of studie, weinig beweging, geen sport.</div></button>
-    <button class="optie actief" data-f="1.375"><div class="ot">Licht actief</div><div class="od">Lichte inspanning of sport 1–3× per week.</div></button>
-    <button class="optie" data-f="1.55"><div class="ot">Matig actief</div><div class="od">Training of sport 3–5× per week.</div></button>
-    <button class="optie" data-f="1.725"><div class="ot">Zeer actief</div><div class="od">Intensief sporten 6–7× per week.</div></button>
-    <button class="optie" data-f="1.9"><div class="ot">Extreem actief</div><div class="od">Fysiek werk + (bijna) dagelijks hard trainen.</div></button>
+    <button class="optie" data-f="1.2"><div class="ot" data-i18n="calc_zittend_t">Zittend</div><div class="od" data-i18n="calc_zittend_d">Kantoor of studie, weinig beweging, geen sport.</div></button>
+    <button class="optie actief" data-f="1.375"><div class="ot" data-i18n="calc_lichtactief_t">Licht actief</div><div class="od" data-i18n="calc_lichtactief_d">Lichte inspanning of sport 1–3× per week.</div></button>
+    <button class="optie" data-f="1.55"><div class="ot" data-i18n="calc_matigactief_t">Matig actief</div><div class="od" data-i18n="calc_matigactief_d">Training of sport 3–5× per week.</div></button>
+    <button class="optie" data-f="1.725"><div class="ot" data-i18n="calc_zeeractief_t">Zeer actief</div><div class="od" data-i18n="calc_zeeractief_d">Intensief sporten 6–7× per week.</div></button>
+    <button class="optie" data-f="1.9"><div class="ot" data-i18n="calc_extreemactief_t">Extreem actief</div><div class="od" data-i18n="calc_extreemactief_d">Fysiek werk + (bijna) dagelijks hard trainen.</div></button>
   </div>
 
-  <div class="calc-label">Wat is je doel?</div>
+  <div class="calc-label" data-i18n="calc_watisdoel">Wat is je doel?</div>
   <div class="doel-keuze" id="doelKeuze">
-    <button data-d="afvallen">Afvallen</button>
-    <button data-d="onderhoud" class="actief">Onderhoud</button>
-    <button data-d="bijkomen">Bijkomen</button>
+    <button data-d="afvallen" data-i18n="calc_afvallen">Afvallen</button>
+    <button data-d="onderhoud" class="actief" data-i18n="calc_onderhoud">Onderhoud</button>
+    <button data-d="bijkomen" data-i18n="calc_bijkomen">Bijkomen</button>
   </div>
   <div class="tempo" id="tempo" style="display:none;">
-    <button data-t="rustig" class="actief">Rustig</button>
-    <button data-t="matig">Gemiddeld</button>
+    <button data-t="rustig" class="actief" data-i18n="calc_rustig">Rustig</button>
+    <button data-t="matig" data-i18n="calc_gemiddeld">Gemiddeld</button>
   </div>
 
   <div class="calc-uitslag" id="calcUitslag">
-    <div class="rij"><span class="l">Ruststofwisseling (BMR)</span><span class="w mono" id="rBmr">–</span></div>
-    <div class="rij"><span class="l">Onderhoud (TDEE)</span><span class="w mono" id="rTdee">–</span></div>
-    <div class="rij groot"><span class="l">Jouw dagdoel</span><span class="w mono" id="rDoel">–</span></div>
+    <div class="rij"><span class="l" data-i18n="calc_bmr">Ruststofwisseling (BMR)</span><span class="w mono" id="rBmr">–</span></div>
+    <div class="rij"><span class="l" data-i18n="calc_tdee">Onderhoud (TDEE)</span><span class="w mono" id="rTdee">–</span></div>
+    <div class="rij groot"><span class="l" data-i18n="calc_dagdoel">Jouw dagdoel</span><span class="w mono" id="rDoel">–</span></div>
     <div class="macro-doelen"><span class="e" id="rE">–</span><span class="k" id="rK">–</span><span class="v" id="rV">–</span></div>
   </div>
 
-  <button class="instel" id="cInstel">Instellen als dagdoel</button>
-  <div class="disclaimer">Een schatting op basis van de Mifflin-St Jeor-formule. Behandel het als startpunt en stuur bij op basis van hoe je gewicht en energie in het echt evolueren. Vermijd extreme tekorten.</div>
+  <button class="instel" id="cInstel" data-i18n="calc_instellen">Instellen als dagdoel</button>
+  <div class="disclaimer" data-i18n="calc_disclaimer">Een schatting op basis van de Mifflin-St Jeor-formule. Behandel het als startpunt en stuur bij op basis van hoe je gewicht en energie in het echt evolueren. Vermijd extreme tekorten.</div>
 </div>
 
 <div class="zoek-wrap">
   <span class="zoek-icoon">⌕</span>
-  <input class="zoek" id="zoek" type="text" placeholder="Typ iets van eten in…" autocomplete="off">
+  <input class="zoek" id="zoek" type="text" placeholder="Typ iets van eten in…" data-i18n-ph="zoek_ph" autocomplete="off">
 </div>
-<button class="scan-knop" id="scanKnop">📷&nbsp;&nbsp;Scan barcode</button>
+<button class="scan-knop" id="scanKnop">📷&nbsp;&nbsp;<span data-i18n="scan_barcode">Scan barcode</span></button>
 
 <div class="snel-rij" id="snelRij" style="display:none;"></div>
 
@@ -1038,8 +1045,8 @@
     <div class="sluit" id="pSluit">✕</div>
   </div>
   <div class="unit-toggle" id="unitToggle" style="display:none;">
-    <button id="uGram" class="actief">Gram</button>
-    <button id="uStuk">Per stuk</button>
+    <button id="uGram" class="actief" data-i18n="portie_gram">Gram</button>
+    <button id="uStuk" data-i18n="portie_stuk">Per stuk</button>
   </div>
   <div class="gram-rij">
     <input class="gram-input mono" id="pGram" type="number" inputmode="numeric" value="100">
@@ -1051,37 +1058,37 @@
     <button id="pMaal3" type="button">× 3</button>
   </div>
   <div class="voorbeeld">
-    <div class="vb-kcal"><div class="l">kcal</div><div class="g mono" id="pKcal">0</div></div>
-    <div class="vb-e"><div class="l">eiwit</div><div class="g mono" id="pE">0</div></div>
-    <div class="vb-k"><div class="l">koolh</div><div class="g mono" id="pK">0</div></div>
-    <div class="vb-v"><div class="l">vet</div><div class="g mono" id="pV">0</div></div>
+    <div class="vb-kcal"><div class="l" data-i18n="portie_l_kcal">kcal</div><div class="g mono" id="pKcal">0</div></div>
+    <div class="vb-e"><div class="l" data-i18n="portie_l_eiwit">eiwit</div><div class="g mono" id="pE">0</div></div>
+    <div class="vb-k"><div class="l" data-i18n="portie_l_koolh">koolh</div><div class="g mono" id="pK">0</div></div>
+    <div class="vb-v"><div class="l" data-i18n="portie_l_vet">vet</div><div class="g mono" id="pV">0</div></div>
   </div>
-  <button class="toevoeg" id="pToevoeg">Toevoegen</button>
+  <button class="toevoeg" id="pToevoeg" data-i18n="toevoegen">Toevoegen</button>
 </div>
 
 <!-- Nieuw / aanpassen eten -->
 <div class="nieuw-form" id="nieuwForm">
   <div class="kop">
-    <div class="t" id="nTitel">Eigen eten toevoegen</div>
+    <div class="t" id="nTitel" data-i18n="nieuw_titel">Eigen eten toevoegen</div>
     <div class="sluit" id="nSluit">✕</div>
   </div>
-  <input id="nNaam" type="text" placeholder="Naam (bv. Mama's lasagne)">
-  <div class="hint" style="margin-top:2px;">Soort:</div>
+  <input id="nNaam" type="text" placeholder="Naam (bv. Mama's lasagne)" data-i18n-ph="nieuw_naam_ph">
+  <div class="hint" style="margin-top:2px;" data-i18n="nieuw_soort">Soort:</div>
   <div class="unit-toggle" id="nSoortToggle">
-    <button id="nSoortVast" class="actief">Vast (gram)</button>
-    <button id="nSoortDrank">Drank (ml)</button>
+    <button id="nSoortVast" class="actief" data-i18n="nieuw_vast">Vast (gram)</button>
+    <button id="nSoortDrank" data-i18n="nieuw_drank">Drank (ml)</button>
   </div>
-  <div class="hint" id="nWaardenHint">Waarden per 100 gram:</div>
+  <div class="hint" id="nWaardenHint" data-i18n="nieuw_waarden_hint">Waarden per 100 gram:</div>
   <div class="grid4">
     <input id="nKcal" type="number" inputmode="numeric" placeholder="kcal">
-    <input id="nE" type="number" inputmode="decimal" placeholder="eiwit g">
-    <input id="nK" type="number" inputmode="decimal" placeholder="koolh g">
-    <input id="nV" type="number" inputmode="decimal" placeholder="vet g">
+    <input id="nE" type="number" inputmode="decimal" placeholder="eiwit g" data-i18n-ph="nieuw_eiwit_ph">
+    <input id="nK" type="number" inputmode="decimal" placeholder="koolh g" data-i18n-ph="nieuw_koolh_ph">
+    <input id="nV" type="number" inputmode="decimal" placeholder="vet g" data-i18n-ph="nieuw_vet_ph">
   </div>
-  <div class="hint" id="nStukHint" style="margin-top:12px;">Optioneel — gewicht van 1 stuk (voor "per stuk"):</div>
-  <input id="nStuk" type="number" inputmode="numeric" placeholder="gram per stuk (bv. 120)">
-  <button class="bewaar" id="nBewaar">Bewaren & kiezen</button>
-  <button class="verwijder" id="nVerwijder" style="display:none;">Verwijderen</button>
+  <div class="hint" id="nStukHint" style="margin-top:12px;" data-i18n="nieuw_stuk_hint">Optioneel — gewicht van 1 stuk (voor "per stuk"):</div>
+  <input id="nStuk" type="number" inputmode="numeric" placeholder="gram per stuk (bv. 120)" data-i18n-ph="nieuw_stuk_ph">
+  <button class="bewaar" id="nBewaar" data-i18n="nieuw_bewaar">Bewaren & kiezen</button>
+  <button class="verwijder" id="nVerwijder" style="display:none;" data-i18n="verwijderen">Verwijderen</button>
 </div>
 
 <!-- Water -->
@@ -1093,24 +1100,24 @@
   <div class="water-balk"><div class="water-vul" id="waterVul"></div></div>
   <div class="water-knoppen">
     <button class="water-min" id="waterMin">−</button>
-    <button class="water-add" data-add="250">+ klein <span>250 ml</span></button>
-    <button class="water-add" data-add="330">+ groot <span>330 ml</span></button>
+    <button class="water-add" data-add="250"><span data-i18n="water_min_klein">+ klein</span> <span>250 ml</span></button>
+    <button class="water-add" data-add="330"><span data-i18n="water_min_groot">+ groot</span> <span>330 ml</span></button>
   </div>
   <div class="water-hint" id="waterHint"></div>
 </div>
 
 <!-- Log -->
 <div class="log-kop">
-  <h2>Gegeten</h2>
-  <button class="wis" id="wisDag">Dag wissen</button>
+  <h2 data-i18n="log_gegeten">Gegeten</h2>
+  <button class="wis" id="wisDag" data-i18n="log_wisdag">Dag wissen</button>
 </div>
 <div class="log-acties">
-  <button id="mtKnop">🍽 Maaltijden</button>
-  <button id="snelKcalKnop">⚡ Snel kcal</button>
+  <button id="mtKnop">🍽 <span data-i18n="nav_maaltijden_kort">Maaltijden</span></button>
+  <button id="snelKcalKnop">⚡ <span data-i18n="log_snelkcal_kort">Snel kcal</span></button>
 </div>
 <div id="logLijst"></div>
 
-<div class="voetnoot">
+<div class="voetnoot" data-i18n="voetnoot">
   Waarden zijn per 100 g (of 100 ml voor drank) en gebaseerd op standaard referentiewaarden — kleine afwijkingen per product/merk zijn normaal.
 </div>
 
@@ -1123,15 +1130,15 @@
       <button class="kal-sluit" id="kalSluit">✕</button>
     </div>
     <div class="kal-weekdagen">
-      <span>ma</span><span>di</span><span>wo</span><span>do</span><span>vr</span><span>za</span><span>zo</span>
+      <span data-i18n="wd_ma">ma</span><span data-i18n="wd_di">di</span><span data-i18n="wd_wo">wo</span><span data-i18n="wd_do">do</span><span data-i18n="wd_vr">vr</span><span data-i18n="wd_za">za</span><span data-i18n="wd_zo">zo</span>
     </div>
     <div class="kal-grid" id="kalGrid"></div>
     <div class="kal-legenda">
-      <div class="rij"><span class="vk groen"></span> Binnen 100 kcal van je doel</div>
-      <div class="rij"><span class="vk blauw"></span> Meer dan 100 kcal onder je doel</div>
-      <div class="rij"><span class="vk rood"></span> Meer dan 100 kcal boven je doel</div>
+      <div class="rij"><span class="vk groen"></span> <span data-i18n="kal_legenda_groen">Binnen 100 kcal van je doel</span></div>
+      <div class="rij"><span class="vk blauw"></span> <span data-i18n="kal_legenda_blauw">Meer dan 100 kcal onder je doel</span></div>
+      <div class="rij"><span class="vk rood"></span> <span data-i18n="kal_legenda_rood">Meer dan 100 kcal boven je doel</span></div>
     </div>
-    <div class="kal-leeg-tekst" id="kalLeegTekst" style="display:none;">Stel eerst een caloriedoel in om de kleuren te zien.</div>
+    <div class="kal-leeg-tekst" id="kalLeegTekst" style="display:none;" data-i18n="kal_leeg_tekst">Stel eerst een caloriedoel in om de kleuren te zien.</div>
   </div>
 </div>
 
@@ -1139,11 +1146,11 @@
 <div class="vr-overlay" id="mtOverlay">
   <div class="vr-paneel">
     <div class="vr-kop">
-      <div class="vr-titel">Maaltijden</div>
+      <div class="vr-titel" data-i18n="mt_titel">Maaltijden</div>
       <button class="wo-sluit" id="mtSluit">✕</button>
     </div>
-    <button class="mt-bewaar" id="mtNieuw">+ Nieuwe maaltijd samenstellen</button>
-    <button class="mt-tweede" id="mtBewaar">Bewaar de dag van vandaag als maaltijd</button>
+    <button class="mt-bewaar" id="mtNieuw" data-i18n="mt_nieuw">+ Nieuwe maaltijd samenstellen</button>
+    <button class="mt-tweede" id="mtBewaar" data-i18n="mt_bewaar_vandaag">Bewaar de dag van vandaag als maaltijd</button>
     <div id="mtLijst"></div>
   </div>
 </div>
@@ -1152,13 +1159,13 @@
 <div class="vr-overlay" id="mbOverlay">
   <div class="vr-paneel">
     <div class="vr-kop">
-      <div class="vr-titel">Maaltijd samenstellen</div>
+      <div class="vr-titel" data-i18n="mb_titel">Maaltijd samenstellen</div>
       <button class="wo-sluit" id="mbSluit">✕</button>
     </div>
-    <input id="mbNaam" type="text" maxlength="40" placeholder="Naam (bv. Mijn ontbijt)" autocomplete="off">
+    <input id="mbNaam" type="text" maxlength="40" placeholder="Naam (bv. Mijn ontbijt)" data-i18n-ph="mb_naam_ph" autocomplete="off">
     <div class="zoek-wrap mb-zoek">
       <span class="zoek-icoon">⌕</span>
-      <input class="zoek" id="mbZoek" type="text" placeholder="Zoek eten om toe te voegen…" autocomplete="off">
+      <input class="zoek" id="mbZoek" type="text" placeholder="Zoek eten om toe te voegen…" data-i18n-ph="mb_zoek_ph" autocomplete="off">
     </div>
     <div class="resultaten" id="mbRes"></div>
     <div class="mb-portie" id="mbPortie" style="display:none;">
@@ -1166,29 +1173,29 @@
       <div class="mb-p-rij">
         <input id="mbPGram" type="number" inputmode="decimal" placeholder="100">
         <span class="mb-p-eh" id="mbPEh">g</span>
-        <button id="mbPVoeg">Toevoegen</button>
+        <button id="mbPVoeg" data-i18n="toevoegen">Toevoegen</button>
       </div>
       <div class="mb-p-kc" id="mbPKc"></div>
     </div>
     <div id="mbItems"></div>
-    <button class="mt-bewaar" id="mbBewaar" style="margin-top:14px;">Maaltijd bewaren</button>
+    <button class="mt-bewaar" id="mbBewaar" style="margin-top:14px;" data-i18n="mb_bewaar">Maaltijd bewaren</button>
   </div>
 </div>
 
 <!-- Snel kcal (overlay) -->
 <div class="uname-overlay" id="skOverlay">
   <div class="uname-paneel">
-    <div class="uname-titel">Snel calorieën loggen</div>
-    <div class="uname-uitleg">Handig als je buitenshuis eet en enkel een schatting hebt. Macro's zijn optioneel.</div>
-    <input id="skNaam" type="text" maxlength="40" placeholder="Wat was het? (optioneel)" autocomplete="off">
-    <input id="skKcal" type="number" inputmode="numeric" placeholder="Calorieën" style="margin-top:10px;">
+    <div class="uname-titel" data-i18n="sk_titel">Snel calorieën loggen</div>
+    <div class="uname-uitleg" data-i18n="sk_uitleg">Handig als je buitenshuis eet en enkel een schatting hebt. Macro's zijn optioneel.</div>
+    <input id="skNaam" type="text" maxlength="40" placeholder="Wat was het? (optioneel)" data-i18n-ph="sk_naam_ph" autocomplete="off">
+    <input id="skKcal" type="number" inputmode="numeric" placeholder="Calorieën" data-i18n-ph="sk_kcal_ph" style="margin-top:10px;">
     <div class="sk-rij">
-      <input id="skE" type="number" inputmode="decimal" placeholder="eiwit">
-      <input id="skK" type="number" inputmode="decimal" placeholder="koolh">
-      <input id="skV" type="number" inputmode="decimal" placeholder="vet">
+      <input id="skE" type="number" inputmode="decimal" placeholder="eiwit" data-i18n-ph="portie_l_eiwit">
+      <input id="skK" type="number" inputmode="decimal" placeholder="koolh" data-i18n-ph="portie_l_koolh">
+      <input id="skV" type="number" inputmode="decimal" placeholder="vet" data-i18n-ph="portie_l_vet">
     </div>
-    <button class="uname-kies" id="skBewaar">Toevoegen</button>
-    <button class="uname-annuleer" id="skAnnuleer">Annuleren</button>
+    <button class="uname-kies" id="skBewaar" data-i18n="toevoegen">Toevoegen</button>
+    <button class="uname-annuleer" id="skAnnuleer" data-i18n="annuleren">Annuleren</button>
   </div>
 </div>
 
@@ -1206,9 +1213,9 @@
 
 <!-- ===== WORKOUT ===== -->
 <div id="viewWorkout" class="view hidden">
-  <button class="terug" id="terugWorkout">‹ Home</button>
+  <button class="terug" id="terugWorkout" data-i18n="terug_home">‹ Home</button>
   <header>
-    <div class="titel">Workout</div>
+    <div class="titel" data-i18n="nav_workout">Workout</div>
     <span class="datum" id="woDatum"></span>
   </header>
 
@@ -1217,11 +1224,11 @@
   <div id="woLijst"></div>
 
   <div class="wo-typekeuze" id="woTypeKeuze">
-    <button data-t="kracht" class="actief">Kracht</button>
-    <button data-t="cardio">Cardio</button>
+    <button data-t="kracht" class="actief" data-i18n="wo_kracht">Kracht</button>
+    <button data-t="cardio" data-i18n="wo_cardio">Cardio</button>
   </div>
   <div class="wo-toevoeg">
-    <input id="woNieuwOef" type="text" placeholder="Oefening toevoegen…" autocomplete="off">
+    <input id="woNieuwOef" type="text" placeholder="Oefening toevoegen…" data-i18n-ph="wo_oef_ph" autocomplete="off">
     <button id="woVoegToe">+</button>
   </div>
   <div class="wo-hint" id="woSjabloonHint"></div>
@@ -1237,26 +1244,26 @@
     <div class="wo-vorige" id="woVorige"></div>
     <div class="wo-sets" id="woSets"></div>
     <div class="wo-set-knoppen" id="woSetKnoppen">
-      <button id="woMinSet">− set</button>
-      <button id="woPlusSet">+ set</button>
+      <button id="woMinSet" data-i18n="wo_min_set">− set</button>
+      <button id="woPlusSet" data-i18n="wo_plus_set">+ set</button>
     </div>
     <div id="woCardio" style="display:none;">
       <div class="wo-cardio-rij">
-        <span class="lab">Tijd</span>
+        <span class="lab" data-i18n="wo_tijd">Tijd</span>
         <input class="cDuur" id="cDuur" type="number" inputmode="decimal" placeholder="min">
         <span class="eh">min</span>
         <span class="delta gelijk" id="cDuurDelta"></span>
       </div>
       <div class="wo-cardio-rij">
-        <span class="lab">Afstand</span>
+        <span class="lab" data-i18n="wo_afstand">Afstand</span>
         <input class="cAfstand" id="cAfstand" type="number" inputmode="decimal" placeholder="km">
         <span class="eh">km</span>
         <span class="delta gelijk" id="cAfstandDelta"></span>
       </div>
     </div>
-    <button class="wo-opslaan" id="woOpslaan">Opslaan</button>
-    <button class="wo-progressie" id="woProgressie">📈 Progressie bekijken</button>
-    <button class="wo-verwijder-oef" id="woVerwijderOef">Oefening verwijderen uit deze dag</button>
+    <button class="wo-opslaan" id="woOpslaan" data-i18n="wo_opslaan">Opslaan</button>
+    <button class="wo-progressie" id="woProgressie" data-i18n="wo_progressie">📈 Progressie bekijken</button>
+    <button class="wo-verwijder-oef" id="woVerwijderOef" data-i18n="wo_verwijder_oef">Oefening verwijderen uit deze dag</button>
   </div>
 </div>
 
@@ -1269,7 +1276,7 @@
     </div>
     <div class="wo-metriek" id="woMetriek"></div>
     <div class="wo-grafiek" id="woGrafiek"></div>
-    <div class="wo-grafiek-leeg" id="woGrafiekLeeg" style="display:none;">Log deze oefening minstens 2 keer om progressie te zien.</div>
+    <div class="wo-grafiek-leeg" id="woGrafiekLeeg" style="display:none;" data-i18n="wo_grafiek_leeg">Log deze oefening minstens 2 keer om progressie te zien.</div>
   </div>
 </div>
 
@@ -1277,7 +1284,7 @@
 <div class="vr-overlay" id="vrOverlay">
   <div class="vr-paneel">
     <div class="vr-kop">
-      <div class="vr-titel">Account</div>
+      <div class="vr-titel" data-i18n="acc_titel">Account</div>
       <button class="wo-sluit" id="vrSluit">✕</button>
     </div>
 
@@ -1285,33 +1292,44 @@
       <div class="acc-avatar" id="accAvatar">👤</div>
       <div class="acc-info">
         <div class="acc-naam" id="vrIk">—</div>
-        <div class="acc-sub" id="accSub">Online account</div>
+        <div class="acc-sub" id="accSub" data-i18n="acc_sub_online">Online account</div>
       </div>
-      <button class="acc-edit" id="accEdit" title="Naam aanpassen">✎</button>
+      <button class="acc-edit" id="accEdit" title="Naam aanpassen" data-i18n-title="acc_edit_title">✎</button>
     </div>
     <div id="accStats"></div>
 
     <div class="vr-sectie">
-      <div class="vr-kopje">Vrienden toevoegen</div>
+      <div class="vr-kopje" data-i18n="instellingen">Instellingen</div>
+      <div class="taal-rij">
+        <span class="taal-label" data-i18n="taal_label">Taal van de app</span>
+        <div class="taal-knoppen">
+          <button class="taal-knop actief" data-taal="nl">Nederlands</button>
+          <button class="taal-knop" data-taal="en">English</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="vr-sectie">
+      <div class="vr-kopje" data-i18n="vr_vrienden_toevoegen">Vrienden toevoegen</div>
       <div class="vr-zoekrij">
-        <input id="vrZoek" type="text" maxlength="20" autocomplete="off" placeholder="Zoek op gebruikersnaam…">
-        <button id="vrZoekKnop">Zoek</button>
+        <input id="vrZoek" type="text" maxlength="20" autocomplete="off" placeholder="Zoek op gebruikersnaam…" data-i18n-ph="vr_zoek_ph">
+        <button id="vrZoekKnop" data-i18n="vr_zoek_knop">Zoek</button>
       </div>
       <div class="vr-zoekres" id="vrZoekRes"></div>
     </div>
 
     <div class="vr-sectie" id="vrVerzoekenSectie" style="display:none;">
-      <div class="vr-kopje">Verzoeken</div>
+      <div class="vr-kopje" data-i18n="vr_verzoeken">Verzoeken</div>
       <div id="vrVerzoeken"></div>
     </div>
 
     <div class="vr-sectie">
-      <div class="vr-kopje">Mijn vrienden</div>
-      <div id="vrLijst"><div class="vr-leeg">Nog geen vrienden toegevoegd.</div></div>
+      <div class="vr-kopje" data-i18n="vr_mijn_vrienden">Mijn vrienden</div>
+      <div id="vrLijst"><div class="vr-leeg" data-i18n="vr_leeg_vrienden">Nog geen vrienden toegevoegd.</div></div>
     </div>
 
     <div class="vr-sectie">
-      <div class="vr-kopje">Account meenemen</div>
+      <div class="vr-kopje" data-i18n="vr_account_meenemen">Account meenemen</div>
       <div id="accMeenemen"></div>
     </div>
   </div>
@@ -1320,12 +1338,12 @@
 <!-- E-mail koppelen / inloggen (overlay) -->
 <div class="uname-overlay" id="emailOverlay">
   <div class="uname-paneel">
-    <div class="uname-titel" id="emailTitel">E-mail koppelen</div>
-    <div class="uname-uitleg" id="emailUitleg">Koppel een e-mail + wachtwoord zodat je je account op een ander toestel kan gebruiken. Dit is optioneel.</div>
-    <input id="emailInput" type="email" autocomplete="email" placeholder="E-mailadres">
+    <div class="uname-titel" id="emailTitel" data-i18n="email_titel">E-mail koppelen</div>
+    <div class="uname-uitleg" id="emailUitleg" data-i18n="email_uitleg">Koppel een e-mail + wachtwoord zodat je je account op een ander toestel kan gebruiken. Dit is optioneel.</div>
+    <input id="emailInput" type="email" autocomplete="email" placeholder="E-mailadres" data-i18n-ph="email_ph">
     <div class="ww-wrap">
-      <input id="emailWw" type="password" autocomplete="current-password" placeholder="Wachtwoord (min. 6 tekens)">
-      <button type="button" class="ww-oog" id="wwOog" aria-label="Wachtwoord tonen">
+      <input id="emailWw" type="password" autocomplete="current-password" placeholder="Wachtwoord (min. 6 tekens)" data-i18n-ph="email_ww_ph">
+      <button type="button" class="ww-oog" id="wwOog" aria-label="Wachtwoord tonen" data-i18n-aria="email_ww_oog">
         <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
           <path d="M2 12s3.6-6.2 10-6.2 10 6.2 10 6.2-3.6 6.2-10 6.2S2 12 2 12z"/>
           <circle cx="12" cy="12" r="2.6" fill="currentColor" stroke="none"/>
@@ -1334,8 +1352,8 @@
       </button>
     </div>
     <div class="uname-fout" id="emailFout"></div>
-    <button class="uname-kies" id="emailKnop">Koppelen</button>
-    <button class="uname-annuleer" id="emailAnnuleer">Annuleren</button>
+    <button class="uname-kies" id="emailKnop" data-i18n="email_koppel">Koppelen</button>
+    <button class="uname-annuleer" id="emailAnnuleer" data-i18n="annuleren">Annuleren</button>
   </div>
 </div>
 
@@ -1346,7 +1364,7 @@
       <div class="vr-titel" id="profNaam">—</div>
       <button class="wo-sluit" id="profSluit">✕</button>
     </div>
-    <div id="profInhoud"><div class="vr-leeg">Laden…</div></div>
+    <div id="profInhoud"><div class="vr-leeg" data-i18n="prof_laden">Laden…</div></div>
   </div>
 </div>
 
@@ -1354,10 +1372,10 @@
 <div class="vr-overlay" id="vpOverlay">
   <div class="vr-paneel">
     <div class="vr-kop">
-      <div class="vr-titel" id="vpTitel">Producten</div>
+      <div class="vr-titel" id="vpTitel" data-i18n="vp_titel">Producten</div>
       <button class="wo-sluit" id="vpSluit">✕</button>
     </div>
-    <div class="zoek-wrap"><span class="zoek-icoon">⌕</span><input class="zoek" id="vpZoek" type="text" placeholder="Zoeken…" autocomplete="off"></div>
+    <div class="zoek-wrap"><span class="zoek-icoon">⌕</span><input class="zoek" id="vpZoek" type="text" placeholder="Zoeken…" data-i18n-ph="vp_zoek_ph" autocomplete="off"></div>
     <div class="lb-knoppen prof-tabs" id="vpTabs"></div>
     <div id="vpTab"></div>
   </div>
@@ -1366,14 +1384,14 @@
 <!-- Gebruikersnaam kiezen (overlay) -->
 <div class="uname-overlay" id="unameOverlay">
   <div class="uname-paneel">
-    <div class="uname-titel" id="unameTitel">Kies je gebruikersnaam</div>
-    <div class="uname-uitleg">Zo vinden vrienden je terug. Geen e-mail nodig.</div>
-    <input id="unameInput" type="text" maxlength="20" autocomplete="off" placeholder="Gebruikersnaam">
-    <div class="uname-regels">3–20 tekens · letters, cijfers of _</div>
+    <div class="uname-titel" id="unameTitel" data-i18n="uname_titel">Kies je gebruikersnaam</div>
+    <div class="uname-uitleg" data-i18n="uname_uitleg">Zo vinden vrienden je terug. Geen e-mail nodig.</div>
+    <input id="unameInput" type="text" maxlength="20" autocomplete="off" placeholder="Gebruikersnaam" data-i18n-ph="uname_ph">
+    <div class="uname-regels" data-i18n="uname_regels">3–20 tekens · letters, cijfers of _</div>
     <div class="uname-fout" id="unameFout"></div>
-    <button class="uname-kies" id="unameKies">Klaar</button>
-    <button class="uname-annuleer" id="unameAnnuleer" style="display:none;">Annuleren</button>
-    <button class="uname-login-knop" id="unameLogin">Ik heb al een account — inloggen</button>
+    <button class="uname-kies" id="unameKies" data-i18n="uname_klaar">Klaar</button>
+    <button class="uname-annuleer" id="unameAnnuleer" style="display:none;" data-i18n="annuleren">Annuleren</button>
+    <button class="uname-login-knop" id="unameLogin" data-i18n="uname_login">Ik heb al een account — inloggen</button>
   </div>
 </div>
 
@@ -1381,11 +1399,11 @@
 <div class="scan-overlay" id="scanOverlay">
   <div class="scan-paneel">
     <div class="scan-kop">
-      <div class="scan-titel">Scan barcode</div>
+      <div class="scan-titel" data-i18n="scan_titel">Scan barcode</div>
       <button class="wo-sluit" id="scanSluit">✕</button>
     </div>
     <div id="scanReader" class="scan-reader"></div>
-    <div class="scan-status" id="scanStatus">Hou de barcode in het vak — genoeg licht en dicht genoeg.</div>
+    <div class="scan-status" id="scanStatus" data-i18n="scan_status_dflt">Hou de barcode in het vak — genoeg licht en dicht genoeg.</div>
   </div>
 </div>
 
@@ -2255,6 +2273,432 @@ let geschiedenis = {};   // {datum: {kcal, doel}} voor de kalender
 let bewerk = null;       // huidige bewerking: {type:'eigen',index} of {type:'db',naam} of null
 let kalMaand = null;     // eerste dag van de getoonde maand in de kalender
 
+// ---------- Taal (NL/EN) ----------
+// De volledige Nederlandse tekst blijft de bron van waarheid (VERT.nl). Bij een
+// ontbrekende Engelse sleutel valt t() automatisch terug op het Nederlands, zodat
+// er nooit een lege of kapotte tekst verschijnt.
+let TAAL = 'nl';
+try{ TAAL = localStorage.getItem('fitlog_taal') || 'nl'; }catch(e){}
+
+const VERT = {
+  nl: {
+    nav_overzicht:"Overzicht", nav_voeding:"Voeding", nav_workout:"Workout", nav_gewicht:"Gewicht",
+    nav_leaderboards:"Leaderboards", nav_account:"Account",
+    home_voeding_sub:"Calorieën & macro's bijhouden", home_workout_sub:"Training loggen",
+    home_gewicht_sub:"Dagelijks gewicht & progressie", home_lb_sub:"Ranglijsten met je vrienden",
+    terug_home:"‹ Home",
+    gw_lab:"Gewicht vandaag", gw_bewaar:"Bewaren", gw_hint_dflt:"Weeg je bij voorkeur elke dag op hetzelfde moment (bv. 's ochtends).",
+    bmi_titel:"BMI", bmi_lengte:"Lengte", bmi_hint:"Vul je lengte in voor je BMI.",
+    gw_perdag:"Per dag", gw_perweek:"Per week",
+    gw_auto_titel1:"Gebruik voor caloriedoel", gw_auto_sub1:"Neemt het gemiddelde van je laatste volledige week.",
+    gw_auto_titel2:"Doel automatisch bijsturen", gw_auto_sub2:"Vergelijkt je echte gewichtsverloop met wat verwacht was, en stuurt je doel stap voor stap bij.",
+    gw_alle_metingen:"Alle metingen", gw_geen_metingen:"Nog geen metingen ingevuld.",
+    titel_leaderboards:"Leaderboards",
+    lb_doel:"Doel vandaag", lb_consistent:"Consistent", lb_trainingweek:"Training / week",
+    lb_totaalkcal:"Totaal kcal", lb_totaaltraining:"Totaal training", lb_hoogstedag:"Hoogste dag",
+    lb_streak:"Streak 🔥", lb_waterdag:"Water vandaag", lb_watertotaal:"Water totaal",
+    vr_leeg_vrienden_lb:"Voeg vrienden toe om een ranglijst te zien.",
+    titel_vandaag:"Vandaag", kcal_label:"kcal",
+    macro_eiwit:"Eiwit", macro_koolh:"Koolh.", macro_vet:"Vet",
+    doel_stel_in:"Stel je caloriedoel in",
+    calc_titel:"Caloriedoel berekenen", calc_geslacht:"Geslacht", calc_man:"Man", calc_vrouw:"Vrouw",
+    calc_jouwgegevens:"Jouw gegevens", calc_leeftijd:"Leeftijd", calc_lengte:"Lengte", calc_gewicht:"Gewicht",
+    calc_hoeactief:"Hoe actief ben je?",
+    calc_zittend_t:"Zittend", calc_zittend_d:"Kantoor of studie, weinig beweging, geen sport.",
+    calc_lichtactief_t:"Licht actief", calc_lichtactief_d:"Lichte inspanning of sport 1–3× per week.",
+    calc_matigactief_t:"Matig actief", calc_matigactief_d:"Training of sport 3–5× per week.",
+    calc_zeeractief_t:"Zeer actief", calc_zeeractief_d:"Intensief sporten 6–7× per week.",
+    calc_extreemactief_t:"Extreem actief", calc_extreemactief_d:"Fysiek werk + (bijna) dagelijks hard trainen.",
+    calc_watisdoel:"Wat is je doel?", calc_afvallen:"Afvallen", calc_onderhoud:"Onderhoud", calc_bijkomen:"Bijkomen",
+    calc_rustig:"Rustig", calc_gemiddeld:"Gemiddeld",
+    calc_bmr:"Ruststofwisseling (BMR)", calc_tdee:"Onderhoud (TDEE)", calc_dagdoel:"Jouw dagdoel",
+    calc_instellen:"Instellen als dagdoel",
+    calc_disclaimer:"Een schatting op basis van de Mifflin-St Jeor-formule. Behandel het als startpunt en stuur bij op basis van hoe je gewicht en energie in het echt evolueren. Vermijd extreme tekorten.",
+    zoek_ph:"Typ iets van eten in…", scan_barcode:"Scan barcode",
+    portie_gram:"Gram", portie_stuk:"Per stuk",
+    portie_l_kcal:"kcal", portie_l_eiwit:"eiwit", portie_l_koolh:"koolh", portie_l_vet:"vet",
+    toevoegen:"Toevoegen",
+    nieuw_titel:"Eigen eten toevoegen", nieuw_naam_ph:"Naam (bv. Mama's lasagne)", nieuw_soort:"Soort:",
+    nieuw_vast:"Vast (gram)", nieuw_drank:"Drank (ml)", nieuw_waarden_hint:"Waarden per 100 gram:",
+    nieuw_kcal_ph:"kcal", nieuw_eiwit_ph:"eiwit g", nieuw_koolh_ph:"koolh g", nieuw_vet_ph:"vet g",
+    nieuw_stuk_hint:'Optioneel — gewicht van 1 stuk (voor "per stuk"):', nieuw_stuk_ph:"gram per stuk (bv. 120)",
+    nieuw_bewaar:"Bewaren & kiezen", verwijderen:"Verwijderen",
+    water_min_klein:"+ klein", water_min_groot:"+ groot",
+    log_gegeten:"Gegeten", log_wisdag:"Dag wissen", log_maaltijden:"🍽 Maaltijden", log_snelkcal:"⚡ Snel kcal",
+    nav_maaltijden_kort:"Maaltijden", log_snelkcal_kort:"Snel kcal",
+    voetnoot:"Waarden zijn per 100 g (of 100 ml voor drank) en gebaseerd op standaard referentiewaarden — kleine afwijkingen per product/merk zijn normaal.",
+    kal_legenda_groen:"Binnen 100 kcal van je doel", kal_legenda_blauw:"Meer dan 100 kcal onder je doel",
+    kal_legenda_rood:"Meer dan 100 kcal boven je doel", kal_leeg_tekst:"Stel eerst een caloriedoel in om de kleuren te zien.",
+    kal_titel_knop:"Kalender",
+    wd_ma:"ma", wd_di:"di", wd_wo:"wo", wd_do:"do", wd_vr:"vr", wd_za:"za", wd_zo:"zo",
+    mt_titel:"Maaltijden", mt_nieuw:"+ Nieuwe maaltijd samenstellen", mt_bewaar_vandaag:"Bewaar de dag van vandaag als maaltijd",
+    mb_titel:"Maaltijd samenstellen", mb_naam_ph:"Naam (bv. Mijn ontbijt)", mb_zoek_ph:"Zoek eten om toe te voegen…",
+    mb_bewaar:"Maaltijd bewaren",
+    sk_titel:"Snel calorieën loggen", sk_uitleg:"Handig als je buitenshuis eet en enkel een schatting hebt. Macro's zijn optioneel.",
+    sk_naam_ph:"Wat was het? (optioneel)", sk_kcal_ph:"Calorieën", annuleren:"Annuleren",
+    titel_workout:"Workout", wo_kracht:"Kracht", wo_cardio:"Cardio", wo_oef_ph:"Oefening toevoegen…",
+    wo_min_set:"− set", wo_plus_set:"+ set", wo_tijd:"Tijd", wo_afstand:"Afstand", wo_opslaan:"Opslaan",
+    wo_progressie:"📈 Progressie bekijken", wo_verwijder_oef:"Oefening verwijderen uit deze dag",
+    wo_grafiek_leeg:"Log deze oefening minstens 2 keer om progressie te zien.",
+    acc_titel:"Account", acc_sub_online:"Online account", acc_edit_title:"Naam aanpassen",
+    vr_vrienden_toevoegen:"Vrienden toevoegen", vr_zoek_ph:"Zoek op gebruikersnaam…", vr_zoek_knop:"Zoek",
+    vr_verzoeken:"Verzoeken", vr_mijn_vrienden:"Mijn vrienden", vr_leeg_vrienden:"Nog geen vrienden toegevoegd.",
+    vr_account_meenemen:"Account meenemen",
+    email_titel:"E-mail koppelen", email_uitleg:"Koppel een e-mail + wachtwoord zodat je je account op een ander toestel kan gebruiken. Dit is optioneel.",
+    email_ph:"E-mailadres", email_ww_ph:"Wachtwoord (min. 6 tekens)", email_ww_oog:"Wachtwoord tonen", email_koppel:"Koppelen",
+    prof_laden:"Laden…", vp_titel:"Producten", vp_zoek_ph:"Zoeken…",
+    uname_titel:"Kies je gebruikersnaam", uname_uitleg:"Zo vinden vrienden je terug. Geen e-mail nodig.",
+    uname_ph:"Gebruikersnaam", uname_regels:"3–20 tekens · letters, cijfers of _", uname_klaar:"Klaar",
+    uname_login:"Ik heb al een account — inloggen",
+    scan_titel:"Scan barcode", scan_status_dflt:"Hou de barcode in het vak — genoeg licht en dicht genoeg.",
+    instellingen:"Instellingen", taal_label:"Taal van de app",
+    wo_geen_oef:"Nog geen oefeningen voor {dag}.<br>Typ hieronder je eerste oefening.",
+    wo_laatst:"laatst: {x}", wo_nooit_gelogd:"nog niet gelogd", wo_cardio_badge:"cardio",
+    wo_hint_vandaag:"Oefeningen die je hier toevoegt komen elke {dag} terug.",
+    wo_hint_ander:"Je bewerkt de vaste oefeningen voor {dag}.",
+    home_kcal_teaser:"{a} / {b} kcal vandaag", home_training_teaser:"{n} {woord} vandaag",
+    home_oef_enkel:"oefening", home_oef_meer:"oefeningen", home_gewicht_teaser:"{g} kg · laatste meting",
+    dash_kcal_over:"kcal over", dash_kcal_boven:"kcal boven doel", dash_doel_sub:"doel {n} kcal", dash_doel_macro:"doel {n}g",
+    log_leeg:"Nog niets gegeten vandaag. Zoek hierboven je eerste item.",
+    wk_week:"Week", wk_maand:"Maand", wk_kcaldag:"kcal/dag", wk_opdoel:"op doel", wk_training:"training", wk_water:"water",
+    lb_geen_data:"nog geen data", lb_kon_niet_laden:"Kon ranglijst niet laden.",
+    lb_uitleg_doel:"Wie zit vandaag het dichtst bij z'n doel?",
+    lb_uitleg_consistentie:"Wie zat deze week de meeste dagen op doel (binnen 100 kcal)?",
+    lb_uitleg_trainingweek:"Wie trainde de meeste dagen deze week?",
+    lb_uitleg_totaalkcal:"Totaal aantal calorieën ooit gelogd (alle dagen samen).",
+    lb_uitleg_totaaltraining:"Totaal aantal dagen getraind (aller tijden).",
+    lb_uitleg_bestedag:"Hoogste aantal calorieën op één dag.",
+    lb_uitleg_streak:"Wie logt het langst zonder onderbreking? 🔥",
+    lb_uitleg_waterdag:"Wie dronk vandaag het meeste water?",
+    lb_uitleg_watertotaal:"Wie dronk in totaal de meeste glazen water? (1 glas = 250 ml)",
+    lb_op_doel_suffix:" op doel", dag_enkel:"dag", dag_meer:"dagen", glas_enkel:"glas", glas_meer:"glazen",
+    lb_geen_gegevens:"Nog geen gegevens om te ranken.", lb_jij:"jij",
+    gw_hint_ingevuld:"Al ingevuld voor vandaag — je kan het aanpassen.",
+    gw_stat_laatste:"laatste (kg)", gw_stat_vsvorige:"t.o.v. vorige", gw_stat_gemweek:"gem. deze week", gw_stat_sindsstart:"sinds start",
+    gw_graf_leeg_dag:"Vul minstens 2 dagen in om een grafiek te zien.",
+    gw_graf_leeg_week:"Er is nog maar {n} week met metingen. Vul meer dagen in.",
+    gw_legenda:"── gemeten &nbsp;&nbsp; ┈┈ trend",
+    gw_auto_actief_waarde:"Actief — je doel rekent nu met {kg} kg.",
+    gw_auto_actief_geen:"Actief, maar er is nog geen gewicht ingevuld.",
+    bmi_ondergewicht:"Ondergewicht", bmi_gezond:"Gezond gewicht", bmi_overgewicht:"Overgewicht", bmi_obesitas:"Obesitas",
+    bmi_hint_gewicht:"Vul je gewicht in voor je BMI.", bmi_hint_bereik:"Gezond gewicht voor {lengte} cm: {laag}–{hoog} kg.",
+    toast_doel_bijgestuurd:"Doel bijgestuurd met {teken}{n} kcal/dag",
+    kal_geen_aanpassing:"nog geen aanpassing", kal_actief_prefix:"Actief — {tekst}.",
+    kal_corr_tdag:"{teken}{n} kcal/dag t.o.v. de formule",
+    kal_meer_tekst:"Je lichaam verbrandt méér of neemt minder calorieën op dan de standaardformule denkt. Daarom mag je ongeveer <b>{pct}% meer eten</b> dan de formule voorspelt om je doel te halen.",
+    kal_minder_tekst:"Je lichaam verbrandt minder of neemt méér calorieën op dan de standaardformule denkt. Daarom ligt je doel ongeveer <b>{pct}% lager</b> dan de formule voorspelt.",
+    kal_nog_te_weinig:"Nog te weinig gegevens. Log minstens twee weken je eten én je gewicht.",
+    kal_week_van:"Week van {datum} · {n} {dagwoord} gelogd",
+    kal_gem_gegeten:"Gemiddeld gegeten", kal_verwacht:"Verwacht op de weegschaal", kal_werkelijk:"Werkelijk", kal_geschat_verbruik:"Geschat verbruik",
+    kal_te_weinig:"Te weinig metingen voor een betrouwbare bijsturing (min. 4 dagen eten en 3 weegmomenten per week).",
+    kal_goed_zo:"Je zit goed — geen aanpassing nodig.",
+    kal_verbrandt:"Je verbrandt ongeveer <b>{n} kcal/dag {richting}</b> dan de formule denkt. ",
+    kal_meer_woord:"méér", kal_minder_woord:"minder", kal_toegepast:"Toegepast: ", kal_voorstel:"Voorstel: ",
+    kal_zet_schakelaar:" — zet de schakelaar aan om dit automatisch te laten gebeuren.",
+    toast_favoriet_toegevoegd:'"{naam}" bij favorieten ✓', toast_favoriet_verwijderd:'"{naam}" uit favorieten',
+    toast_maaltijd_toegevoegd:'"{naam}" toegevoegd ✓',
+    toast_geef_naam:"Geef je maaltijd een naam.", toast_voeg_eerst_eten_toe:"Voeg eerst iets van eten toe.",
+    toast_maaltijd_bewaard:"Maaltijd bewaard ✓", toast_niets_gelogd:"Je hebt vandaag nog niets gelogd.",
+    toast_vul_calorieen:"Vul een aantal calorieën in.", toast_kcal_toegevoegd:"{n} kcal toegevoegd ✓",
+    toast_vul_hoeveelheid:"Vul een hoeveelheid in.", toast_naam_bestaat:"Er bestaat al iets met die naam — kies een andere.",
+    toast_gevonden:"Gevonden: {naam} — controleer de waarden.", toast_product_fallback:"product",
+    toast_product_zonder_waarden:"Product gevonden, maar zonder voedingswaarden. Vul ze zelf aan.",
+    toast_product_niet_herkend:"Product niet herkend. Vul de gegevens zelf in.",
+    toast_product_naam_code:"Product {code}",
+    toast_email_gekoppeld:"E-mail gekoppeld! Je kan nu op een ander toestel inloggen.",
+    toast_verzoek_verstuurd:"Vriendschapsverzoek verstuurd naar {naam} ✓",
+    toast_maaltijd_al:"Die maaltijd heb je al.", toast_maaltijd_bij_jou:'"{naam}" bij jouw maaltijden ✓',
+    toast_product_al:"Dit product staat al bij jou.", toast_product_bij_jou:'"{naam}" toegevoegd aan jouw producten ✓',
+    toast_gewicht_bewaard:"Gewicht bewaard ✓", toast_vul_gewicht:"Vul eerst je gewicht in.",
+    toast_doel_rekent_gewicht:"Je caloriedoel rekent nu met je gewicht ✓",
+    water_doel_gehaald:"Doel gehaald! 💪", water_glazen_te_gaan:"≈ {n} {glaswoord} · nog {ml} ml te gaan",
+    water_stel_gewicht_in:"Stel je gewicht in bij het caloriedoel om een waterdoel te berekenen.",
+    mt_leeg:"Nog geen maaltijden. Maak er een van dingen die je vaak samen eet — bijvoorbeeld je ontbijt of je vaste lunch. Daarna log je die met één tik.",
+    mt_favoriet_title:"Favoriet", mt_aanpassen_title:"Aanpassen",
+    nieuw_waarden_ml:"Waarden per 100 ml:",
+    nieuw_stuk_hint_drank:'Optioneel — inhoud van 1 glas/blik in ml (voor "per glas"):',
+    nieuw_stuk_ph_drank:"ml per glas (bv. 250)",
+    nieuw_wijzigingen_bewaren:"Wijzigingen bewaren", nieuw_herstel_standaard:"Herstel standaardwaarden",
+    zeker_verwijderen:"Zeker? Tik nogmaals om te verwijderen", zeker_wissen:"Zeker? Tik nogmaals",
+    scan_camera_geweigerd:"Camera geweigerd. Sta camera toe: telefoon Instellingen → Apps → Chrome → Permissions → Camera → Allow. Probeer daarna opnieuw.",
+    scan_camera_niet_beschikbaar:"Camera niet beschikbaar — misschien in gebruik door een andere app. Sluit die app en probeer opnieuw.",
+    scan_https_nodig:"Camera vereist https. Open de app via je github.io-link.",
+    scan_kon_niet_starten:"Kon de camera niet starten. Sluit het venster en probeer opnieuw.",
+    scan_camera_starten:"Camera starten…", scan_kon_niet_laden:"Kon de scanner niet laden. Ben je online?",
+    scan_opzoeken:"Barcode {code} — opzoeken…", scan_opzoeken_mislukt:"Opzoeken mislukt — ben je online? Probeer opnieuw of vul zelf in.",
+    kd_doel_suffix:"/ doel {n}", kd_alleen_totaal:"Voor deze dag is enkel het totaal bewaard (van vóór deze versie). Vanaf nu wordt ook bewaard wat je precies at.",
+    wo_vorige_keer:"Vorige keer ({datum}):<br><b>{tekst}</b>", wo_geen_eerdere:"Nog geen eerdere sessie — dit wordt je startpunt.",
+    wo_bijwerken:"Bijwerken",
+    wo_cardio_ph:"Cardio toevoegen (bv. Lopen)…",
+    metriek_gewicht:"Gewicht", metriek_tempo:"Tempo",
+    uname_regels_fout:"3–20 tekens: letters, cijfers of _", uname_geen_verbinding:"Even geen verbinding — probeer zo opnieuw.",
+    uname_controleren:"Controleren…", uname_bezet:"Die naam is al bezet, kies een andere.", algemene_fout:"Er ging iets mis. Probeer opnieuw.",
+    mn_gekoppeld:'✓ Gekoppeld aan <b>{email}</b><br><span>Je kan met deze e-mail inloggen op een ander toestel.</span>',
+    mn_uitloggen_knop:"Uitloggen op dit toestel", mn_koppel_uitleg:"Koppel een e-mail zodat je je progressie kan meenemen naar een ander toestel. Optioneel — je account werkt ook zonder.",
+    mn_login_knop:"Inloggen op bestaand account",
+    email_uitleg_koppel:"Koppel een e-mail + wachtwoord aan je huidige account, zodat je het op een ander toestel kan gebruiken. Je houdt je gegevens en vrienden.",
+    email_uitleg_login:"Log in met de e-mail en het wachtwoord die je eerder koppelde. Let op: je huidige (niet-gekoppelde) gegevens op dit toestel worden dan vervangen door je bestaande account.",
+    email_knop_inloggen:"Inloggen", email_vul_geldig:"Vul een geldig e-mailadres in.", email_ww_min6:"Wachtwoord moet minstens 6 tekens zijn.",
+    email_bezig:"Bezig…", email_fout_in_use:'Die e-mail is al gekoppeld aan een account. Gebruik "Inloggen".',
+    email_fout_wrong_pw:"E-mail of wachtwoord klopt niet.", email_fout_not_found:"Geen account met die e-mail.",
+    email_fout_not_allowed:'E-mail inloggen staat nog uit in Firebase (zet "Email/Password" aan).',
+    confirm_uitloggen:"Uitloggen op dit toestel? Je kan later opnieuw inloggen met je e-mail.",
+    stat_totaal_kcal:"totaal kcal", stat_trainingen:"trainingen", stat_hoogste_dag:"hoogste dag",
+    stat_glazen_water:"glazen water", stat_dagen_op_rij:"dagen op rij",
+    prof_geen_doel:"geen doel ingesteld", prof_kcal_vandaag_label:"kcal vandaag",
+    prof_macros_line:"E {e}g · K {k}g · V {v}g",
+    prof_gegeten_vandaag:"Gegeten vandaag", prof_niets_gegeten:"Nog niets gegeten vandaag.",
+    prof_niets_gelogd:"Nog niets gelogd vandaag.",
+    vp_open_knop:"🍽 {bezit} producten &amp; maaltijden", vp_nieuw_badge:"{n} nieuw",
+    prof_training_vandaag:"Training vandaag", prof_geen_training:"Geen training vandaag.",
+    prof_kon_niet_laden:"Kon dit profiel niet laden.",
+    bezit_haar:"Haar", bezit_zijn:"Zijn", bezit_hun:"Hun",
+    vp_producten_titel:"{bezit} producten", vp_tab_nieuw:"Nieuw ({n})", vp_tab_heb:"Heb je al ({n})", vp_tab_maaltijden:"Maaltijden ({n})",
+    vp_niets_gevonden:"Niets gevonden.", vp_geen_maaltijden:"{naam} heeft nog geen maaltijden gemaakt.",
+    vp_tip_maaltijd:"Tik op een maaltijd om ze bij jouw maaltijden te zetten.",
+    vp_heb_je:"✓ heb je", vp_toevoegen_actie:"+ toevoegen",
+    vp_alles_van:"Je hebt al alles van {naam}.", vp_geen_eigen:"{naam} heeft nog geen eigen producten.",
+    vp_niets_gemeenschappelijk:"Nog niets gemeenschappelijk.", vp_tip_product:"Tik op een product om het aan jouw lijst toe te voegen.",
+    vp_toegevoegd:"✓ toegevoegd", label_drank:"drank",
+    fav_leeg:"Tik op ☆ bij een product of maaltijd om het hier als favoriet te zetten.",
+    mb_zoek_leeg:"Zoek hierboven en tik iets aan om het aan deze maaltijd toe te voegen.",
+    mb_portie_kcal:"{kc} kcal · E {e} K {k} V {v}",
+    eenheid_ml_label:"Ml", per_x_label:"Per {se}", se_glas_fallback:"glas", se_stuk_fallback:"stuk",
+    calc_res_eiwit:"{g}g eiwit", calc_res_koolh:"{g}g koolh.", calc_res_vet:"{g}g vet",
+    doel_knop_ingesteld:"🎯&nbsp;&nbsp;Doel {kcal} kcal · {e}e / {k}k / {v}v — aanpassen",
+    vr_verwijder_knop:"Verwijder", vr_ongeldige_naam:"Vul een geldige gebruikersnaam in.", vr_dat_ben_jij:"Dat ben jij. :)",
+    vr_zoeken_bezig:"Zoeken…", vr_geen_gebruiker:"Geen gebruiker met die naam.", vr_al_vrienden:"Jullie zijn al vrienden.",
+    vr_verzoek_sturen:"Verzoek sturen", vr_zoeken_mislukt:"Zoeken mislukt. Probeer opnieuw.",
+    vr_verzoek_al:"Verzoek al verstuurd.", vr_verzoek_verstuurd_naar:"✓ Vriendschapsverzoek verstuurd naar {naam}",
+    vr_versturen_mislukt:"Versturen mislukt. Probeer opnieuw.",
+    vr_accepteer_knop:"Accepteer",
+    gw_vul_geldig:"Vul een geldig gewicht in (kg).",
+    account_nog_laden:"Je account wordt nog geladen — probeer zo opnieuw.",
+  },
+  en: {
+    nav_overzicht:"Overview", nav_voeding:"Nutrition", nav_workout:"Workout", nav_gewicht:"Weight",
+    nav_leaderboards:"Leaderboards", nav_account:"Account",
+    home_voeding_sub:"Track calories & macros", home_workout_sub:"Log your training",
+    home_gewicht_sub:"Daily weight & progress", home_lb_sub:"Rankings with your friends",
+    terug_home:"‹ Home",
+    gw_lab:"Weight today", gw_bewaar:"Save", gw_hint_dflt:"Preferably weigh yourself at the same time each day (e.g. in the morning).",
+    bmi_titel:"BMI", bmi_lengte:"Height", bmi_hint:"Enter your height to see your BMI.",
+    gw_perdag:"Per day", gw_perweek:"Per week",
+    gw_auto_titel1:"Use for calorie goal", gw_auto_sub1:"Uses the average of your last full week.",
+    gw_auto_titel2:"Auto-adjust goal", gw_auto_sub2:"Compares your actual weight trend with what was expected, and adjusts your goal step by step.",
+    gw_alle_metingen:"All measurements", gw_geen_metingen:"No measurements yet.",
+    titel_leaderboards:"Leaderboards",
+    lb_doel:"Goal today", lb_consistent:"Consistent", lb_trainingweek:"Training / week",
+    lb_totaalkcal:"Total kcal", lb_totaaltraining:"Total training", lb_hoogstedag:"Highest day",
+    lb_streak:"Streak 🔥", lb_waterdag:"Water today", lb_watertotaal:"Total water",
+    vr_leeg_vrienden_lb:"Add friends to see a leaderboard.",
+    titel_vandaag:"Today", kcal_label:"kcal",
+    macro_eiwit:"Protein", macro_koolh:"Carbs", macro_vet:"Fat",
+    doel_stel_in:"Set your calorie goal",
+    calc_titel:"Calculate calorie goal", calc_geslacht:"Gender", calc_man:"Man", calc_vrouw:"Woman",
+    calc_jouwgegevens:"Your details", calc_leeftijd:"Age", calc_lengte:"Height", calc_gewicht:"Weight",
+    calc_hoeactief:"How active are you?",
+    calc_zittend_t:"Sedentary", calc_zittend_d:"Office or study, little movement, no sport.",
+    calc_lichtactief_t:"Lightly active", calc_lichtactief_d:"Light exercise or sport 1–3× per week.",
+    calc_matigactief_t:"Moderately active", calc_matigactief_d:"Training or sport 3–5× per week.",
+    calc_zeeractief_t:"Very active", calc_zeeractief_d:"Intense exercise 6–7× per week.",
+    calc_extreemactief_t:"Extremely active", calc_extreemactief_d:"Physical work + (almost) daily intense training.",
+    calc_watisdoel:"What's your goal?", calc_afvallen:"Lose weight", calc_onderhoud:"Maintain", calc_bijkomen:"Gain weight",
+    calc_rustig:"Slow", calc_gemiddeld:"Moderate",
+    calc_bmr:"Resting metabolism (BMR)", calc_tdee:"Maintenance (TDEE)", calc_dagdoel:"Your daily goal",
+    calc_instellen:"Set as daily goal",
+    calc_disclaimer:"An estimate based on the Mifflin-St Jeor formula. Treat it as a starting point and adjust based on how your weight and energy actually evolve. Avoid extreme deficits.",
+    zoek_ph:"Type something you ate…", scan_barcode:"Scan barcode",
+    portie_gram:"Grams", portie_stuk:"Per piece",
+    portie_l_kcal:"kcal", portie_l_eiwit:"protein", portie_l_koolh:"carbs", portie_l_vet:"fat",
+    toevoegen:"Add",
+    nieuw_titel:"Add custom food", nieuw_naam_ph:"Name (e.g. Mom's lasagna)", nieuw_soort:"Type:",
+    nieuw_vast:"Solid (grams)", nieuw_drank:"Drink (ml)", nieuw_waarden_hint:"Values per 100 grams:",
+    nieuw_kcal_ph:"kcal", nieuw_eiwit_ph:"protein g", nieuw_koolh_ph:"carbs g", nieuw_vet_ph:"fat g",
+    nieuw_stuk_hint:'Optional — weight of 1 piece (for "per piece"):', nieuw_stuk_ph:"grams per piece (e.g. 120)",
+    nieuw_bewaar:"Save & select", verwijderen:"Delete",
+    water_min_klein:"+ small", water_min_groot:"+ large",
+    log_gegeten:"Eaten", log_wisdag:"Clear day", log_maaltijden:"🍽 Meals", log_snelkcal:"⚡ Quick kcal",
+    nav_maaltijden_kort:"Meals", log_snelkcal_kort:"Quick kcal",
+    voetnoot:"Values are per 100 g (or 100 ml for drinks) and based on standard reference values — small variations per product/brand are normal.",
+    kal_legenda_groen:"Within 100 kcal of your goal", kal_legenda_blauw:"More than 100 kcal under your goal",
+    kal_legenda_rood:"More than 100 kcal over your goal", kal_leeg_tekst:"Set a calorie goal first to see the colors.",
+    kal_titel_knop:"Calendar",
+    wd_ma:"Mo", wd_di:"Tu", wd_wo:"We", wd_do:"Th", wd_vr:"Fr", wd_za:"Sa", wd_zo:"Su",
+    mt_titel:"Meals", mt_nieuw:"+ Create new meal", mt_bewaar_vandaag:"Save today as a meal",
+    mb_titel:"Build a meal", mb_naam_ph:"Name (e.g. My breakfast)", mb_zoek_ph:"Search food to add…",
+    mb_bewaar:"Save meal",
+    sk_titel:"Quick-log calories", sk_uitleg:"Handy when eating out and you only have an estimate. Macros are optional.",
+    sk_naam_ph:"What was it? (optional)", sk_kcal_ph:"Calories", annuleren:"Cancel",
+    titel_workout:"Workout", wo_kracht:"Strength", wo_cardio:"Cardio", wo_oef_ph:"Add exercise…",
+    wo_min_set:"− set", wo_plus_set:"+ set", wo_tijd:"Time", wo_afstand:"Distance", wo_opslaan:"Save",
+    wo_progressie:"📈 View progress", wo_verwijder_oef:"Remove exercise from this day",
+    wo_grafiek_leeg:"Log this exercise at least twice to see progress.",
+    acc_titel:"Account", acc_sub_online:"Online account", acc_edit_title:"Edit name",
+    vr_vrienden_toevoegen:"Add friends", vr_zoek_ph:"Search by username…", vr_zoek_knop:"Search",
+    vr_verzoeken:"Requests", vr_mijn_vrienden:"My friends", vr_leeg_vrienden:"No friends added yet.",
+    vr_account_meenemen:"Take your account with you",
+    email_titel:"Link email", email_uitleg:"Link an email + password so you can use your account on another device. This is optional.",
+    email_ph:"Email address", email_ww_ph:"Password (min. 6 characters)", email_ww_oog:"Show password", email_koppel:"Link",
+    prof_laden:"Loading…", vp_titel:"Products", vp_zoek_ph:"Search…",
+    uname_titel:"Choose your username", uname_uitleg:"This is how friends find you. No email needed.",
+    uname_ph:"Username", uname_regels:"3–20 characters · letters, numbers or _", uname_klaar:"Done",
+    uname_login:"I already have an account — log in",
+    scan_titel:"Scan barcode", scan_status_dflt:"Hold the barcode in the frame — enough light and close enough.",
+    instellingen:"Settings", taal_label:"App language",
+    wo_geen_oef:"No exercises for {dag} yet.<br>Type your first exercise below.",
+    wo_laatst:"last: {x}", wo_nooit_gelogd:"not logged yet", wo_cardio_badge:"cardio",
+    wo_hint_vandaag:"Exercises you add here will repeat every {dag}.",
+    wo_hint_ander:"You're editing the fixed exercises for {dag}.",
+    home_kcal_teaser:"{a} / {b} kcal today", home_training_teaser:"{n} {woord} today",
+    home_oef_enkel:"exercise", home_oef_meer:"exercises", home_gewicht_teaser:"{g} kg · latest reading",
+    dash_kcal_over:"kcal left", dash_kcal_boven:"kcal over goal", dash_doel_sub:"goal {n} kcal", dash_doel_macro:"goal {n}g",
+    log_leeg:"Nothing eaten yet today. Search for your first item above.",
+    wk_week:"Week", wk_maand:"Month", wk_kcaldag:"kcal/day", wk_opdoel:"on goal", wk_training:"training", wk_water:"water",
+    lb_geen_data:"no data yet", lb_kon_niet_laden:"Couldn't load the leaderboard.",
+    lb_uitleg_doel:"Who's closest to their goal today?",
+    lb_uitleg_consistentie:"Who hit their goal (within 100 kcal) the most days this week?",
+    lb_uitleg_trainingweek:"Who trained the most days this week?",
+    lb_uitleg_totaalkcal:"Total calories ever logged (all days combined).",
+    lb_uitleg_totaaltraining:"Total number of days trained (all-time).",
+    lb_uitleg_bestedag:"Highest number of calories in a single day.",
+    lb_uitleg_streak:"Who's logged the longest without a break? 🔥",
+    lb_uitleg_waterdag:"Who drank the most water today?",
+    lb_uitleg_watertotaal:"Who drank the most glasses of water in total? (1 glass = 250 ml)",
+    lb_op_doel_suffix:" on goal", dag_enkel:"day", dag_meer:"days", glas_enkel:"glass", glas_meer:"glasses",
+    lb_geen_gegevens:"No data to rank yet.", lb_jij:"you",
+    gw_hint_ingevuld:"Already logged for today — you can adjust it.",
+    gw_stat_laatste:"latest (kg)", gw_stat_vsvorige:"vs previous", gw_stat_gemweek:"avg this week", gw_stat_sindsstart:"since start",
+    gw_graf_leeg_dag:"Log at least 2 days to see a chart.",
+    gw_graf_leeg_week:"Only {n} week of data so far. Log more days.",
+    gw_legenda:"── measured &nbsp;&nbsp; ┈┈ trend",
+    gw_auto_actief_waarde:"Active — your goal now uses {kg} kg.",
+    gw_auto_actief_geen:"Active, but no weight has been logged yet.",
+    bmi_ondergewicht:"Underweight", bmi_gezond:"Healthy weight", bmi_overgewicht:"Overweight", bmi_obesitas:"Obesity",
+    bmi_hint_gewicht:"Enter your weight to see your BMI.", bmi_hint_bereik:"Healthy weight for {lengte} cm: {laag}–{hoog} kg.",
+    toast_doel_bijgestuurd:"Goal adjusted by {teken}{n} kcal/day",
+    kal_geen_aanpassing:"no adjustment yet", kal_actief_prefix:"Active — {tekst}.",
+    kal_corr_tdag:"{teken}{n} kcal/day vs the formula",
+    kal_meer_tekst:"Your body burns more, or absorbs fewer calories, than the standard formula assumes. So you can eat roughly <b>{pct}% more</b> than the formula predicts to hit your goal.",
+    kal_minder_tekst:"Your body burns less, or absorbs more calories, than the standard formula assumes. So your goal is set roughly <b>{pct}% lower</b> than the formula predicts.",
+    kal_nog_te_weinig:"Not enough data yet. Log at least two weeks of food and weight.",
+    kal_week_van:"Week of {datum} · {n} {dagwoord} logged",
+    kal_gem_gegeten:"Average eaten", kal_verwacht:"Expected on the scale", kal_werkelijk:"Actual", kal_geschat_verbruik:"Estimated burn",
+    kal_te_weinig:"Not enough measurements for a reliable adjustment (min. 4 days of food and 3 weigh-ins per week).",
+    kal_goed_zo:"You're on track — no adjustment needed.",
+    kal_verbrandt:"You burn roughly <b>{n} kcal/day {richting}</b> than the formula thinks. ",
+    kal_meer_woord:"more", kal_minder_woord:"less", kal_toegepast:"Applied: ", kal_voorstel:"Suggestion: ",
+    kal_zet_schakelaar:" — turn on the switch to have this happen automatically.",
+    toast_favoriet_toegevoegd:'"{naam}" added to favorites ✓', toast_favoriet_verwijderd:'"{naam}" removed from favorites',
+    toast_maaltijd_toegevoegd:'"{naam}" added ✓',
+    toast_geef_naam:"Give your meal a name.", toast_voeg_eerst_eten_toe:"Add some food first.",
+    toast_maaltijd_bewaard:"Meal saved ✓", toast_niets_gelogd:"You haven't logged anything today yet.",
+    toast_vul_calorieen:"Enter a number of calories.", toast_kcal_toegevoegd:"{n} kcal added ✓",
+    toast_vul_hoeveelheid:"Enter an amount.", toast_naam_bestaat:"Something with that name already exists — pick another.",
+    toast_gevonden:"Found: {naam} — check the values.", toast_product_fallback:"product",
+    toast_product_zonder_waarden:"Product found, but without nutrition values. Fill them in yourself.",
+    toast_product_niet_herkend:"Product not recognized. Enter the details yourself.",
+    toast_product_naam_code:"Product {code}",
+    toast_email_gekoppeld:"Email linked! You can now log in on another device.",
+    toast_verzoek_verstuurd:"Friend request sent to {naam} ✓",
+    toast_maaltijd_al:"You already have that meal.", toast_maaltijd_bij_jou:'"{naam}" added to your meals ✓',
+    toast_product_al:"You already have this product.", toast_product_bij_jou:'"{naam}" added to your products ✓',
+    toast_gewicht_bewaard:"Weight saved ✓", toast_vul_gewicht:"Enter your weight first.",
+    toast_doel_rekent_gewicht:"Your calorie goal now uses your weight ✓",
+    water_doel_gehaald:"Goal reached! 💪", water_glazen_te_gaan:"≈ {n} {glaswoord} · {ml} ml to go",
+    water_stel_gewicht_in:"Set your weight in the calorie goal to calculate a water target.",
+    mt_leeg:"No meals yet. Create one from things you often eat together — like your breakfast or your usual lunch. Then log it with a single tap.",
+    mt_favoriet_title:"Favorite", mt_aanpassen_title:"Edit",
+    nieuw_waarden_ml:"Values per 100 ml:",
+    nieuw_stuk_hint_drank:'Optional — content of 1 glass/can in ml (for "per glass"):',
+    nieuw_stuk_ph_drank:"ml per glass (e.g. 250)",
+    nieuw_wijzigingen_bewaren:"Save changes", nieuw_herstel_standaard:"Restore default values",
+    zeker_verwijderen:"Sure? Tap again to delete", zeker_wissen:"Sure? Tap again",
+    scan_camera_geweigerd:"Camera denied. Allow the camera: phone Settings → Apps → Chrome → Permissions → Camera → Allow. Then try again.",
+    scan_camera_niet_beschikbaar:"Camera not available — maybe another app is using it. Close that app and try again.",
+    scan_https_nodig:"Camera requires https. Open the app via your github.io link.",
+    scan_kon_niet_starten:"Couldn't start the camera. Close this window and try again.",
+    scan_camera_starten:"Starting camera…", scan_kon_niet_laden:"Couldn't load the scanner. Are you online?",
+    scan_opzoeken:"Barcode {code} — looking up…", scan_opzoeken_mislukt:"Lookup failed — are you online? Try again or enter it yourself.",
+    kd_doel_suffix:"/ goal {n}", kd_alleen_totaal:"For this day, only the total was saved (from before this version). From now on what you ate is saved too.",
+    wo_vorige_keer:"Last time ({datum}):<br><b>{tekst}</b>", wo_geen_eerdere:"No earlier session yet — this will be your starting point.",
+    wo_bijwerken:"Update",
+    wo_cardio_ph:"Add cardio (e.g. Running)…",
+    metriek_gewicht:"Weight", metriek_tempo:"Pace",
+    uname_regels_fout:"3–20 characters: letters, numbers or _", uname_geen_verbinding:"No connection right now — try again in a moment.",
+    uname_controleren:"Checking…", uname_bezet:"That name is already taken, pick another.", algemene_fout:"Something went wrong. Try again.",
+    mn_gekoppeld:'✓ Linked to <b>{email}</b><br><span>You can log in with this email on another device.</span>',
+    mn_uitloggen_knop:"Log out on this device", mn_koppel_uitleg:"Link an email so you can take your progress to another device. Optional — your account also works without it.",
+    mn_login_knop:"Log in to existing account",
+    email_uitleg_koppel:"Link an email + password to your current account, so you can use it on another device. You keep your data and friends.",
+    email_uitleg_login:"Log in with the email and password you linked earlier. Note: your current (unlinked) data on this device will then be replaced by your existing account.",
+    email_knop_inloggen:"Log in", email_vul_geldig:"Enter a valid email address.", email_ww_min6:"Password must be at least 6 characters.",
+    email_bezig:"Working…", email_fout_in_use:'That email is already linked to an account. Use "Log in".',
+    email_fout_wrong_pw:"Email or password is incorrect.", email_fout_not_found:"No account with that email.",
+    email_fout_not_allowed:'Email sign-in is still off in Firebase (turn on "Email/Password").',
+    confirm_uitloggen:"Log out on this device? You can log back in later with your email.",
+    stat_totaal_kcal:"total kcal", stat_trainingen:"workouts", stat_hoogste_dag:"highest day",
+    stat_glazen_water:"glasses of water", stat_dagen_op_rij:"days in a row",
+    prof_geen_doel:"no goal set", prof_kcal_vandaag_label:"kcal today",
+    prof_macros_line:"P {e}g · C {k}g · F {v}g",
+    prof_gegeten_vandaag:"Eaten today", prof_niets_gegeten:"Nothing eaten yet today.",
+    prof_niets_gelogd:"Nothing logged yet today.",
+    vp_open_knop:"🍽 {bezit} products &amp; meals", vp_nieuw_badge:"{n} new",
+    prof_training_vandaag:"Training today", prof_geen_training:"No training today.",
+    prof_kon_niet_laden:"Couldn't load this profile.",
+    bezit_haar:"Her", bezit_zijn:"His", bezit_hun:"Their",
+    vp_producten_titel:"{bezit} products", vp_tab_nieuw:"New ({n})", vp_tab_heb:"Already have ({n})", vp_tab_maaltijden:"Meals ({n})",
+    vp_niets_gevonden:"Nothing found.", vp_geen_maaltijden:"{naam} hasn't created any meals yet.",
+    vp_tip_maaltijd:"Tap a meal to add it to your meals.",
+    vp_heb_je:"✓ you have it", vp_toevoegen_actie:"+ add",
+    vp_alles_van:"You already have everything from {naam}.", vp_geen_eigen:"{naam} hasn't added any custom products yet.",
+    vp_niets_gemeenschappelijk:"Nothing in common yet.", vp_tip_product:"Tap a product to add it to your list.",
+    vp_toegevoegd:"✓ added", label_drank:"drink",
+    fav_leeg:"Tap ☆ on a product or meal to set it as a favorite here.",
+    mb_zoek_leeg:"Search above and tap something to add it to this meal.",
+    mb_portie_kcal:"{kc} kcal · P {e} C {k} F {v}",
+    eenheid_ml_label:"Ml", per_x_label:"Per {se}", se_glas_fallback:"glass", se_stuk_fallback:"piece",
+    calc_res_eiwit:"{g}g protein", calc_res_koolh:"{g}g carbs", calc_res_vet:"{g}g fat",
+    doel_knop_ingesteld:"🎯&nbsp;&nbsp;Goal {kcal} kcal · {e}p / {k}c / {v}f — edit",
+    vr_verwijder_knop:"Remove", vr_ongeldige_naam:"Enter a valid username.", vr_dat_ben_jij:"That's you. :)",
+    vr_zoeken_bezig:"Searching…", vr_geen_gebruiker:"No user with that name.", vr_al_vrienden:"You're already friends.",
+    vr_verzoek_sturen:"Send request", vr_zoeken_mislukt:"Search failed. Try again.",
+    vr_verzoek_al:"Request already sent.", vr_verzoek_verstuurd_naar:"✓ Friend request sent to {naam}",
+    vr_versturen_mislukt:"Failed to send. Try again.",
+    vr_accepteer_knop:"Accept",
+    gw_vul_geldig:"Enter a valid weight (kg).",
+    account_nog_laden:"Your account is still loading — try again in a moment.",
+  }
+};
+function t(k){
+  const w = VERT[TAAL];
+  if(w && w[k]!=null) return w[k];
+  return (VERT.nl[k]!=null) ? VERT.nl[k] : k;
+}
+// Vertaalde tekst met eenvoudige {plaatshouder}-vervanging, bv. tf('wo_laatst', {x:'3×80kg'})
+function tf(k, vervang){
+  let s = t(k);
+  for(const key in vervang){ s = s.split('{'+key+'}').join(vervang[key]); }
+  return s;
+}
+function dagenWoord(n){ return n===1 ? t('dag_enkel') : t('dag_meer'); }
+function glasWoord(n){ return n===1 ? t('glas_enkel') : t('glas_meer'); }
+function vertaalPagina(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = t(el.getAttribute('data-i18n')); });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.placeholder = t(el.getAttribute('data-i18n-ph')); });
+  document.querySelectorAll('[data-i18n-title]').forEach(el=>{ el.title = t(el.getAttribute('data-i18n-title')); });
+  document.querySelectorAll('[data-i18n-aria]').forEach(el=>{ el.setAttribute('aria-label', t(el.getAttribute('data-i18n-aria'))); });
+  document.documentElement.lang = TAAL;
+  document.querySelectorAll('.taal-knop').forEach(b=> b.classList.toggle('actief', b.dataset.taal===TAAL));
+}
+function zetTaal(nieuw){
+  if(nieuw!==('nl') && nieuw!=='en') return;
+  TAAL = nieuw;
+  try{ localStorage.setItem('fitlog_taal', TAAL); }catch(e){}
+  vertaalPagina();
+  if(typeof herrenderAlles === 'function') herrenderAlles();
+}
+
 // ---------- State ----------
 let log = [];          // gegeten items vandaag
 let eigen = [];        // eigen toegevoegde voedingsmiddelen
@@ -2343,11 +2787,11 @@ function updateWater(){
     const pct = Math.max(0, Math.min(100, tot/doel*100));
     $('waterVul').style.width = pct + '%';
     const glazen = Math.round(tot/250);
-    $('waterHint').textContent = tot>=doel ? 'Doel gehaald! 💪' : ('≈ '+glazen+' '+(glazen===1?'glas':'glazen')+' · nog '+Math.max(0,doel-tot).toLocaleString('nl-BE')+' ml te gaan');
+    $('waterHint').textContent = tot>=doel ? t('water_doel_gehaald') : tf('water_glazen_te_gaan', {n:glazen, glaswoord:glasWoord(glazen), ml:Math.max(0,doel-tot).toLocaleString('nl-BE')});
   } else {
     $('waterDoel').textContent = '–';
     $('waterVul').style.width = '0%';
-    $('waterHint').textContent = 'Stel je gewicht in bij het caloriedoel om een waterdoel te berekenen.';
+    $('waterHint').textContent = t('water_stel_gewicht_in');
   }
 }
 function voegWaterGlas(ml){ waterLijst.push(ml); bewaarWater(); updateWater(); }
@@ -2419,8 +2863,8 @@ function renderGewicht(){
   const dagen = gewichtDagen();
   $('gwInput').value = (gewichtLog[vandaag]!=null) ? gewichtLog[vandaag] : '';
   $('gwHint').textContent = (gewichtLog[vandaag]!=null)
-    ? 'Al ingevuld voor vandaag — je kan het aanpassen.'
-    : 'Weeg je bij voorkeur elke dag op hetzelfde moment (bv. \'s ochtends).';
+    ? t('gw_hint_ingevuld')
+    : t('gw_hint_dflt');
 
   // Stats
   const laatste = dagen.length ? gewichtLog[dagen[dagen.length-1]] : null;
@@ -2435,10 +2879,10 @@ function renderGewicht(){
     return '<span class="lb-diff '+kl+'">'+(d>0?'+':(d<0?'−':''))+Math.abs(d).toFixed(1)+'</span>';
   }
   $('gwStats').innerHTML = dagen.length ? (
-    '<div class="stat-vak"><div class="stat-getal">'+laatste.toFixed(1)+'</div><div class="stat-lab">laatste (kg)</div></div>'+
-    '<div class="stat-vak"><div class="stat-getal">'+deltaTxt(laatste, vorige)+'</div><div class="stat-lab">t.o.v. vorige</div></div>'+
-    '<div class="stat-vak"><div class="stat-getal">'+(dezeWeek?dezeWeek.gem.toFixed(1):'–')+'</div><div class="stat-lab">gem. deze week</div></div>'+
-    '<div class="stat-vak"><div class="stat-getal">'+deltaTxt(laatste, eerste)+'</div><div class="stat-lab">sinds start</div></div>'
+    '<div class="stat-vak"><div class="stat-getal">'+laatste.toFixed(1)+'</div><div class="stat-lab">'+t('gw_stat_laatste')+'</div></div>'+
+    '<div class="stat-vak"><div class="stat-getal">'+deltaTxt(laatste, vorige)+'</div><div class="stat-lab">'+t('gw_stat_vsvorige')+'</div></div>'+
+    '<div class="stat-vak"><div class="stat-getal">'+(dezeWeek?dezeWeek.gem.toFixed(1):'–')+'</div><div class="stat-lab">'+t('gw_stat_gemweek')+'</div></div>'+
+    '<div class="stat-vak"><div class="stat-getal">'+deltaTxt(laatste, eerste)+'</div><div class="stat-lab">'+t('gw_stat_sindsstart')+'</div></div>'
   ) : '';
 
   // Grafiek
@@ -2446,18 +2890,18 @@ function renderGewicht(){
   if(gwModus==='dag'){
     const laatsteDagen = dagen.slice(-14);
     if(laatsteDagen.length<2){
-      box.innerHTML = '<div class="vr-leeg">Vul minstens 2 dagen in om een grafiek te zien.</div>';
+      box.innerHTML = '<div class="vr-leeg">'+t('gw_graf_leeg_dag')+'</div>';
     } else {
       box.innerHTML = svgLijnGrafiek(laatsteDagen.map(k=>({ x: datumKort(k), y: Math.round(gewichtLog[k]*10)/10 })), 'kg', {kleur:'#BE96FF', decimalen:1, trend:true});
-      if(laatsteDagen.length>=3) box.innerHTML += '<div class="gw-legenda">── gemeten &nbsp;&nbsp; ┈┈ trend</div>';
+      if(laatsteDagen.length>=3) box.innerHTML += '<div class="gw-legenda">'+t('gw_legenda')+'</div>';
     }
   } else {
     const w = weken.slice(-10);
     if(w.length<2){
-      box.innerHTML = '<div class="vr-leeg">Er is nog maar '+w.length+' week met metingen. Vul meer dagen in.</div>';
+      box.innerHTML = '<div class="vr-leeg">'+tf('gw_graf_leeg_week', {n:w.length})+'</div>';
     } else {
       box.innerHTML = svgLijnGrafiek(w.map(x=>({ x: datumKort(x.week), y: Math.round(x.gem*10)/10 })), 'kg', {kleur:'#BE96FF', decimalen:1, trend:true});
-      if(w.length>=3) box.innerHTML += '<div class="gw-legenda">── gemeten &nbsp;&nbsp; ┈┈ trend</div>';
+      if(w.length>=3) box.innerHTML += '<div class="gw-legenda">'+t('gw_legenda')+'</div>';
     }
   }
 
@@ -2467,13 +2911,13 @@ function renderGewicht(){
   sch.setAttribute('aria-checked', gewichtAuto ? 'true' : 'false');
   const auto = autoGewichtWaarde();
   $('gwAutoSub').textContent = gewichtAuto
-    ? (auto!=null ? ('Actief — je doel rekent nu met '+auto.toFixed(1)+' kg.') : 'Actief, maar er is nog geen gewicht ingevuld.')
-    : 'Neemt het gemiddelde van je laatste volledige week.';
+    ? (auto!=null ? tf('gw_auto_actief_waarde', {kg:auto.toFixed(1)}) : t('gw_auto_actief_geen'))
+    : t('gw_auto_sub1');
 
   // Lijst
   $('gwLijst').innerHTML = dagen.length
     ? dagen.slice().reverse().map(k=>'<div class="gw-item"><span class="gw-d">'+datumLang(k)+'</span><span class="gw-kg">'+gewichtLog[k].toFixed(1)+' kg</span><button class="gw-del" data-gwd="'+k+'">✕</button></div>').join('')
-    : '<div class="vr-leeg">Nog geen metingen ingevuld.</div>';
+    : '<div class="vr-leeg">'+t('gw_geen_metingen')+'</div>';
   $('gwLijst').querySelectorAll('[data-gwd]').forEach(b=>{
     b.onclick = ()=>{ delete gewichtLog[b.dataset.gwd]; bewaarGewicht(); pasAutoGewichtToe(); renderGewicht(); updateHomeTeasers(); };
   });
@@ -2482,7 +2926,7 @@ function renderGewicht(){
 }
 function datumLang(sleutel){
   const [j,m,d] = sleutel.split('-').map(Number);
-  const dagen = ['zo','ma','di','wo','do','vr','za'];
+  const dagen = TAAL==='en' ? ['su','mo','tu','we','th','fr','sa'] : ['zo','ma','di','wo','do','vr','za'];
   const dt = new Date(j, m-1, d);
   return dagen[dt.getDay()]+' '+d+'/'+m;
 }
@@ -2567,17 +3011,17 @@ function pasKalibratieToe(stil){
   bewaarKalibratie();
   const r = berekenCalc();
   if(r){ DOEL = r; bewaarDoel(); bewaarGeschiedenis(); updateDashboard(); }
-  if(!stil) toonToast('Doel bijgestuurd met '+(a.stap>0?'+':'−')+Math.abs(a.stap)+' kcal/dag');
+  if(!stil) toonToast(tf('toast_doel_bijgestuurd', {teken:(a.stap>0?'+':'−'), n:Math.abs(a.stap)}));
   return a;
 }
 function renderKalibratie(){
   const sch = $('gwKal');
   sch.classList.toggle('aan', kalibreerAuto);
   sch.setAttribute('aria-checked', kalibreerAuto ? 'true' : 'false');
-  const corrTxt = doelCorrectie===0 ? 'nog geen aanpassing' : ((doelCorrectie>0?'+':'−')+Math.abs(doelCorrectie)+' kcal/dag t.o.v. de formule');
+  const corrTxt = doelCorrectie===0 ? t('kal_geen_aanpassing') : tf('kal_corr_tdag', {teken:(doelCorrectie>0?'+':'−'), n:Math.abs(doelCorrectie)});
   $('gwKalSub').textContent = kalibreerAuto
-    ? ('Actief — '+corrTxt+'.')
-    : 'Vergelijkt je echte gewichtsverloop met wat verwacht was, en stuurt je doel stap voor stap bij.';
+    ? tf('kal_actief_prefix', {tekst:corrTxt})
+    : t('gw_auto_sub2');
 
   // Huidige aanpassing t.o.v. de formule (in %) met uitleg
   const banner = $('gwCorrectie');
@@ -2588,38 +3032,39 @@ function renderKalibratie(){
       const basis = DOEL.kcal - doelCorrectie;   // formulewaarde zonder correctie
       const pct = basis>0 ? Math.round(Math.abs(doelCorrectie)/basis*1000)/10 : 0;
       const meer = doelCorrectie > 0;
+      const pctTxt = TAAL==='en' ? pct.toString() : pct.toString().replace('.',',');
       banner.style.display = 'block';
       banner.className = 'gw-correctie ' + (meer ? 'meer' : 'minder');
       banner.innerHTML =
-        '<div class="gc-groot">'+(meer?'+':'−')+pct.toString().replace('.',',')+'% '+
+        '<div class="gc-groot">'+(meer?'+':'−')+pctTxt+'% '+
           '<span>('+(meer?'+':'−')+Math.abs(doelCorrectie)+' kcal/dag)</span></div>'+
         '<div class="gc-uitleg">'+(meer
-          ? 'Je lichaam verbrandt méér of neemt minder calorieën op dan de standaardformule denkt. Daarom mag je ongeveer <b>'+pct.toString().replace('.',',')+'% meer eten</b> dan de formule voorspelt om je doel te halen.'
-          : 'Je lichaam verbrandt minder of neemt méér calorieën op dan de standaardformule denkt. Daarom ligt je doel ongeveer <b>'+pct.toString().replace('.',',')+'% lager</b> dan de formule voorspelt.')+
+          ? tf('kal_meer_tekst', {pct:pctTxt})
+          : tf('kal_minder_tekst', {pct:pctTxt}))+
         '</div>';
     }
   }
 
   const box = $('gwAnalyse');
   const a = kalibratieAnalyse();
-  if(!a){ box.innerHTML = '<div class="vr-leeg">Nog te weinig gegevens. Log minstens twee weken je eten én je gewicht.</div>'; return; }
+  if(!a){ box.innerHTML = '<div class="vr-leeg">'+t('kal_nog_te_weinig')+'</div>'; return; }
   const fmt = (v)=> (v>0?'+':(v<0?'−':''))+Math.abs(v).toFixed(2)+' kg';
   let html = '<div class="kal-kaart">';
-  html += '<div class="kal-week">Week van '+datumKort(a.week)+' · '+a.inname.dagen+' dag'+(a.inname.dagen===1?'':'en')+' gelogd</div>';
-  html += '<div class="kal-rij"><span>Gemiddeld gegeten</span><b>'+Math.round(a.inname.gem).toLocaleString('nl-BE')+' kcal/dag</b></div>';
-  html += '<div class="kal-rij"><span>Verwacht op de weegschaal</span><b>'+fmt(a.verwacht)+'</b></div>';
-  html += '<div class="kal-rij"><span>Werkelijk</span><b>'+fmt(a.werkelijk)+'</b></div>';
-  html += '<div class="kal-rij"><span>Geschat verbruik</span><b>'+Math.round(a.tdeeEcht).toLocaleString('nl-BE')+' kcal/dag</b></div>';
+  html += '<div class="kal-week">'+tf('kal_week_van', {datum:datumKort(a.week), n:a.inname.dagen, dagwoord:dagenWoord(a.inname.dagen)})+'</div>';
+  html += '<div class="kal-rij"><span>'+t('kal_gem_gegeten')+'</span><b>'+Math.round(a.inname.gem).toLocaleString('nl-BE')+' kcal/dag</b></div>';
+  html += '<div class="kal-rij"><span>'+t('kal_verwacht')+'</span><b>'+fmt(a.verwacht)+'</b></div>';
+  html += '<div class="kal-rij"><span>'+t('kal_werkelijk')+'</span><b>'+fmt(a.werkelijk)+'</b></div>';
+  html += '<div class="kal-rij"><span>'+t('kal_geschat_verbruik')+'</span><b>'+Math.round(a.tdeeEcht).toLocaleString('nl-BE')+' kcal/dag</b></div>';
   if(!a.genoegData){
-    html += '<div class="kal-note">Te weinig metingen voor een betrouwbare bijsturing (min. 4 dagen eten en 3 weegmomenten per week).</div>';
+    html += '<div class="kal-note">'+t('kal_te_weinig')+'</div>';
   } else if(a.stap===0){
-    html += '<div class="kal-note ok">Je zit goed — geen aanpassing nodig.</div>';
+    html += '<div class="kal-note ok">'+t('kal_goed_zo')+'</div>';
   } else {
-    const richting = a.fout>0 ? 'méér' : 'minder';
-    html += '<div class="kal-note">Je verbrandt ongeveer <b>'+Math.abs(Math.round(a.fout))+' kcal/dag '+richting+'</b> dan de formule denkt. '+
-            (kalibreerAuto && laatsteKalibratie===a.week ? 'Toegepast: ' : 'Voorstel: ')+
+    const richting = a.fout>0 ? t('kal_meer_woord') : t('kal_minder_woord');
+    html += '<div class="kal-note">'+tf('kal_verbrandt', {n:Math.abs(Math.round(a.fout)), richting:richting})+
+            (kalibreerAuto && laatsteKalibratie===a.week ? t('kal_toegepast') : t('kal_voorstel'))+
             '<b>'+(a.stap>0?'+':'−')+Math.abs(a.stap)+' kcal/dag</b>'+
-            (kalibreerAuto ? '' : ' — zet de schakelaar aan om dit automatisch te laten gebeuren.')+'</div>';
+            (kalibreerAuto ? '' : t('kal_zet_schakelaar'))+'</div>';
   }
   html += '</div>';
   box.innerHTML = html;
@@ -2650,8 +3095,8 @@ function noteerGebruik(it){
 function isFavoriet(naam){ return favorieten.indexOf(naam) !== -1; }
 function wisselFavoriet(naam){
   const i = favorieten.indexOf(naam);
-  if(i===-1){ favorieten.unshift(naam); toonToast('"'+naam+'" bij favorieten ✓'); }
-  else { favorieten.splice(i,1); toonToast('"'+naam+'" uit favorieten'); }
+  if(i===-1){ favorieten.unshift(naam); toonToast(tf('toast_favoriet_toegevoegd', {naam:naam})); }
+  else { favorieten.splice(i,1); toonToast(tf('toast_favoriet_verwijderd', {naam:naam})); }
   bewaarSnel(); renderSnel();
 }
 function renderSnel(){
@@ -2660,7 +3105,7 @@ function renderSnel(){
   const favEten = favorieten.filter(n=> alleEten().some(x=>x.n===n));
   if(favMaaltijden.length===0 && favEten.length===0){
     box.style.display='block';
-    box.innerHTML = '<div class="fav-leeg">Tik op ☆ bij een product of maaltijd om het hier als favoriet te zetten.</div>';
+    box.innerHTML = '<div class="fav-leeg">'+t('fav_leeg')+'</div>';
     return;
   }
   box.style.display='flex';
@@ -2687,16 +3132,16 @@ function openMaaltijden(){
 function renderMaaltijden(){
   const box = $('mtLijst');
   if(maaltijden.length===0){
-    box.innerHTML = '<div class="mt-uitleg">Nog geen maaltijden. Maak er een van dingen die je vaak samen eet — bijvoorbeeld je ontbijt of je vaste lunch. Daarna log je die met één tik.</div>';
+    box.innerHTML = '<div class="mt-uitleg">'+t('mt_leeg')+'</div>';
     return;
   }
   box.innerHTML = maaltijden.map((m,i)=>{
     let kc=0; for(const it of m.items) kc+=it.kc;
     return '<div class="mt-item">'+
-      '<button class="mt-ster'+(m.fav?' aan':'')+'" data-mtf="'+i+'" title="Favoriet">'+(m.fav?'★':'☆')+'</button>'+
+      '<button class="mt-ster'+(m.fav?' aan':'')+'" data-mtf="'+i+'" title="'+t('mt_favoriet_title')+'">'+(m.fav?'★':'☆')+'</button>'+
       '<div class="mt-info" data-mt="'+i+'"><div class="mt-naam">'+escapeHtml(m.naam)+'</div>'+
       '<div class="mt-sub">'+m.items.length+' item'+(m.items.length===1?'':'s')+' · '+rond(kc)+' kcal</div></div>'+
-      '<button class="mt-bew" data-mtb="'+i+'" title="Aanpassen">✎</button>'+
+      '<button class="mt-bew" data-mtb="'+i+'" title="'+t('mt_aanpassen_title')+'">✎</button>'+
       '<button class="mt-del" data-mtd="'+i+'">✕</button></div>';
   }).join('');
   box.querySelectorAll('[data-mt]').forEach(b=> b.onclick = ()=> voegMaaltijdToe(parseInt(b.dataset.mt)) );
@@ -2713,7 +3158,7 @@ function voegMaaltijdToe(i){
   for(const it of m.items){ log.push(Object.assign({}, it)); }
   bewaarLog(); updateDashboard(); renderLog();
   $('mtOverlay').classList.remove('open');
-  toonToast('"'+m.naam+'" toegevoegd ✓');
+  toonToast(tf('toast_maaltijd_toegevoegd', {naam:m.naam}));
 }
 // --- Maaltijd samenstellen ---
 function openMaaltijdBouw(index){
@@ -2732,7 +3177,7 @@ function openMaaltijdBouw(index){
 function renderMaaltijdBouw(){
   const box = $('mbItems');
   if(!mtBouw.items.length){
-    box.innerHTML = '<div class="mt-uitleg">Zoek hierboven en tik iets aan om het aan deze maaltijd toe te voegen.</div>';
+    box.innerHTML = '<div class="mt-uitleg">'+t('mb_zoek_leeg')+'</div>';
   } else {
     let kc=0; for(const it of mtBouw.items) kc+=it.kc;
     box.innerHTML = mtBouw.items.map((it,i)=>
@@ -2746,8 +3191,8 @@ function renderMaaltijdBouw(){
 }
 function bewaarMaaltijdBouw(){
   const naam = $('mbNaam').value.trim();
-  if(!naam){ toonToast('Geef je maaltijd een naam.'); $('mbNaam').focus(); return; }
-  if(!mtBouw.items.length){ toonToast('Voeg eerst iets van eten toe.'); return; }
+  if(!naam){ toonToast(t('toast_geef_naam')); $('mbNaam').focus(); return; }
+  if(!mtBouw.items.length){ toonToast(t('toast_voeg_eerst_eten_toe')); return; }
   if(mtBouw.bewerkIndex!=null){
     maaltijden[mtBouw.bewerkIndex].naam = naam;
     maaltijden[mtBouw.bewerkIndex].items = mtBouw.items;
@@ -2759,10 +3204,10 @@ function bewaarMaaltijdBouw(){
   $('mbOverlay').classList.remove('open');
   renderSnel();
   openMaaltijden();
-  toonToast('Maaltijd bewaard ✓');
+  toonToast(t('toast_maaltijd_bewaard'));
 }
 function bewaarDagAlsMaaltijd(){
-  if(log.length===0){ toonToast('Je hebt vandaag nog niets gelogd.'); return; }
+  if(log.length===0){ toonToast(t('toast_niets_gelogd')); return; }
   mtBouw = { naam:'', items: log.map(it=>Object.assign({}, it)), bewerkIndex:null };
   $('mbNaam').value = ''; $('mbZoek').value=''; $('mbRes').innerHTML=''; paneelVerberg($('mbRes'));
   mbGekozen = null; $('mbPortie').style.display='none';
@@ -2779,7 +3224,7 @@ function openSnelKcal(){
 }
 function bewaarSnelKcal(){
   const kc = parseFloat($('skKcal').value);
-  if(isNaN(kc) || kc<=0){ toonToast('Vul een aantal calorieën in.'); $('skKcal').focus(); return; }
+  if(isNaN(kc) || kc<=0){ toonToast(t('toast_vul_calorieen')); $('skKcal').focus(); return; }
   const naam = $('skNaam').value.trim() || 'Snelle invoer';
   log.push({
     n: naam, gram: 0, eenheid:'g', label:'geschat',
@@ -2790,7 +3235,7 @@ function bewaarSnelKcal(){
   });
   bewaarLog(); updateDashboard(); renderLog();
   $('skOverlay').classList.remove('open');
-  toonToast(rond(kc)+' kcal toegevoegd ✓');
+  toonToast(tf('toast_kcal_toegevoegd', {n:rond(kc)}));
 }
 
 // ---------- Streak & weekoverzicht ----------
@@ -2865,16 +3310,16 @@ function renderWeekKaart(){
   box.innerHTML =
     '<div class="wk-kop">'+
       '<div class="wk-tabs">'+
-        '<button class="wk-tab'+(weekKaartModus==='week'?' actief':'')+'" data-wk="week">Week</button>'+
-        '<button class="wk-tab'+(weekKaartModus==='maand'?' actief':'')+'" data-wk="maand">Maand</button>'+
+        '<button class="wk-tab'+(weekKaartModus==='week'?' actief':'')+'" data-wk="week">'+t('wk_week')+'</button>'+
+        '<button class="wk-tab'+(weekKaartModus==='maand'?' actief':'')+'" data-wk="maand">'+t('wk_maand')+'</button>'+
       '</div>'+
       (streak>0?'<span class="wk-streak">🔥 '+streak+'</span>':'')+
     '</div>'+
     '<div class="wk-rij">'+
-      '<div class="wk-vak"><b>'+(w.gem? w.gem.toLocaleString('nl-BE'):'–')+'</b><span>kcal/dag</span></div>'+
-      '<div class="wk-vak"><b>'+w.binnen+'/'+w.dagen+'</b><span>op doel</span></div>'+
-      '<div class="wk-vak"><b>'+w.training+'</b><span>training</span></div>'+
-      '<div class="wk-vak"><b>'+(w.water/1000).toFixed(1)+'L</b><span>water</span></div>'+
+      '<div class="wk-vak"><b>'+(w.gem? w.gem.toLocaleString('nl-BE'):'–')+'</b><span>'+t('wk_kcaldag')+'</span></div>'+
+      '<div class="wk-vak"><b>'+w.binnen+'/'+w.dagen+'</b><span>'+t('wk_opdoel')+'</span></div>'+
+      '<div class="wk-vak"><b>'+w.training+'</b><span>'+t('wk_training')+'</span></div>'+
+      '<div class="wk-vak"><b>'+(w.water/1000).toFixed(1)+'L</b><span>'+t('wk_water')+'</span></div>'+
     '</div>';
   box.querySelectorAll('.wk-tab').forEach(b=>{
     b.onclick = (e)=>{ e.stopPropagation(); weekKaartModus = b.dataset.wk; renderWeekKaart(); };
@@ -2887,10 +3332,10 @@ function huidigLengte(){
   return (isNaN(l)||l<=0) ? null : l;
 }
 function bmiCategorie(bmi){
-  if(bmi < 18.5) return { txt:'Ondergewicht', kleur:'#5B8DEF' };
-  if(bmi < 25)   return { txt:'Gezond gewicht', kleur:'#34C98A' };
-  if(bmi < 30)   return { txt:'Overgewicht', kleur:'#F0BE5A' };
-  return { txt:'Obesitas', kleur:'#F2685F' };
+  if(bmi < 18.5) return { txt:t('bmi_ondergewicht'), kleur:'#5B8DEF' };
+  if(bmi < 25)   return { txt:t('bmi_gezond'), kleur:'#34C98A' };
+  if(bmi < 30)   return { txt:t('bmi_overgewicht'), kleur:'#F0BE5A' };
+  return { txt:t('bmi_obesitas'), kleur:'#F2685F' };
 }
 function renderBMI(){
   const lengte = huidigLengte();
@@ -2901,7 +3346,7 @@ function renderBMI(){
     $('bmiWaarde').textContent = '–';
     $('bmiCat').textContent = '';
     $('bmiNaald').style.display = 'none';
-    $('bmiHint').textContent = !lengte ? 'Vul je lengte in voor je BMI.' : 'Vul je gewicht in voor je BMI.';
+    $('bmiHint').textContent = !lengte ? t('bmi_hint') : t('bmi_hint_gewicht');
     return;
   }
   const m = lengte/100;
@@ -2915,7 +3360,7 @@ function renderBMI(){
   n.style.display = 'block'; n.style.left = pos+'%';
   // gezond gewichtsbereik voor deze lengte
   const laag = (18.5*m*m), hoog = (24.9*m*m);
-  $('bmiHint').textContent = 'Gezond gewicht voor '+lengte+' cm: '+laag.toFixed(0)+'–'+hoog.toFixed(0)+' kg.';
+  $('bmiHint').textContent = tf('bmi_hint_bereik', {lengte:lengte, laag:laag.toFixed(0), hoog:hoog.toFixed(0)});
 }
 function zetLengte(cm){
   if(isNaN(cm) || cm<=0) return;
@@ -2979,14 +3424,14 @@ function updateDashboard(){
     pil.className = 'doel-rest ' + kleur;
     pil.style.display = 'inline-flex';
     if(rest>=0){
-      pil.innerHTML = '<span class="getal">'+rest.toLocaleString('nl-BE')+'</span><span class="tekst">kcal over</span>';
+      pil.innerHTML = '<span class="getal">'+rest.toLocaleString('nl-BE')+'</span><span class="tekst">'+t('dash_kcal_over')+'</span>';
     } else {
-      pil.innerHTML = '<span class="getal">'+Math.abs(rest).toLocaleString('nl-BE')+'</span><span class="tekst">kcal boven doel</span>';
+      pil.innerHTML = '<span class="getal">'+Math.abs(rest).toLocaleString('nl-BE')+'</span><span class="tekst">'+t('dash_kcal_boven')+'</span>';
     }
-    $('doelSub').textContent = 'doel ' + DOEL.kcal.toLocaleString('nl-BE') + ' kcal';
-    $('doelE').textContent = 'doel ' + DOEL.e + 'g';
-    $('doelK').textContent = 'doel ' + DOEL.k + 'g';
-    $('doelV').textContent = 'doel ' + DOEL.v + 'g';
+    $('doelSub').textContent = tf('dash_doel_sub', {n:DOEL.kcal.toLocaleString('nl-BE')});
+    $('doelE').textContent = tf('dash_doel_macro', {n:DOEL.e});
+    $('doelK').textContent = tf('dash_doel_macro', {n:DOEL.k});
+    $('doelV').textContent = tf('dash_doel_macro', {n:DOEL.v});
   } else {
     $('doelRest').style.display = 'none';
     $('doelSub').textContent = '';
@@ -2998,7 +3443,7 @@ function updateDashboard(){
 function renderLog(){
   const wrap = $('logLijst');
   if(log.length===0){
-    wrap.innerHTML = '<div class="log-leeg">Nog niets gegeten vandaag. Zoek hierboven je eerste item.</div>';
+    wrap.innerHTML = '<div class="log-leeg">'+t('log_leeg')+'</div>';
     return;
   }
   wrap.innerHTML = '';
@@ -3112,12 +3557,12 @@ zoekInput.addEventListener('input', ()=>{
       html += '<div class="res-item" data-naam="'+encodeURIComponent(f.n)+'">'+
                 '<span class="n">'+escapeHtml(f.n)+'</span>'+
                 '<span class="kc">'+f.kc+' kcal /100'+(f.drank?'ml':'g')+'</span>'+
-                '<button class="res-ster'+(isFavoriet(f.n)?' aan':'')+'" data-fav="'+encodeURIComponent(f.n)+'" title="Favoriet">'+(isFavoriet(f.n)?'★':'☆')+'</button>'+
-                '<button class="res-bewerk" data-naam="'+encodeURIComponent(f.n)+'" title="Aanpassen">✎</button>'+
+                '<button class="res-ster'+(isFavoriet(f.n)?' aan':'')+'" data-fav="'+encodeURIComponent(f.n)+'" title="'+t('mt_favoriet_title')+'">'+(isFavoriet(f.n)?'★':'☆')+'</button>'+
+                '<button class="res-bewerk" data-naam="'+encodeURIComponent(f.n)+'" title="'+t('mt_aanpassen_title')+'">✎</button>'+
               '</div>';
     });
   }
-  html += '<div class="res-nieuw" id="resNieuw">+ Eigen eten toevoegen'+(q?' "'+escapeHtml(zoekInput.value.trim())+'"':'')+'</div>';
+  html += '<div class="res-nieuw" id="resNieuw">+ '+t('nieuw_titel')+(q?' "'+escapeHtml(zoekInput.value.trim())+'"':'')+'</div>';
   resBox.innerHTML = html;
   resBox.querySelectorAll('.res-item').forEach(el=>{
     el.onclick = ()=>{
@@ -3177,12 +3622,12 @@ function werkMbKcalBij(){
   if(!mbGekozen){ $('mbPKc').textContent=''; return; }
   const g = parseFloat($('mbPGram').value);
   if(isNaN(g) || g<=0){ $('mbPKc').textContent=''; return; }
-  $('mbPKc').textContent = rond(mbGekozen.kc*g/100)+' kcal · E '+rond1(mbGekozen.e*g/100)+' K '+rond1(mbGekozen.k*g/100)+' V '+rond1(mbGekozen.v*g/100);
+  $('mbPKc').textContent = tf('mb_portie_kcal', {kc:rond(mbGekozen.kc*g/100), e:rond1(mbGekozen.e*g/100), k:rond1(mbGekozen.k*g/100), v:rond1(mbGekozen.v*g/100)});
 }
 function voegAanMaaltijd(){
   if(!mbGekozen || !mtBouw) return;
   const g = parseFloat($('mbPGram').value);
-  if(isNaN(g) || g<=0){ toonToast('Vul een hoeveelheid in.'); $('mbPGram').focus(); return; }
+  if(isNaN(g) || g<=0){ toonToast(t('toast_vul_hoeveelheid')); $('mbPGram').focus(); return; }
   const f = mbGekozen, factor = g/100;
   mtBouw.items.push({
     n:f.n, gram:g, eenheid:(f.drank?'ml':'g'), label:'',
@@ -3204,10 +3649,10 @@ function openPortie(f, bewerkIndex, voorafGram){
   bewerkLogIndex = (bewerkIndex!=null) ? bewerkIndex : null;
   paneelVerberg(resBox);
   $('pNaam').textContent = f.n;
-  $('pToevoeg').textContent = (bewerkLogIndex!=null) ? 'Bijwerken' : 'Toevoegen';
+  $('pToevoeg').textContent = (bewerkLogIndex!=null) ? t('wo_bijwerken') : t('toevoegen');
   // Knoplabels aanpassen: drank = ml, vast = gram
-  $('uGram').textContent = f.drank ? 'Ml' : 'Gram';
-  $('uStuk').textContent = f.drank ? ('Per ' + (f.se || 'glas')) : 'Per stuk';
+  $('uGram').textContent = f.drank ? t('eenheid_ml_label') : t('portie_gram');
+  $('uStuk').textContent = f.drank ? tf('per_x_label', {se: f.se || t('se_glas_fallback')}) : t('portie_stuk');
   if(f.stuk){ $('unitToggle').style.display = 'flex'; }
   else { $('unitToggle').style.display = 'none'; }
   zetModus('gram');
@@ -3218,7 +3663,7 @@ function openPortie(f, bewerkIndex, voorafGram){
   $('pGram').focus();
   $('pGram').select();
 }
-function sluitPortie(){ paneelVerberg($('portie')); bewerkLogIndex = null; porDoel = 'log'; $('pToevoeg').textContent = 'Toevoegen'; }
+function sluitPortie(){ paneelVerberg($('portie')); bewerkLogIndex = null; porDoel = 'log'; $('pToevoeg').textContent = t('toevoegen'); }
 
 function bewerkLogItem(i){
   const it = log[i]; if(!it) return;
@@ -3250,7 +3695,7 @@ function zetModus(m){
   } else {
     $('pGram').value = 1;
     $('pGram').step = 'any';
-    const se = gekozen.se || (drank ? 'glas' : 'stuk');
+    const se = gekozen.se || (drank ? t('se_glas_fallback') : t('se_stuk_fallback'));
     $('pEenheid').textContent = se + ' × ' + gekozen.stuk + (drank ? 'ml' : 'g');
     bouwSnel([['1','1'],['2','2'],['3','3'],['0.5','½']]);
   }
@@ -3300,7 +3745,7 @@ $('pToevoeg').onclick = ()=>{
   const eenheid = gekozen.drank ? 'ml' : 'g';
   let label = null;
   if(modus==='stuk'){
-    const se = gekozen.se || (gekozen.drank ? 'glas' : 'stuk');
+    const se = gekozen.se || (gekozen.drank ? t('se_glas_fallback') : t('se_stuk_fallback'));
     const aantalTekst = (inv % 1 === 0) ? inv : inv.toString().replace('.',',');
     label = aantalTekst + ' ' + se;
   }
@@ -3319,7 +3764,7 @@ $('pToevoeg').onclick = ()=>{
   else { log.push(nieuw); }
   noteerGebruik(nieuw);
   bewerkLogIndex = null;
-  $('pToevoeg').textContent = 'Toevoegen';
+  $('pToevoeg').textContent = t('toevoegen');
   bewaarLog();
   gekozen=null;
   sluitPortie();
@@ -3334,11 +3779,11 @@ function zetNieuwSoort(drank){
   nDrank = !!drank;
   $('nSoortVast').classList.toggle('actief', !nDrank);
   $('nSoortDrank').classList.toggle('actief', nDrank);
-  $('nWaardenHint').textContent = nDrank ? 'Waarden per 100 ml:' : 'Waarden per 100 gram:';
+  $('nWaardenHint').textContent = nDrank ? t('nieuw_waarden_ml') : t('nieuw_waarden_hint');
   $('nStukHint').textContent = nDrank
-    ? 'Optioneel — inhoud van 1 glas/blik in ml (voor "per glas"):'
-    : 'Optioneel — gewicht van 1 stuk (voor "per stuk"):';
-  $('nStuk').placeholder = nDrank ? 'ml per glas (bv. 250)' : 'gram per stuk (bv. 120)';
+    ? t('nieuw_stuk_hint_drank')
+    : t('nieuw_stuk_hint');
+  $('nStuk').placeholder = nDrank ? t('nieuw_stuk_ph_drank') : t('nieuw_stuk_ph');
 }
 $('nSoortVast').onclick = ()=> zetNieuwSoort(false);
 $('nSoortDrank').onclick = ()=> zetNieuwSoort(true);
@@ -3348,8 +3793,8 @@ function openNieuw(naam, vooraf){
   resetVerwijderKnop();
   paneelVerberg(resBox);
   sluitPortie();
-  $('nTitel').textContent = 'Eigen eten toevoegen';
-  $('nBewaar').textContent = 'Bewaren & kiezen';
+  $('nTitel').textContent = t('nieuw_titel');
+  $('nBewaar').textContent = t('nieuw_bewaar');
   $('nVerwijder').style.display = 'none';
   $('nNaam').readOnly = false;
   $('nNaam').value = naam || '';
@@ -3378,10 +3823,10 @@ function openBewerk(naam){
   if(eigenIndex >= 0){ bewerk = {type:'eigen', index:eigenIndex}; f = eigen[eigenIndex]; }
   else { bewerk = {type:'db', naam:naam}; f = alleEten().find(x=>x.n===naam); }
   if(!f) return;
-  $('nTitel').textContent = 'Aanpassen';
-  $('nBewaar').textContent = 'Wijzigingen bewaren';
+  $('nTitel').textContent = t('mt_aanpassen_title');
+  $('nBewaar').textContent = t('nieuw_wijzigingen_bewaren');
   $('nVerwijder').style.display = 'block';
-  $('nVerwijder').textContent = (bewerk.type==='eigen') ? 'Verwijderen' : 'Herstel standaardwaarden';
+  $('nVerwijder').textContent = (bewerk.type==='eigen') ? t('verwijderen') : t('nieuw_herstel_standaard');
   $('nNaam').readOnly = (bewerk.type === 'db');   // eigen product: naam wel aanpasbaar
   $('nNaam').value = f.n;
   $('nKcal').value = f.kc;
@@ -3414,7 +3859,7 @@ $('nBewaar').onclick = ()=>{
     const f = eigen[bewerk.index];
     if(naam !== f.n){
       const botst = alleEten().some((x,i)=> x.n===naam && !(x===f));
-      if(botst){ toonToast('Er bestaat al iets met die naam — kies een andere.'); $('nNaam').focus(); return; }
+      if(botst){ toonToast(t('toast_naam_bestaat')); $('nNaam').focus(); return; }
       f.n = naam;
     }
     f.kc=waarden.kc; f.e=waarden.e; f.k=waarden.k; f.v=waarden.v;
@@ -3450,8 +3895,8 @@ $('nVerwijder').onclick = ()=>{
     // Dubbele tik ter bevestiging (confirm-pop-up werkt niet in alle omgevingen)
     if(!verwijderBevestig){
       verwijderBevestig = true;
-      $('nVerwijder').textContent = 'Zeker? Tik nogmaals om te verwijderen';
-      verwijderTimer = setTimeout(()=>{ verwijderBevestig=false; $('nVerwijder').textContent='Verwijderen'; }, 3500);
+      $('nVerwijder').textContent = t('zeker_verwijderen');
+      verwijderTimer = setTimeout(()=>{ verwijderBevestig=false; $('nVerwijder').textContent=t('verwijderen'); }, 3500);
       return;
     }
     resetVerwijderKnop();
@@ -3502,13 +3947,13 @@ function scanStatus(tekst, soort){
 function scanFoutmelding(e){
   const naam = (e && (e.name || e.toString())) || '';
   if(/NotAllowed|Permission/i.test(naam)){
-    scanStatus('Camera geweigerd. Sta camera toe: telefoon Instellingen → Apps → Chrome → Permissions → Camera → Allow. Probeer daarna opnieuw.', 'fout');
+    scanStatus(t('scan_camera_geweigerd'), 'fout');
   } else if(/NotReadable|TrackStart|NotFound/i.test(naam)){
-    scanStatus('Camera niet beschikbaar — misschien in gebruik door een andere app. Sluit die app en probeer opnieuw.', 'fout');
+    scanStatus(t('scan_camera_niet_beschikbaar'), 'fout');
   } else if(/SecurityError/i.test(naam)){
-    scanStatus('Camera vereist https. Open de app via je github.io-link.', 'fout');
+    scanStatus(t('scan_https_nodig'), 'fout');
   } else {
-    scanStatus('Kon de camera niet starten. Sluit het venster en probeer opnieuw.', 'fout');
+    scanStatus(t('scan_kon_niet_starten'), 'fout');
   }
 }
 
@@ -3519,7 +3964,7 @@ async function startScan(){
   sluitPortie(); sluitNieuw(); paneelVerberg(resBox);
   $('scanOverlay').classList.add('open');
   scanBezig = false;
-  scanStatus('Camera starten…', 'bezig');
+  scanStatus(t('scan_camera_starten'), 'bezig');
   if(heeftNativeScanner()){
     await startNative();
   } else {
@@ -3558,7 +4003,7 @@ async function startNative(){
     await startFallback();
     return;
   }
-  scanStatus('Hou de barcode in het vak — genoeg licht en dicht genoeg.');
+  scanStatus(t('scan_status_dflt'));
   detecteerLus(video);
 }
 
@@ -3605,7 +4050,7 @@ function stopStream(){
 // --- Fallback: html5-qrcode (o.a. iPhone/Safari) ---
 async function startFallback(){
   try{ await laadScannerLib(); }
-  catch(e){ scanStatus('Kon de scanner niet laden. Ben je online?', 'fout'); return; }
+  catch(e){ scanStatus(t('scan_kon_niet_laden'), 'fout'); return; }
   try{ $('scanReader').innerHTML = ''; }catch(e){}
   scanner = new Html5Qrcode('scanReader', {
     formatsToSupport: [
@@ -3622,7 +4067,7 @@ async function startFallback(){
     try{
       scanActief = true;
       await scanner.start(cam, config, onDecode, ()=>{});
-      scanStatus('Hou de barcode in het vak — genoeg licht en dicht genoeg.');
+      scanStatus(t('scan_status_dflt'));
       return;
     }catch(e){
       laatsteFout = e; scanActief = false;
@@ -3653,7 +4098,7 @@ function lijktDrank(p){
 }
 
 async function verwerkBarcode(code){
-  scanStatus('Barcode '+code+' — opzoeken…', 'bezig');
+  scanStatus(tf('scan_opzoeken', {code:code}), 'bezig');
   // 1) Al bij mijn eigen producten? → meteen loggen
   const bestaand = eigen.find(x=> x.code === code);
   if(bestaand){ await stopScan(); openPortie(bestaand); return; }
@@ -3681,8 +4126,8 @@ async function verwerkBarcode(code){
       let portie = parseFloat(p.serving_quantity);
       if(isNaN(portie) || portie<=0) portie = null;
       scanSe = portie ? 'portie' : null;
-      toonToast('Gevonden: ' + (naam || 'product') + ' — controleer de waarden.');
-      openNieuw(naam || ('Product '+code), {
+      toonToast(tf('toast_gevonden', {naam: naam || t('toast_product_fallback')}));
+      openNieuw(naam || tf('toast_product_naam_code', {code:code}), {
         kcal: Math.round(kcal),
         e: n['proteins_100g']!=null ? Math.round(n['proteins_100g']*10)/10 : '',
         k: n['carbohydrates_100g']!=null ? Math.round(n['carbohydrates_100g']*10)/10 : '',
@@ -3693,17 +4138,17 @@ async function verwerkBarcode(code){
     } else if(p && kcal==null){
       // Wel een product, maar geen (betrouwbare) voedingswaarden → naam invullen, rest zelf
       scanSe = null;
-      toonToast('Product gevonden, maar zonder voedingswaarden. Vul ze zelf aan.');
+      toonToast(t('toast_product_zonder_waarden'));
       openNieuw(naam, { drank: lijktDrank(p) });
     } else {
       // Helemaal niet gevonden
       scanSe = null;
-      toonToast('Product niet herkend. Vul de gegevens zelf in.');
+      toonToast(t('toast_product_niet_herkend'));
       openNieuw('');
     }
   }catch(e){
     scanBezig = false;
-    scanStatus('Opzoeken mislukt — ben je online? Probeer opnieuw of vul zelf in.', 'fout');
+    scanStatus(t('scan_opzoeken_mislukt'), 'fout');
   }
 }
 
@@ -3796,9 +4241,9 @@ function berekenCalc(){
   $('rBmr').textContent = rond(bmr).toLocaleString('nl-BE') + ' kcal';
   $('rTdee').textContent = rond(tdee).toLocaleString('nl-BE') + ' kcal';
   $('rDoel').textContent = doelKcal.toLocaleString('nl-BE') + ' kcal';
-  $('rE').textContent = eiwitG + 'g eiwit';
-  $('rK').textContent = koolhG + 'g koolh.';
-  $('rV').textContent = vetG + 'g vet';
+  $('rE').textContent = tf('calc_res_eiwit', {g:eiwitG});
+  $('rK').textContent = tf('calc_res_koolh', {g:koolhG});
+  $('rV').textContent = tf('calc_res_vet', {g:vetG});
   return { kcal: doelKcal, e: eiwitG, k: koolhG, v: vetG };
 }
 
@@ -3818,8 +4263,7 @@ $('cInstel').onclick = ()=>{
 function markeerDoelKnop(){
   if(!doelGezet) return;
   $('doelKnop').classList.add('ingesteld');
-  $('doelKnop').innerHTML = '🎯&nbsp;&nbsp;Doel ' + DOEL.kcal.toLocaleString('nl-BE') + ' kcal · '
-    + DOEL.e + 'e / ' + DOEL.k + 'k / ' + DOEL.v + 'v — aanpassen';
+  $('doelKnop').innerHTML = tf('doel_knop_ingesteld', {kcal:DOEL.kcal.toLocaleString('nl-BE'), e:DOEL.e, k:DOEL.k, v:DOEL.v});
 }
 
 async function bewaarDoel(){
@@ -3860,17 +4304,19 @@ $('wisDag').onclick = ()=>{
   if(log.length===0) return;
   if(!wisBevestig){
     wisBevestig = true;
-    $('wisDag').textContent = 'Zeker? Tik nogmaals';
-    wisTimer = setTimeout(()=>{ wisBevestig=false; $('wisDag').textContent='Dag wissen'; }, 3500);
+    $('wisDag').textContent = t('zeker_wissen');
+    wisTimer = setTimeout(()=>{ wisBevestig=false; $('wisDag').textContent=t('log_wisdag'); }, 3500);
     return;
   }
-  clearTimeout(wisTimer); wisBevestig=false; $('wisDag').textContent='Dag wissen';
+  clearTimeout(wisTimer); wisBevestig=false; $('wisDag').textContent=t('log_wisdag');
   log = [];
   bewaarLog(); updateDashboard(); renderLog();
 };
 
 // ---------- Kalender ----------
-const MAANDEN_VOL = ['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'];
+const MAANDEN_VOL_NL = ['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'];
+const MAANDEN_VOL_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+function maandenVol(){ return TAAL==='en' ? MAANDEN_VOL_EN : MAANDEN_VOL_NL; }
 
 $('kalKnop').onclick = ()=>{
   const d = new Date();
@@ -3896,7 +4342,7 @@ function kleurVoor(entry){
 function renderKalender(){
   const jaar = kalMaand.getFullYear();
   const maand = kalMaand.getMonth();
-  $('kalTitel').textContent = MAANDEN_VOL[maand] + ' ' + jaar;
+  $('kalTitel').textContent = maandenVol()[maand] + ' ' + jaar;
   $('kalLeegTekst').style.display = doelGezet ? 'none' : 'block';
 
   const eersteDag = new Date(jaar, maand, 1);
@@ -3932,10 +4378,8 @@ function toonDagDetail(key){
   const isVandaag = key === vandaagSleutel();
   if(!entry && !isVandaag) return;
   const [j,m,d] = key.split('-');
-  const dagenVol=['zondag','maandag','dinsdag','woensdag','donderdag','vrijdag','zaterdag'];
-  const maandenVol=['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'];
   const dt = new Date(+j, +m-1, +d);
-  $('kalDagTitel').textContent = dagenVol[dt.getDay()]+' '+(+d)+' '+maandenVol[+m-1];
+  $('kalDagTitel').textContent = WDAGEN_VOL()[dt.getDay()]+' '+(+d)+' '+maandenVol()[+m-1];
   // Items: voor vandaag live uit de log, anders uit de bewaarde geschiedenis
   let items, kcal, doel;
   if(isVandaag){
@@ -3947,11 +4391,11 @@ function toonDagDetail(key){
     kcal = entry.kcal; doel = entry.doel;
   }
   let html = '<div class="kd-kcal">'+(kcal||0).toLocaleString('nl-BE')+' <span>kcal</span>'+
-             (doel ? ' <span class="kd-doel">/ doel '+doel.toLocaleString('nl-BE')+'</span>' : '')+'</div>';
+             (doel ? ' <span class="kd-doel">'+tf('kd_doel_suffix', {n:doel.toLocaleString('nl-BE')})+'</span>' : '')+'</div>';
   if(items && items.length){
     html += items.map(it=>'<div class="prof-item"><span>'+escapeHtml(it.n||'?')+(it.label?' <em>('+escapeHtml(it.label)+')</em>':'')+'</span><span class="prof-ikc">'+(it.kc||0)+'</span></div>').join('');
   } else {
-    html += '<div class="vr-leeg">Voor deze dag is enkel het totaal bewaard (van vóór deze versie). Vanaf nu wordt ook bewaard wat je precies at.</div>';
+    html += '<div class="vr-leeg">'+t('kd_alleen_totaal')+'</div>';
   }
   $('kalDagInhoud').innerHTML = html;
   $('kalDagOverlay').classList.add('open');
@@ -3960,11 +4404,11 @@ function toonDagDetail(key){
 // ---------- Datum ----------
 function toonDatum(){
   const d = new Date();
-  const dagenK=['zo','ma','di','wo','do','vr','za'];
-  const maanden=['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];
+  const dagenK = TAAL==='en' ? ['sun','mon','tue','wed','thu','fri','sat'] : ['zo','ma','di','wo','do','vr','za'];
+  const maanden = TAAL==='en' ? ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'] : ['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];
   $('datum').textContent = dagenK[d.getDay()]+' '+d.getDate()+' '+maanden[d.getMonth()];
-  const dagenVol=['zondag','maandag','dinsdag','woensdag','donderdag','vrijdag','zaterdag'];
-  const maandenVol=['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'];
+  const dagenVol = TAAL==='en' ? ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'] : ['zondag','maandag','dinsdag','woensdag','donderdag','vrijdag','zaterdag'];
+  const maandenVol = TAAL==='en' ? ['January','February','March','April','May','June','July','August','September','October','November','December'] : ['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'];
   const langeDatum = dagenVol[d.getDay()]+' '+d.getDate()+' '+maandenVol[d.getMonth()];
   if($('homeDatum')) $('homeDatum').textContent = langeDatum;
   if($('woDatum')) $('woDatum').textContent = dagenK[d.getDay()]+' '+d.getDate()+' '+maanden[d.getMonth()];
@@ -3998,14 +4442,14 @@ $('terugLeaderboard').onclick = ()=> toonView('home');
 
 function updateHomeTeasers(){
   let kc=0; for(const it of log) kc+=it.kc;
-  if(doelGezet) $('homeMacroSub').textContent = rond(kc).toLocaleString('nl-BE')+' / '+DOEL.kcal.toLocaleString('nl-BE')+' kcal vandaag';
-  else $('homeMacroSub').textContent = "Calorieën & macro's bijhouden";
+  if(doelGezet) $('homeMacroSub').textContent = tf('home_kcal_teaser', {a:rond(kc).toLocaleString('nl-BE'), b:DOEL.kcal.toLocaleString('nl-BE')});
+  else $('homeMacroSub').textContent = t('home_voeding_sub');
   const wd = new Date().getDay();
   const aantal = (sjablonen[wd]||[]).length;
-  $('homeWorkoutSub').textContent = aantal>0 ? (aantal+' oefening'+(aantal>1?'en':'')+' vandaag') : 'Training loggen';
+  $('homeWorkoutSub').textContent = aantal>0 ? tf('home_training_teaser', {n:aantal, woord: aantal>1?t('home_oef_meer'):t('home_oef_enkel')}) : t('home_workout_sub');
   const gd = gewichtDagen();
   const gsub = $('homeGewichtSub');
-  if(gsub) gsub.textContent = gd.length ? (gewichtLog[gd[gd.length-1]].toFixed(1)+' kg · laatste meting') : "Dagelijks gewicht & progressie";
+  if(gsub) gsub.textContent = gd.length ? tf('home_gewicht_teaser', {g:gewichtLog[gd[gd.length-1]].toFixed(1)}) : t('home_gewicht_sub');
 }
 
 // ================= WORKOUT =================
@@ -4016,8 +4460,12 @@ let woNieuwType = 'kracht';
 let woGekozenDag = new Date().getDay();
 let woHuidigeOef = null;
 let woReferentie = null;   // laatste sessie die NIET van vandaag is (voor vergelijking ▲▼)
-const WDAGEN = ['Zo','Ma','Di','Wo','Do','Vr','Za'];
-const WDAGEN_VOL = ['zondag','maandag','dinsdag','woensdag','donderdag','vrijdag','zaterdag'];
+const WDAGEN_NL = ['Zo','Ma','Di','Wo','Do','Vr','Za'];
+const WDAGEN_EN = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+const WDAGEN_VOL_NL = ['zondag','maandag','dinsdag','woensdag','donderdag','vrijdag','zaterdag'];
+const WDAGEN_VOL_EN = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+function WDAGEN(){ return TAAL==='en' ? WDAGEN_EN : WDAGEN_NL; }
+function WDAGEN_VOL(){ return TAAL==='en' ? WDAGEN_VOL_EN : WDAGEN_VOL_NL; }
 
 async function laadWorkout(){
   const s = await ladenRaw('workout-sjablonen');
@@ -4078,13 +4526,13 @@ function renderWorkout(){
   const isVandaag = woGekozenDag === vandaag;
   let html = '';
   if(lijst.length===0){
-    html = '<div class="wo-leeg">Nog geen oefeningen voor '+WDAGEN_VOL[woGekozenDag]+'.<br>Typ hieronder je eerste oefening.</div>';
+    html = '<div class="wo-leeg">'+tf('wo_geen_oef', {dag:WDAGEN_VOL()[woGekozenDag]})+'</div>';
   } else {
     lijst.forEach(oef=>{
       const laatste = laatsteSessie(oef);
       const gedaanVandaag = isVandaag && laatste && laatste.datum === vandaagSleutel();
-      const laatsteStr = laatste ? ('laatst: '+sessieTekst(oef, laatste)) : 'nog niet gelogd';
-      const badge = isCardio(oef) ? '<span class="badge">cardio</span>' : '';
+      const laatsteStr = laatste ? tf('wo_laatst', {x:sessieTekst(oef, laatste)}) : t('wo_nooit_gelogd');
+      const badge = isCardio(oef) ? '<span class="badge">'+t('wo_cardio_badge')+'</span>' : '';
       html += '<div class="wo-oef" data-oef="'+encodeURIComponent(oef)+'">'+
                 '<div class="info"><div class="n">'+escapeHtml(oef)+badge+'</div><div class="laatste">'+escapeHtml(laatsteStr)+'</div></div>'+
                 (gedaanVandaag ? '<span class="vink">✓</span>' : '')+
@@ -4098,15 +4546,15 @@ function renderWorkout(){
   });
 
   $('woSjabloonHint').textContent = isVandaag
-    ? 'Oefeningen die je hier toevoegt komen elke '+WDAGEN_VOL[woGekozenDag]+' terug.'
-    : 'Je bewerkt de vaste oefeningen voor '+WDAGEN_VOL[woGekozenDag]+'.';
+    ? tf('wo_hint_vandaag', {dag:WDAGEN_VOL()[woGekozenDag]})
+    : tf('wo_hint_ander', {dag:WDAGEN_VOL()[woGekozenDag]});
 }
 function woDagKnop(i){
   const vandaag = new Date().getDay();
   let cls = 'button';
   let c = (i===woGekozenDag) ? 'actief' : '';
   if(i===vandaag) c += ' vandaag';
-  return '<button class="'+c+'" data-d="'+i+'">'+WDAGEN[i]+'</button>';
+  return '<button class="'+c+'" data-d="'+i+'">'+WDAGEN()[i]+'</button>';
 }
 
 $('woTypeKeuze').querySelectorAll('button').forEach(b=>{
@@ -4114,7 +4562,7 @@ $('woTypeKeuze').querySelectorAll('button').forEach(b=>{
     woNieuwType = b.dataset.t;
     $('woTypeKeuze').querySelectorAll('button').forEach(x=>x.classList.remove('actief'));
     b.classList.add('actief');
-    $('woNieuwOef').placeholder = woNieuwType==='cardio' ? 'Cardio toevoegen (bv. Lopen)…' : 'Oefening toevoegen…';
+    $('woNieuwOef').placeholder = woNieuwType==='cardio' ? t('wo_cardio_ph') : t('wo_oef_ph');
   };
 });
 
@@ -4148,12 +4596,12 @@ function openLog(oef){
   $('woCardio').style.display = cardio ? 'block' : 'none';
 
   if(ref){
-    $('woVorige').innerHTML = 'Vorige keer ('+datumKort(ref.datum)+'):<br><b>'+escapeHtml(sessieTekst(oef, ref))+'</b>';
+    $('woVorige').innerHTML = tf('wo_vorige_keer', {datum:datumKort(ref.datum), tekst:escapeHtml(sessieTekst(oef, ref))});
   } else {
-    $('woVorige').innerHTML = 'Nog geen eerdere sessie — dit wordt je startpunt.';
+    $('woVorige').innerHTML = t('wo_geen_eerdere');
   }
   $('woVorige').style.display='block';
-  $('woOpslaan').textContent = vandaag ? 'Bijwerken' : 'Opslaan';
+  $('woOpslaan').textContent = vandaag ? t('wo_bijwerken') : t('wo_opslaan');
 
   if(cardio){
     $('cDuur').value = vandaag && vandaag.duur ? vandaag.duur : '';
@@ -4289,8 +4737,8 @@ $('woVerwijderOef').onclick = ()=>{
 // ----- Progressiegrafiek -----
 let woMetriek = 'gewicht';
 const METRIEKEN = {
-  kracht: [['gewicht','Gewicht'],['volume','Volume'],['reps','Reps']],
-  cardio: [['afstand','Afstand'],['duur','Tijd'],['tempo','Tempo']]
+  get kracht(){ return [['gewicht',t('metriek_gewicht')],['volume','Volume'],['reps','Reps']]; },
+  get cardio(){ return [['afstand',t('wo_afstand')],['duur',t('wo_tijd')],['tempo',t('metriek_tempo')]]; }
 };
 $('woProgressie').onclick = ()=>{
   $('woLogOverlay').classList.remove('open');
@@ -4484,8 +4932,8 @@ function toonAccountChip(){
 let unameEditModus = false;
 function vraagGebruikersnaam(){
   unameEditModus = false;
-  $('unameTitel').textContent = 'Kies je gebruikersnaam';
-  $('unameKies').textContent = 'Klaar';
+  $('unameTitel').textContent = t('uname_titel');
+  $('unameKies').textContent = t('uname_klaar');
   $('unameAnnuleer').style.display = 'none';
   $('unameFout').textContent = '';
   $('unameInput').value = '';
@@ -4495,8 +4943,8 @@ function vraagGebruikersnaam(){
 function openNaamAanpassen(){
   if(!fbKlaar){ return; }
   unameEditModus = true;
-  $('unameTitel').textContent = 'Naam aanpassen';
-  $('unameKies').textContent = 'Opslaan';
+  $('unameTitel').textContent = t('acc_edit_title');
+  $('unameKies').textContent = t('gw_bewaar');
   $('unameAnnuleer').style.display = 'block';
   $('unameFout').textContent = '';
   $('unameInput').value = fbNaam || '';
@@ -4508,19 +4956,19 @@ function openNaamAanpassen(){
 async function kiesGebruikersnaam(){
   const naam = $('unameInput').value.trim();
   if(!/^[A-Za-z0-9_]{3,20}$/.test(naam)){
-    $('unameFout').textContent = '3–20 tekens: letters, cijfers of _';
+    $('unameFout').textContent = t('uname_regels_fout');
     return;
   }
-  if(!fbDb || !fbUid){ $('unameFout').textContent = 'Even geen verbinding — probeer zo opnieuw.'; return; }
+  if(!fbDb || !fbUid){ $('unameFout').textContent = t('uname_geen_verbinding'); return; }
   const lower = naam.toLowerCase();
   const oudLower = (fbNaam||'').toLowerCase();
   if(unameEditModus && lower === oudLower){ $('unameOverlay').classList.remove('open'); return; }
-  $('unameKies').disabled = true; $('unameFout').textContent = 'Controleren…';
+  $('unameKies').disabled = true; $('unameFout').textContent = t('uname_controleren');
   try{
     const ref = fbDb.collection('usernames').doc(lower);
     const bestaat = await ref.get();
     if(bestaat.exists && bestaat.data().uid !== fbUid){
-      $('unameFout').textContent = 'Die naam is al bezet, kies een andere.';
+      $('unameFout').textContent = t('uname_bezet');
       $('unameKies').disabled = false; return;
     }
     await ref.set({ uid: fbUid });
@@ -4537,7 +4985,7 @@ async function kiesGebruikersnaam(){
     $('unameKies').disabled = false;
     toonAccountChip(); werkChipBij(); startVriendenListeners(); syncNu();
   }catch(e){
-    $('unameFout').textContent = 'Er ging iets mis. Probeer opnieuw.';
+    $('unameFout').textContent = t('algemene_fout');
     $('unameKies').disabled = false;
   }
 }
@@ -4632,7 +5080,7 @@ function mergeVrienden(){
 }
 
 function openVrienden(){
-  if(!fbKlaar){ alert('Je account wordt nog geladen — probeer zo opnieuw.'); return; }
+  if(!fbKlaar){ alert(t('account_nog_laden')); return; }
   $('vrIk').textContent = fbNaam;
   $('accAvatar').textContent = (fbNaam||'?').charAt(0).toUpperCase();
   $('vrZoek').value=''; $('vrZoekRes').innerHTML='';
@@ -4646,13 +5094,13 @@ function openVrienden(){
 function renderMeenemen(){
   const box = $('accMeenemen'); if(!box) return;
   if(fbEmail){
-    box.innerHTML = '<div class="mn-status">✓ Gekoppeld aan <b>'+escapeHtml(fbEmail)+'</b><br><span>Je kan met deze e-mail inloggen op een ander toestel.</span></div>'+
-      '<button class="vr-knop grijs" id="mnUitlog">Uitloggen op dit toestel</button>';
+    box.innerHTML = '<div class="mn-status">'+tf('mn_gekoppeld', {email:escapeHtml(fbEmail)})+'</div>'+
+      '<button class="vr-knop grijs" id="mnUitlog">'+t('mn_uitloggen_knop')+'</button>';
     $('mnUitlog').onclick = uitloggen;
   } else {
-    box.innerHTML = '<div class="mn-status"><span>Koppel een e-mail zodat je je progressie kan meenemen naar een ander toestel. Optioneel — je account werkt ook zonder.</span></div>'+
-      '<button class="vr-knop" id="mnKoppel">E-mail koppelen</button> '+
-      '<button class="vr-knop grijs" id="mnLogin">Inloggen op bestaand account</button>';
+    box.innerHTML = '<div class="mn-status"><span>'+t('mn_koppel_uitleg')+'</span></div>'+
+      '<button class="vr-knop" id="mnKoppel">'+t('email_titel')+'</button> '+
+      '<button class="vr-knop grijs" id="mnLogin">'+t('mn_login_knop')+'</button>';
     $('mnKoppel').onclick = ()=> openEmailForm('koppel');
     $('mnLogin').onclick = ()=> openEmailForm('login');
   }
@@ -4662,11 +5110,11 @@ function openEmailForm(modus, vanaf){
   emailModus = modus;
   emailVanaf = vanaf || 'account';
   const koppel = (modus==='koppel');
-  $('emailTitel').textContent = koppel ? 'E-mail koppelen' : 'Inloggen op bestaand account';
+  $('emailTitel').textContent = koppel ? t('email_titel') : t('mn_login_knop');
   $('emailUitleg').textContent = koppel
-    ? 'Koppel een e-mail + wachtwoord aan je huidige account, zodat je het op een ander toestel kan gebruiken. Je houdt je gegevens en vrienden.'
-    : 'Log in met de e-mail en het wachtwoord die je eerder koppelde. Let op: je huidige (niet-gekoppelde) gegevens op dit toestel worden dan vervangen door je bestaande account.';
-  $('emailKnop').textContent = koppel ? 'Koppelen' : 'Inloggen';
+    ? t('email_uitleg_koppel')
+    : t('email_uitleg_login');
+  $('emailKnop').textContent = koppel ? t('email_koppel') : t('email_knop_inloggen');
   $('emailInput').value = ''; $('emailWw').value = ''; $('emailFout').textContent = '';
   $('vrOverlay').classList.remove('open');
   $('emailOverlay').classList.add('open');
@@ -4676,9 +5124,9 @@ function openEmailForm(modus, vanaf){
 async function doeEmailActie(){
   const email = $('emailInput').value.trim();
   const ww = $('emailWw').value;
-  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ $('emailFout').textContent = 'Vul een geldig e-mailadres in.'; return; }
-  if(ww.length < 6){ $('emailFout').textContent = 'Wachtwoord moet minstens 6 tekens zijn.'; return; }
-  $('emailKnop').disabled = true; $('emailFout').textContent = 'Bezig…';
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ $('emailFout').textContent = t('email_vul_geldig'); return; }
+  if(ww.length < 6){ $('emailFout').textContent = t('email_ww_min6'); return; }
+  $('emailKnop').disabled = true; $('emailFout').textContent = t('email_bezig');
   try{
     if(emailModus === 'koppel'){
       const cred = firebase.auth.EmailAuthProvider.credential(email, ww);
@@ -4688,7 +5136,7 @@ async function doeEmailActie(){
       $('emailKnop').disabled = false;
       renderMeenemen();
       $('vrOverlay').classList.add('open');
-      toonToast('E-mail gekoppeld! Je kan nu op een ander toestel inloggen.');
+      toonToast(t('toast_email_gekoppeld'));
     } else {
       await firebase.auth().signInWithEmailAndPassword(email, ww);
       // onAuthStateChanged laadt automatisch je bestaande account
@@ -4699,15 +5147,15 @@ async function doeEmailActie(){
   }catch(e){
     $('emailKnop').disabled = false;
     const c = (e && e.code) || '';
-    if(c.includes('email-already-in-use')) $('emailFout').textContent = 'Die e-mail is al gekoppeld aan een account. Gebruik "Inloggen".';
-    else if(c.includes('wrong-password') || c.includes('invalid-credential')) $('emailFout').textContent = 'E-mail of wachtwoord klopt niet.';
-    else if(c.includes('user-not-found')) $('emailFout').textContent = 'Geen account met die e-mail.';
-    else if(c.includes('operation-not-allowed')) $('emailFout').textContent = 'E-mail inloggen staat nog uit in Firebase (zet "Email/Password" aan).';
-    else $('emailFout').textContent = 'Er ging iets mis. Probeer opnieuw.';
+    if(c.includes('email-already-in-use')) $('emailFout').textContent = t('email_fout_in_use');
+    else if(c.includes('wrong-password') || c.includes('invalid-credential')) $('emailFout').textContent = t('email_fout_wrong_pw');
+    else if(c.includes('user-not-found')) $('emailFout').textContent = t('email_fout_not_found');
+    else if(c.includes('operation-not-allowed')) $('emailFout').textContent = t('email_fout_not_allowed');
+    else $('emailFout').textContent = t('algemene_fout');
   }
 }
 async function uitloggen(){
-  if(!confirm('Uitloggen op dit toestel? Je kan later opnieuw inloggen met je e-mail.')) return;
+  if(!confirm(t('confirm_uitloggen'))) return;
   try{ await firebase.auth().signOut(); }catch(e){}
   location.reload();
 }
@@ -4719,7 +5167,7 @@ function renderVerzoeken(){
   sec.style.display='block';
   box.innerHTML = inkomendLijst.map(v=>
     '<div class="vr-rij"><span class="vr-naam">'+escapeHtml(v.vanNaam||'?')+'</span>'+
-    '<button class="vr-knop" data-acc="'+v.id+'">Accepteer</button>'+
+    '<button class="vr-knop" data-acc="'+v.id+'">'+t('vr_accepteer_knop')+'</button>'+
     '<button class="vr-knop rood" data-weig="'+v.id+'">✕</button></div>'
   ).join('');
   box.querySelectorAll('[data-acc]').forEach(b=> b.onclick=()=>accepteerVerzoek(b.dataset.acc));
@@ -4727,10 +5175,10 @@ function renderVerzoeken(){
 }
 function renderVrienden(){
   const box = $('vrLijst');
-  if(vriendenLijst.length===0){ box.innerHTML='<div class="vr-leeg">Nog geen vrienden toegevoegd.</div>'; renderLeaderboard(); return; }
+  if(vriendenLijst.length===0){ box.innerHTML='<div class="vr-leeg">'+t('vr_leeg_vrienden')+'</div>'; renderLeaderboard(); return; }
   box.innerHTML = vriendenLijst.map(v=>
     '<div class="vr-rij"><span class="vr-naam vr-klik" data-uid="'+v.uid+'" data-naam="'+escapeHtml(v.naam||'?')+'">'+escapeHtml(v.naam||'?')+' ›</span>'+
-    '<button class="vr-knop rood" data-verw="'+v.id+'">Verwijder</button></div>'
+    '<button class="vr-knop rood" data-verw="'+v.id+'">'+t('vr_verwijder_knop')+'</button></div>'
   ).join('');
   box.querySelectorAll('[data-verw]').forEach(b=> b.onclick=()=>verwijderVerzoek(b.dataset.verw, true));
   box.querySelectorAll('.vr-klik').forEach(b=> b.onclick=()=>bekijkVriend(b.dataset.uid, b.dataset.naam));
@@ -4748,19 +5196,19 @@ function werkChipBij(){
 async function zoekVriend(){
   const naam = $('vrZoek').value.trim();
   const res = $('vrZoekRes');
-  if(!/^[A-Za-z0-9_]{3,20}$/.test(naam)){ res.innerHTML='<div class="vr-mini fout">Vul een geldige gebruikersnaam in.</div>'; return; }
+  if(!/^[A-Za-z0-9_]{3,20}$/.test(naam)){ res.innerHTML='<div class="vr-mini fout">'+t('vr_ongeldige_naam')+'</div>'; return; }
   const lower = naam.toLowerCase();
-  if(lower === (fbNaam||'').toLowerCase()){ res.innerHTML='<div class="vr-mini fout">Dat ben jij. :)</div>'; return; }
-  res.innerHTML='<div class="vr-mini">Zoeken…</div>';
+  if(lower === (fbNaam||'').toLowerCase()){ res.innerHTML='<div class="vr-mini fout">'+t('vr_dat_ben_jij')+'</div>'; return; }
+  res.innerHTML='<div class="vr-mini">'+t('vr_zoeken_bezig')+'</div>';
   try{
     const snap = await fbDb.collection('usernames').doc(lower).get();
-    if(!snap.exists){ res.innerHTML='<div class="vr-mini fout">Geen gebruiker met die naam.</div>'; return; }
+    if(!snap.exists){ res.innerHTML='<div class="vr-mini fout">'+t('vr_geen_gebruiker')+'</div>'; return; }
     const uid = snap.data().uid;
-    if(vriendenLijst.some(v=>v.uid===uid)){ res.innerHTML='<div class="vr-mini ok">Jullie zijn al vrienden.</div>'; return; }
+    if(vriendenLijst.some(v=>v.uid===uid)){ res.innerHTML='<div class="vr-mini ok">'+t('vr_al_vrienden')+'</div>'; return; }
     res.innerHTML = '<div class="vr-rij"><span class="vr-naam">'+escapeHtml(naam)+'</span>'+
-                    '<button class="vr-knop" id="vrStuur">Verzoek sturen</button></div>';
+                    '<button class="vr-knop" id="vrStuur">'+t('vr_verzoek_sturen')+'</button></div>';
     $('vrStuur').onclick = ()=> stuurVerzoek(uid, naam);
-  }catch(e){ res.innerHTML='<div class="vr-mini fout">Zoeken mislukt. Probeer opnieuw.</div>'; }
+  }catch(e){ res.innerHTML='<div class="vr-mini fout">'+t('vr_zoeken_mislukt')+'</div>'; }
 }
 
 async function stuurVerzoek(naarUid, naarNaam){
@@ -4769,13 +5217,13 @@ async function stuurVerzoek(naarUid, naarNaam){
     // bestaat er al een open/geaccepteerd verzoek tussen ons?
     const V = fbDb.collection('verzoeken');
     const bestaand = await V.where('van','==',fbUid).where('naar','==',naarUid).get();
-    if(!bestaand.empty){ res.innerHTML='<div class="vr-mini ok">Verzoek al verstuurd.</div>'; return; }
+    if(!bestaand.empty){ res.innerHTML='<div class="vr-mini ok">'+t('vr_verzoek_al')+'</div>'; return; }
     await V.add({ van:fbUid, vanNaam:fbNaam, naar:naarUid, naarNaam:naarNaam, status:'open',
       tijd: firebase.firestore.FieldValue.serverTimestamp() });
-    res.innerHTML='<div class="vr-mini ok">✓ Vriendschapsverzoek verstuurd naar '+escapeHtml(naarNaam)+'</div>';
-    toonToast('Vriendschapsverzoek verstuurd naar ' + naarNaam + ' ✓');
+    res.innerHTML='<div class="vr-mini ok">'+tf('vr_verzoek_verstuurd_naar', {naam:escapeHtml(naarNaam)})+'</div>';
+    toonToast(tf('toast_verzoek_verstuurd', {naam:naarNaam}));
     $('vrZoek').value='';
-  }catch(e){ res.innerHTML='<div class="vr-mini fout">Versturen mislukt. Probeer opnieuw.</div>'; }
+  }catch(e){ res.innerHTML='<div class="vr-mini fout">'+t('vr_versturen_mislukt')+'</div>'; }
 }
 async function accepteerVerzoek(id){
   try{ await fbDb.collection('verzoeken').doc(id).update({ status:'geaccepteerd' }); }catch(e){}
@@ -4788,17 +5236,17 @@ async function verwijderVerzoek(id){
 function statsBlok(st){
   const glazen = Math.round((st.totaalWater||0)/250);
   return '<div class="stats-rij">'+
-    '<div class="stat-vak"><div class="stat-getal">'+(st.totaalKcal||0).toLocaleString('nl-BE')+'</div><div class="stat-lab">totaal kcal</div></div>'+
-    '<div class="stat-vak"><div class="stat-getal">'+(st.trainingTotaal||0)+'</div><div class="stat-lab">trainingen</div></div>'+
-    '<div class="stat-vak"><div class="stat-getal">'+(st.hoogsteDag||0).toLocaleString('nl-BE')+'</div><div class="stat-lab">hoogste dag</div></div>'+
-    '<div class="stat-vak"><div class="stat-getal">'+glazen.toLocaleString('nl-BE')+'</div><div class="stat-lab">glazen water</div></div>'+
-    '<div class="stat-vak"><div class="stat-getal">🔥 '+(st.streak||0)+'</div><div class="stat-lab">dagen op rij</div></div>'+
+    '<div class="stat-vak"><div class="stat-getal">'+(st.totaalKcal||0).toLocaleString('nl-BE')+'</div><div class="stat-lab">'+t('stat_totaal_kcal')+'</div></div>'+
+    '<div class="stat-vak"><div class="stat-getal">'+(st.trainingTotaal||0)+'</div><div class="stat-lab">'+t('stat_trainingen')+'</div></div>'+
+    '<div class="stat-vak"><div class="stat-getal">'+(st.hoogsteDag||0).toLocaleString('nl-BE')+'</div><div class="stat-lab">'+t('stat_hoogste_dag')+'</div></div>'+
+    '<div class="stat-vak"><div class="stat-getal">'+glazen.toLocaleString('nl-BE')+'</div><div class="stat-lab">'+t('stat_glazen_water')+'</div></div>'+
+    '<div class="stat-vak"><div class="stat-getal">🔥 '+(st.streak||0)+'</div><div class="stat-lab">'+t('stat_dagen_op_rij')+'</div></div>'+
   '</div>';
 }
 let vriendData = null;   // {naam, bezit, eigen, maaltijden}
 async function bekijkVriend(uid, naam){
   $('profNaam').textContent = naam;
-  $('profInhoud').innerHTML = '<div class="vr-leeg">Laden…</div>';
+  $('profInhoud').innerHTML = '<div class="vr-leeg">'+t('prof_laden')+'</div>';
   $('profOverlay').classList.add('open');
   try{
     const key = vandaagSleutel();
@@ -4811,7 +5259,7 @@ async function bekijkVriend(uid, naam){
       haalStats(uid)
     ]);
     const geslacht = (userSnap.exists && userSnap.data().geslacht) ? userSnap.data().geslacht : null;
-    const bezit = geslacht==='vrouw' ? 'Haar' : (geslacht==='man' ? 'Zijn' : 'Hun');
+    const bezit = geslacht==='vrouw' ? t('bezit_haar') : (geslacht==='man' ? t('bezit_zijn') : t('bezit_hun'));
     vriendData = {
       naam: naam, bezit: bezit,
       eigen: (eigenSnap.exists && Array.isArray(eigenSnap.data().lijst)) ? eigenSnap.data().lijst : [],
@@ -4822,24 +5270,24 @@ async function bekijkVriend(uid, naam){
     // Voeding vandaag
     if(dagSnap.exists){
       const d = dagSnap.data();
-      const doelTxt = d.doel ? ('doel '+d.doel.toLocaleString('nl-BE')+' kcal') : 'geen doel ingesteld';
-      html += '<div class="prof-kcal">'+(d.kcal||0).toLocaleString('nl-BE')+' <span>kcal vandaag</span></div>';
+      const doelTxt = d.doel ? tf('dash_doel_sub', {n:d.doel.toLocaleString('nl-BE')}) : t('prof_geen_doel');
+      html += '<div class="prof-kcal">'+(d.kcal||0).toLocaleString('nl-BE')+' <span>'+t('prof_kcal_vandaag_label')+'</span></div>';
       html += '<div class="prof-doel">'+doelTxt+'</div>';
-      html += '<div class="prof-macros">E '+(d.e||0)+'g · K '+(d.k||0)+'g · V '+(d.v||0)+'g</div>';
+      html += '<div class="prof-macros">'+tf('prof_macros_line', {e:(d.e||0), k:(d.k||0), v:(d.v||0)})+'</div>';
       if(d.items && d.items.length){
-        html += '<div class="vr-kopje" style="margin-top:16px;">Gegeten vandaag</div>';
+        html += '<div class="vr-kopje" style="margin-top:16px;">'+t('prof_gegeten_vandaag')+'</div>';
         html += d.items.map(it=>'<div class="prof-item"><span>'+escapeHtml(it.n||'?')+(it.label?' <em>('+escapeHtml(it.label)+')</em>':'')+'</span><span class="prof-ikc">'+(it.kc||0)+'</span></div>').join('');
       } else {
-        html += '<div class="vr-leeg" style="margin-top:12px;">Nog niets gegeten vandaag.</div>';
+        html += '<div class="vr-leeg" style="margin-top:12px;">'+t('prof_niets_gegeten')+'</div>';
       }
     } else {
-      html += '<div class="vr-leeg">Nog niets gelogd vandaag.</div>';
+      html += '<div class="vr-leeg">'+t('prof_niets_gelogd')+'</div>';
     }
     // Producten & maaltijden achter een knop
     const nieuwAantal = vriendData.eigen.filter(f=>!heeftProduct(f)).length;
-    html += '<button class="vp-open" id="vpOpen">🍽 '+bezit+' producten &amp; maaltijden'+(nieuwAantal?' <span class="vp-badge">'+nieuwAantal+' nieuw</span>':'')+' ›</button>';
+    html += '<button class="vp-open" id="vpOpen">'+tf('vp_open_knop', {bezit:bezit})+(nieuwAantal?' <span class="vp-badge">'+tf('vp_nieuw_badge', {n:nieuwAantal})+'</span>':'')+' ›</button>';
     // Training vandaag
-    html += '<div class="vr-kopje" style="margin-top:20px;">Training vandaag</div>';
+    html += '<div class="vr-kopje" style="margin-top:20px;">'+t('prof_training_vandaag')+'</div>';
     let woHtml = '';
     if(woSnap.exists){
       const wl = woSnap.data().log || {};
@@ -4860,11 +5308,11 @@ async function bekijkVriend(uid, naam){
         }
       }
     }
-    html += woHtml || '<div class="vr-leeg">Geen training vandaag.</div>';
+    html += woHtml || '<div class="vr-leeg">'+t('prof_geen_training')+'</div>';
     $('profInhoud').innerHTML = html;
     $('vpOpen').onclick = openVriendProducten;
   }catch(e){
-    $('profInhoud').innerHTML = '<div class="vr-leeg">Kon dit profiel niet laden.</div>';
+    $('profInhoud').innerHTML = '<div class="vr-leeg">'+t('prof_kon_niet_laden')+'</div>';
   }
 }
 function heeftProduct(f){
@@ -4878,14 +5326,14 @@ let vpTab = 'nieuw';
 function openVriendProducten(){
   if(!vriendData) return;
   vpTab = 'nieuw';
-  $('vpTitel').textContent = vriendData.bezit + ' producten';
+  $('vpTitel').textContent = tf('vp_producten_titel', {bezit:vriendData.bezit});
   $('vpZoek').value = '';
   const nieuwAantal = vriendData.eigen.filter(f=>!heeftProduct(f)).length;
   const hebAantal = vriendData.eigen.length - nieuwAantal;
   $('vpTabs').innerHTML =
-    '<button class="lb-kies actief" data-ptab="nieuw">Nieuw ('+nieuwAantal+')</button>'+
-    '<button class="lb-kies" data-ptab="heb">Heb je al ('+hebAantal+')</button>'+
-    '<button class="lb-kies" data-ptab="maaltijd">Maaltijden ('+vriendData.maaltijden.length+')</button>';
+    '<button class="lb-kies actief" data-ptab="nieuw">'+tf('vp_tab_nieuw', {n:nieuwAantal})+'</button>'+
+    '<button class="lb-kies" data-ptab="heb">'+tf('vp_tab_heb', {n:hebAantal})+'</button>'+
+    '<button class="lb-kies" data-ptab="maaltijd">'+tf('vp_tab_maaltijden', {n:vriendData.maaltijden.length})+'</button>';
   $('vpTabs').querySelectorAll('[data-ptab]').forEach(b=>{
     b.onclick = ()=>{
       vpTab = b.dataset.ptab;
@@ -4905,14 +5353,14 @@ function renderVriendTab(){
   if(tab==='maaltijd'){
     let ms = v.maaltijden.map((m,i)=>({m,i}));
     if(zoek) ms = ms.filter(x=> zonderAccent(x.m.naam||'').includes(zoek));
-    if(!ms.length){ box.innerHTML = '<div class="vr-leeg">'+(v.maaltijden.length? 'Niets gevonden.' : escapeHtml(v.naam)+' heeft nog geen maaltijden gemaakt.')+'</div>'; return; }
-    box.innerHTML = '<div class="prof-tip">Tik op een maaltijd om ze bij jouw maaltijden te zetten.</div>' +
+    if(!ms.length){ box.innerHTML = '<div class="vr-leeg">'+(v.maaltijden.length? t('vp_niets_gevonden') : tf('vp_geen_maaltijden', {naam:escapeHtml(v.naam)}))+'</div>'; return; }
+    box.innerHTML = '<div class="prof-tip">'+t('vp_tip_maaltijd')+'</div>' +
       ms.map(x=>{
         const m=x.m, heb=heeftMaaltijd(m);
         let kc=0; for(const it of (m.items||[])) kc+=it.kc||0;
         return '<div class="prof-item import'+(heb?' heb':'')+'" data-impmt="'+x.i+'">'+
           '<span>'+escapeHtml(m.naam||'?')+' <em>('+(m.items||[]).length+' items · '+rond(kc)+' kcal)</em></span>'+
-          '<span class="imp-actie">'+(heb?'✓ heb je':'+ toevoegen')+'</span></div>';
+          '<span class="imp-actie">'+(heb?t('vp_heb_je'):t('vp_toevoegen_actie'))+'</span></div>';
       }).join('');
     box.querySelectorAll('[data-impmt]').forEach(el=>{
       el.onclick = ()=> importeerMaaltijd(v.maaltijden[parseInt(el.dataset.impmt)], el);
@@ -4923,38 +5371,38 @@ function renderVriendTab(){
   let lijst = v.eigen.map((f,i)=>({f,i})).filter(x=> nieuw ? !heeftProduct(x.f) : heeftProduct(x.f));
   if(zoek) lijst = lijst.filter(x=> zonderAccent(x.f.n||'').includes(zoek));
   if(!lijst.length){
-    box.innerHTML = '<div class="vr-leeg">'+(zoek ? 'Niets gevonden.' : (nieuw
-      ? (v.eigen.length ? 'Je hebt al alles van '+escapeHtml(v.naam)+'.' : escapeHtml(v.naam)+' heeft nog geen eigen producten.')
-      : 'Nog niets gemeenschappelijk.'))+'</div>';
+    box.innerHTML = '<div class="vr-leeg">'+(zoek ? t('vp_niets_gevonden') : (nieuw
+      ? (v.eigen.length ? tf('vp_alles_van', {naam:escapeHtml(v.naam)}) : tf('vp_geen_eigen', {naam:escapeHtml(v.naam)}))
+      : t('vp_niets_gemeenschappelijk')))+'</div>';
     return;
   }
-  box.innerHTML = (nieuw ? '<div class="prof-tip">Tik op een product om het aan jouw lijst toe te voegen.</div>' : '') +
+  box.innerHTML = (nieuw ? '<div class="prof-tip">'+t('vp_tip_product')+'</div>' : '') +
     lijst.map(x=>'<div class="prof-item'+(nieuw?' import':' heb-vast')+'"'+(nieuw?' data-imp="'+x.i+'"':'')+'>'+
-      '<span>'+escapeHtml(x.f.n||'?')+(x.f.drank?' <em>(drank)</em>':'')+'</span>'+
-      '<span class="imp-actie">'+(nieuw?'+ toevoegen':'✓ heb je')+'</span></div>').join('');
+      '<span>'+escapeHtml(x.f.n||'?')+(x.f.drank?' <em>('+t('label_drank')+')</em>':'')+'</span>'+
+      '<span class="imp-actie">'+(nieuw?t('vp_toevoegen_actie'):t('vp_heb_je'))+'</span></div>').join('');
   box.querySelectorAll('[data-imp]').forEach(el=>{
     el.onclick = ()=> importeerProduct(v.eigen[parseInt(el.dataset.imp)], el);
   });
 }
 function importeerMaaltijd(m, el){
   if(!m) return;
-  if(heeftMaaltijd(m)){ toonToast('Die maaltijd heb je al.'); return; }
+  if(heeftMaaltijd(m)){ toonToast(t('toast_maaltijd_al')); return; }
   maaltijden.unshift({ naam: m.naam, items: (m.items||[]).map(x=>Object.assign({}, x)), fav:false });
   bewaarSnel(); renderSnel();
-  toonToast('"'+m.naam+'" bij jouw maaltijden ✓');
-  if(el){ el.classList.add('heb'); el.querySelector('.imp-actie').textContent='✓ toegevoegd'; el.onclick=null; }
+  toonToast(tf('toast_maaltijd_bij_jou', {naam:m.naam}));
+  if(el){ el.classList.add('heb'); el.querySelector('.imp-actie').textContent=t('vp_toegevoegd'); el.onclick=null; }
 }
 function importeerProduct(f, el){
   if(!f) return;
-  if(heeftProduct(f)){ toonToast('Dit product staat al bij jou.'); return; }
+  if(heeftProduct(f)){ toonToast(t('toast_product_al')); return; }
   const nieuw = { n:f.n, kc:f.kc, e:f.e, k:f.k, v:f.v };
   if(f.drank) nieuw.drank = 1;
-  if(f.stuk){ nieuw.stuk = f.stuk; nieuw.se = f.se || (f.drank?'glas':'stuk'); }
+  if(f.stuk){ nieuw.stuk = f.stuk; nieuw.se = f.se || (f.drank?t('se_glas_fallback'):t('se_stuk_fallback')); }
   if(f.code) nieuw.code = f.code;
   eigen.unshift(nieuw);
   bewaarEigen();
-  toonToast('“'+f.n+'” toegevoegd aan jouw producten ✓');
-  if(el){ el.classList.add('heb'); el.querySelector('.imp-actie').textContent = '✓ toegevoegd'; el.onclick=null; }
+  toonToast(tf('toast_product_bij_jou', {naam:f.n}));
+  if(el){ el.classList.add('heb'); el.querySelector('.imp-actie').textContent = t('vp_toegevoegd'); el.onclick=null; }
 }
 $('profSluit').onclick = ()=> $('profOverlay').classList.remove('open');$('profOverlay').onclick = (e)=>{ if(e.target===$('profOverlay')) $('profOverlay').classList.remove('open'); };
 $('vpSluit').onclick = ()=> $('vpOverlay').classList.remove('open');
@@ -5035,21 +5483,21 @@ function doelKleurDiff(kcal, doel){
   return '<span class="lb-diff '+kleur+'">'+teken+Math.abs(diff).toLocaleString('nl-BE')+'</span>';
 }
 function tekenLeaderboard(box, rijen){
-  if(rijen.length===0){ box.innerHTML='<div class="vr-leeg">Nog geen gegevens om te ranken.</div>'; return; }
+  if(rijen.length===0){ box.innerHTML='<div class="vr-leeg">'+t('lb_geen_gegevens')+'</div>'; return; }
   const med = ['🥇','🥈','🥉'];
   box.innerHTML = rijen.map((r,i)=>
     '<div class="lb-rij'+(r.mij?' ik':'')+(r.mij?'':' klik')+'"'+(r.mij?'':' data-uid="'+r.uid+'" data-naam="'+escapeHtml(r.naam||'?')+'"')+'>'+
     '<span class="lb-pos">'+(med[i]||(i+1))+'</span>'+
-    '<span class="lb-naam">'+escapeHtml(r.naam)+(r.mij?' <em>(jij)</em>':'')+'</span>'+
+    '<span class="lb-naam">'+escapeHtml(r.naam)+(r.mij?' <em>('+t('lb_jij')+')</em>':'')+'</span>'+
     '<span class="lb-extra">'+r.extra+'</span></div>'
   ).join('');
   box.querySelectorAll('.lb-rij.klik').forEach(rij=> rij.onclick=()=>bekijkVriend(rij.dataset.uid, rij.dataset.naam));
 }
 async function renderLeaderboard(){
   const box = $('vrLeaderboards'); if(!box) return;
-  if(vriendenLijst.length===0){ box.innerHTML='<div class="vr-leeg">Voeg vrienden toe om een ranglijst te zien.</div>'; return; }
+  if(vriendenLijst.length===0){ box.innerHTML='<div class="vr-leeg">'+t('vr_leeg_vrienden_lb')+'</div>'; return; }
   const deelnemers = [{uid:fbUid, naam:fbNaam, mij:true}, ...vriendenLijst.map(v=>({uid:v.uid, naam:v.naam, mij:false}))];
-  box.innerHTML = '<div class="vr-leeg">Laden…</div>';
+  box.innerHTML = '<div class="vr-leeg">'+t('prof_laden')+'</div>';
   for(const k in statsCache) delete statsCache[k];   // verse cijfers per keer
   try{
     const stats = await Promise.all(deelnemers.map(p=> haalStats(p.uid)));
@@ -5071,50 +5519,48 @@ async function renderLeaderboard(){
       const met = rijen.filter(r=> r.dag.doel!=null && r.dag.kcal!=null)
         .map(r=>({...r, sort:Math.abs(r.dag.kcal-r.dag.doel), extra:r.dag.kcal.toLocaleString('nl-BE')+' / '+r.dag.doel.toLocaleString('nl-BE')+'  '+doelKleurDiff(r.dag.kcal, r.dag.doel)}))
         .sort((a,b)=>a.sort-b.sort);
-      const zonder = rijen.filter(r=> !(r.dag.doel!=null && r.dag.kcal!=null)).map(r=>({...r, extra:'nog geen data'}));
+      const zonder = rijen.filter(r=> !(r.dag.doel!=null && r.dag.kcal!=null)).map(r=>({...r, extra:t('lb_geen_data')}));
       tekenLeaderboard(box, [...met, ...zonder]);
     } else if(lbKeuze==='consistentie'){
-      tekenLeaderboard(box, rijen.map(r=>({...r, sort:r.st.consistentieWeek||0, extra:(r.st.consistentieWeek||0)+' dag'+((r.st.consistentieWeek||0)===1?'':'en')+' op doel'})).sort((a,b)=>b.sort-a.sort));
+      tekenLeaderboard(box, rijen.map(r=>({...r, sort:r.st.consistentieWeek||0, extra:(r.st.consistentieWeek||0)+' '+dagenWoord(r.st.consistentieWeek||0)+t('lb_op_doel_suffix')})).sort((a,b)=>b.sort-a.sort));
     } else if(lbKeuze==='trainingWeek'){
-      tekenLeaderboard(box, rijen.map(r=>({...r, sort:r.st.trainingWeek, extra:r.st.trainingWeek+' dag'+(r.st.trainingWeek===1?'':'en')})).sort((a,b)=>b.sort-a.sort));
+      tekenLeaderboard(box, rijen.map(r=>({...r, sort:r.st.trainingWeek, extra:r.st.trainingWeek+' '+dagenWoord(r.st.trainingWeek)})).sort((a,b)=>b.sort-a.sort));
     } else if(lbKeuze==='totaalKcal'){
       tekenLeaderboard(box, rijen.map(r=>({...r, sort:r.st.totaalKcal, extra:r.st.totaalKcal.toLocaleString('nl-BE')+' kcal'})).sort((a,b)=>b.sort-a.sort));
     } else if(lbKeuze==='totaalTraining'){
-      tekenLeaderboard(box, rijen.map(r=>({...r, sort:r.st.trainingTotaal, extra:r.st.trainingTotaal+' dag'+(r.st.trainingTotaal===1?'':'en')})).sort((a,b)=>b.sort-a.sort));
+      tekenLeaderboard(box, rijen.map(r=>({...r, sort:r.st.trainingTotaal, extra:r.st.trainingTotaal+' '+dagenWoord(r.st.trainingTotaal)})).sort((a,b)=>b.sort-a.sort));
     } else if(lbKeuze==='besteDag'){
       tekenLeaderboard(box, rijen.map(r=>({...r, sort:r.st.hoogsteDag, extra:r.st.hoogsteDag.toLocaleString('nl-BE')+' kcal'})).sort((a,b)=>b.sort-a.sort));
     } else if(lbKeuze==='streak'){
-      tekenLeaderboard(box, rijen.map(r=>({...r, sort:r.st.streak||0, extra:(r.st.streak||0)+' dag'+((r.st.streak||0)===1?'':'en')+' 🔥'})).sort((a,b)=>b.sort-a.sort));
+      tekenLeaderboard(box, rijen.map(r=>({...r, sort:r.st.streak||0, extra:(r.st.streak||0)+' '+dagenWoord(r.st.streak||0)+' 🔥'})).sort((a,b)=>b.sort-a.sort));
     } else if(lbKeuze==='waterDag'){
       tekenLeaderboard(box, rijen.map(r=>({...r, sort:r.st.todayWater||0, extra:(r.st.todayWater||0).toLocaleString('nl-BE')+' ml'})).sort((a,b)=>b.sort-a.sort));
     } else { // waterTotaal
-      tekenLeaderboard(box, rijen.map(r=>{ const gl=Math.round((r.st.totaalWater||0)/250); return {...r, sort:r.st.totaalWater||0, extra:gl.toLocaleString('nl-BE')+' '+(gl===1?'glas':'glazen')}; }).sort((a,b)=>b.sort-a.sort));
+      tekenLeaderboard(box, rijen.map(r=>{ const gl=Math.round((r.st.totaalWater||0)/250); return {...r, sort:r.st.totaalWater||0, extra:gl.toLocaleString('nl-BE')+' '+glasWoord(gl)}; }).sort((a,b)=>b.sort-a.sort));
     }
-  }catch(e){ box.innerHTML='<div class="vr-leeg">Kon ranglijst niet laden.</div>'; }
+  }catch(e){ box.innerHTML='<div class="vr-leeg">'+t('lb_kon_niet_laden')+'</div>'; }
 }
 
 $('vrSluit').onclick = sluitVrienden;
 $('vrOverlay').onclick = (e)=>{ if(e.target===$('vrOverlay')) sluitVrienden(); };
 $('vrZoekKnop').onclick = zoekVriend;
 $('vrZoek').addEventListener('keydown', (e)=>{ if(e.key==='Enter') zoekVriend(); });
+function bijwerkLbUitleg(){
+  const u = $('lbUitleg');
+  const txt = {
+    doel: t('lb_uitleg_doel'), consistentie: t('lb_uitleg_consistentie'), trainingWeek: t('lb_uitleg_trainingweek'),
+    totaalKcal: t('lb_uitleg_totaalkcal'), totaalTraining: t('lb_uitleg_totaaltraining'), besteDag: t('lb_uitleg_bestedag'),
+    streak: t('lb_uitleg_streak'), waterDag: t('lb_uitleg_waterdag'), waterTotaal: t('lb_uitleg_watertotaal')
+  };
+  if(u) u.textContent = txt[lbKeuze] || '';
+}
+bijwerkLbUitleg();
 document.querySelectorAll('.lb-kies').forEach(b=>{
   b.onclick = ()=>{
     lbKeuze = b.dataset.lb;
     document.querySelectorAll('.lb-kies').forEach(x=>x.classList.remove('actief'));
     b.classList.add('actief');
-    const u = $('lbUitleg');
-    const txt = {
-      doel: "Wie zit vandaag het dichtst bij z'n doel?",
-      consistentie: 'Wie zat deze week de meeste dagen op doel (binnen 100 kcal)?',
-      trainingWeek: 'Wie trainde de meeste dagen deze week?',
-      totaalKcal: 'Totaal aantal calorieën ooit gelogd (alle dagen samen).',
-      totaalTraining: 'Totaal aantal dagen getraind (aller tijden).',
-      besteDag: 'Hoogste aantal calorieën op één dag.',
-      streak: 'Wie logt het langst zonder onderbreking? 🔥',
-      waterDag: 'Wie dronk vandaag het meeste water?',
-      waterTotaal: 'Wie dronk in totaal de meeste glazen water? (1 glas = 250 ml)'
-    };
-    if(u) u.textContent = txt[lbKeuze] || '';
+    bijwerkLbUitleg();
     renderLeaderboard();
   };
 });
@@ -5125,13 +5571,13 @@ $('bmiLengte').addEventListener('input', ()=>{
 });
 $('gwBewaar').onclick = ()=>{
   const g = parseFloat(($('gwInput').value||'').replace(',','.'));
-  if(isNaN(g) || g<=0 || g>400){ $('gwHint').textContent = 'Vul een geldig gewicht in (kg).'; return; }
+  if(isNaN(g) || g<=0 || g>400){ $('gwHint').textContent = t('gw_vul_geldig'); return; }
   gewichtLog[vandaagSleutel()] = Math.round(g*10)/10;
   bewaarGewicht();
   pasAutoGewichtToe();
   renderGewicht();
   updateHomeTeasers();
-  toonToast('Gewicht bewaard ✓');
+  toonToast(t('toast_gewicht_bewaard'));
 };
 $('gwInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') $('gwBewaar').click(); });
 document.querySelectorAll('[data-gw]').forEach(b=>{
@@ -5144,11 +5590,11 @@ document.querySelectorAll('[data-gw]').forEach(b=>{
 });
 $('gwAuto').onclick = ()=>{
   if(!gewichtAuto){
-    if(autoGewichtWaarde()==null){ toonToast('Vul eerst je gewicht in.'); return; }
+    if(autoGewichtWaarde()==null){ toonToast(t('toast_vul_gewicht')); return; }
     gewichtAuto = true;
     bewaarGewicht();
     pasAutoGewichtToe();
-    toonToast('Je caloriedoel rekent nu met je gewicht ✓');
+    toonToast(t('toast_doel_rekent_gewicht'));
   } else {
     gewichtAuto = false;
     bewaarGewicht();
@@ -5194,7 +5640,27 @@ $('unameKies').onclick = kiesGebruikersnaam;
 $('unameInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') kiesGebruikersnaam(); });
 $('accountChip').onclick = openVrienden;
 
+document.querySelectorAll('.taal-knop').forEach(b=> b.onclick = ()=> zetTaal(b.dataset.taal));
+
+// Herrendert alle schermen die dynamische tekst tonen — nodig zodat een taalwissel
+// meteen doorwerkt, ook op schermen die al eerder werden opgebouwd.
+function herrenderAlles(){
+  toonDatum();
+  markeerDoelKnop();
+  updateDashboard();
+  renderLog();
+  renderGewicht();
+  updateWater();
+  renderSnel();
+  renderWeekKaart();
+  updateHomeTeasers();
+  renderWorkout();
+  renderVrienden();
+  if(typeof bijwerkLbUitleg === 'function') bijwerkLbUitleg();
+}
+
 (async function init(){
+  vertaalPagina();
   toonDatum();
   await laad();
   await laadWorkout();
