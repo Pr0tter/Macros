@@ -2276,11 +2276,16 @@ const DB = [
   {n:"Baconburger (broodje)",kc:290,e:15,k:20,v:17,stuk:220,se:"stuk"},
   {n:"Draadjesvlees",kc:200,e:24,k:2,v:10},
   {n:"BBQ tofu (gegrild)",kc:150,e:14,k:5,v:9},
+  {n:"Cornetto (ijshoorntje)",kc:270,e:4,k:28,v:15,stuk:110,se:"stuk"},
+  {n:"Bananenbrood",kc:300,e:4,k:45,v:11},
 ];
 
 // Engelse namen voor de ingebouwde database — enkel gebruikt voor weergave; alle
 // opslag/matching blijft op de Nederlandse naam (f.n) lopen, dus niets breekt.
 // Ontbrekende vertalingen vallen gewoon terug op de Nederlandse naam.
+// BELANGRIJK: voeg je hierboven een nieuw item toe aan DB, voeg dan METEEN ook
+// hier de Engelse vertaling toe — anders duikt het nieuwe eten alleen in het
+// Nederlands op, ook in de Engelse modus.
 const DB_EN = {
   "Kipfilet (rauw)":"Chicken breast (raw)", "Kalkoenfilet":"Turkey breast", "Rundergehakt":"Ground beef",
   "Biefstuk (mager)":"Steak (lean)", "Varkenshaas":"Pork tenderloin", "Spek":"Bacon",
@@ -2546,6 +2551,7 @@ const DB_EN = {
   "BBQ ribs (spareribs)":"BBQ ribs (spare ribs)", "Gegrilde maïskolf":"Grilled corn on the cob", "BBQ worst":"BBQ sausage",
   "Gegrilde groenten (mix)":"Grilled vegetables (mix)", "Baconburger (broodje)":"Bacon burger (bun)", "Draadjesvlees":"Shredded beef stew (draadjesvlees)",
   "BBQ tofu (gegrild)":"BBQ tofu (grilled)",
+  "Cornetto (ijshoorntje)":"Cornetto (ice cream cone)", "Bananenbrood":"Banana bread",
 };
 function naamVoor(f){
   const naam = (typeof f === 'string') ? f : (f && f.n);
@@ -3880,7 +3886,13 @@ zoekInput.addEventListener('input', ()=>{
     el.onclick = ()=>{
       const naam = decodeURIComponent(el.dataset.naam);
       const f = alleEten().find(x=>x.n===naam);
-      if(f) openPortie(f);
+      if(f){
+        // Meteen inklappen (geen fade-uit) zodat de resultatenlijst en het
+        // portie-scherm niet even samen ruimte innemen — dat gaf de "spring".
+        resBox.classList.remove('open','groeit');
+        resBox.innerHTML = '';
+        openPortie(f);
+      }
     };
   });
   resBox.querySelectorAll('.res-bewerk').forEach(b=>{
@@ -3898,6 +3910,11 @@ zoekInput.addEventListener('input', ()=>{
   });
   $('resNieuw').onclick = ()=> openNieuw(zoekInput.value.trim());
 });
+// Terug tikken in het zoekveld terwijl er al tekst in staat moet de resultaten
+// meteen opnieuw tonen — anders blijft de lijst dicht tot je een letter wijzigt.
+zoekInput.addEventListener('focus', ()=>{
+  if(zoekInput.value.trim().length>0) zoekInput.dispatchEvent(new Event('input'));
+});
 
 // Zoeken binnen de maaltijd-bouwer
 $('mbZoek').addEventListener('input', ()=>{
@@ -3912,9 +3929,16 @@ $('mbZoek').addEventListener('input', ()=>{
   box.querySelectorAll('[data-mbnaam]').forEach(el=>{
     el.onclick = ()=>{
       const f = alleEten().find(x=>x.n===decodeURIComponent(el.dataset.mbnaam));
-      if(f) kiesVoorMaaltijd(f);
+      if(f){
+        box.classList.remove('open','groeit');
+        box.innerHTML = '';
+        kiesVoorMaaltijd(f);
+      }
     };
   });
+});
+$('mbZoek').addEventListener('focus', ()=>{
+  if($('mbZoek').value.trim().length>0) $('mbZoek').dispatchEvent(new Event('input'));
 });
 
 let mbGekozen = null;
