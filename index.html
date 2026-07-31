@@ -1102,6 +1102,7 @@
     <button class="water-min" id="waterMin">−</button>
     <button class="water-add" data-add="250"><span data-i18n="water_min_klein">+ klein</span> <span>250 ml</span></button>
     <button class="water-add" data-add="330"><span data-i18n="water_min_groot">+ groot</span> <span>330 ml</span></button>
+    <button class="water-add" data-add="500"><span data-i18n="water_min_halveliter">+ 0,5L</span> <span>500 ml</span></button>
   </div>
   <div class="water-hint" id="waterHint"></div>
 </div>
@@ -2278,6 +2279,7 @@ const DB = [
   {n:"BBQ tofu (gegrild)",kc:150,e:14,k:5,v:9},
   {n:"Cornetto (ijshoorntje)",kc:270,e:4,k:28,v:15,stuk:110,se:"stuk"},
   {n:"Bananenbrood",kc:300,e:4,k:45,v:11},
+  {n:"Smosje kaas-hesp",kc:270,e:13,k:27,v:12,stuk:130,se:"stuk"},
 ];
 
 // Engelse namen voor de ingebouwde database — enkel gebruikt voor weergave; alle
@@ -2552,6 +2554,7 @@ const DB_EN = {
   "Gegrilde groenten (mix)":"Grilled vegetables (mix)", "Baconburger (broodje)":"Bacon burger (bun)", "Draadjesvlees":"Shredded beef stew (draadjesvlees)",
   "BBQ tofu (gegrild)":"BBQ tofu (grilled)",
   "Cornetto (ijshoorntje)":"Cornetto (ice cream cone)", "Bananenbrood":"Banana bread",
+  "Smosje kaas-hesp":"Ham & cheese sandwich",
 };
 function naamVoor(f){
   const naam = (typeof f === 'string') ? f : (f && f.n);
@@ -2629,7 +2632,7 @@ const VERT = {
     nieuw_kcal_ph:"kcal", nieuw_eiwit_ph:"eiwit g", nieuw_koolh_ph:"koolh g", nieuw_vet_ph:"vet g",
     nieuw_stuk_hint:'Optioneel — gewicht van 1 stuk (voor "per stuk"):', nieuw_stuk_ph:"gram per stuk (bv. 120)",
     nieuw_bewaar:"Bewaren & kiezen", verwijderen:"Verwijderen",
-    water_min_klein:"+ klein", water_min_groot:"+ groot",
+    water_min_klein:"+ klein", water_min_groot:"+ groot", water_min_halveliter:"+ 0,5L",
     log_gegeten:"Gegeten", log_wisdag:"Dag wissen", log_maaltijden:"🍽 Maaltijden", log_snelkcal:"⚡ Snel kcal",
     nav_maaltijden_kort:"Maaltijden", log_snelkcal_kort:"Snel kcal",
     voetnoot:"Waarden zijn per 100 g (of 100 ml voor drank) en gebaseerd op standaard referentiewaarden — kleine afwijkingen per product/merk zijn normaal.",
@@ -2824,7 +2827,7 @@ const VERT = {
     nieuw_kcal_ph:"kcal", nieuw_eiwit_ph:"protein g", nieuw_koolh_ph:"carbs g", nieuw_vet_ph:"fat g",
     nieuw_stuk_hint:'Optional — weight of 1 piece (for "per piece"):', nieuw_stuk_ph:"grams per piece (e.g. 120)",
     nieuw_bewaar:"Save & select", verwijderen:"Delete",
-    water_min_klein:"+ small", water_min_groot:"+ large",
+    water_min_klein:"+ small", water_min_groot:"+ large", water_min_halveliter:"+ 0.5L",
     log_gegeten:"Eaten", log_wisdag:"Clear day", log_maaltijden:"🍽 Meals", log_snelkcal:"⚡ Quick kcal",
     nav_maaltijden_kort:"Meals", log_snelkcal_kort:"Quick kcal",
     voetnoot:"Values are per 100 g (or 100 ml for drinks) and based on standard reference values — small variations per product/brand are normal.",
